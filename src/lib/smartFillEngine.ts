@@ -16,6 +16,7 @@ export interface SmartFillResult {
   priorities: { value: string; confidence: 'high' | 'medium' | 'low' } | null
   suggestedChallengeIds: { value: string[]; confidence: 'high' | 'medium' | 'low' } | null
   suggestedUseCaseIds: { value: string[]; confidence: 'high' | 'medium' | 'low' } | null
+  contacts: { value: { name: string; title: string; email?: string }[]; confidence: 'high' | 'medium' | 'low' } | null
 }
 
 // Industry keyword matching
@@ -66,7 +67,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
     .trim()
 
-  if (!cleaned) return { companyName: null, industryId: null, companySize: null, priorities: null, suggestedChallengeIds: null, suggestedUseCaseIds: null }
+  if (!cleaned) return { companyName: null, industryId: null, companySize: null, priorities: null, suggestedChallengeIds: null, suggestedUseCaseIds: null, contacts: null }
 
   const lower = cleaned.toLowerCase()
 
@@ -78,6 +79,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     { key: 'companySize', patterns: [/^company\s*size/i, /^size/i, /^employees?/i] },
     { key: 'priorities', patterns: [/^strategic\s*priorities/i, /^priorities/i, /^key\s*priorities/i] },
     { key: 'challenges', patterns: [/^key\s*challenges/i, /^challenges/i, /^business\s*challenges/i, /^pain\s*points/i] },
+    { key: 'stakeholders', patterns: [/^key\s*stakeholders/i, /^stakeholders/i, /^contacts?/i, /^key\s*contacts/i, /^decision\s*makers?/i, /^customer\s*contacts/i] },
   ]
 
   // Split into lines, identify sections
@@ -267,7 +269,67 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     }
   }
 
-  return { companyName, industryId, companySize, priorities, suggestedChallengeIds, suggestedUseCaseIds }
+  // 7. CRM Contacts — extract name + title pairs from stakeholder/contact sections
+  let contacts: SmartFillResult['contacts'] = null
+  const extractedContacts: { name: string; title: string; email?: string }[] = []
+
+  // Pattern 1: Structured section "Name — Title" or "Name: Title" or "Name, Title"
+  if (sections.stakeholders) {
+    for (const line of sections.stakeholders) {
+      // "Sam Richardson — Deputy CIO" or "Sam Richardson: Deputy CIO"
+      const sepMatch = line.match(/^([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\s*[-–—:,]\s*(.+)/i)
+      if (sepMatch) {
+        const name = sepMatch[1].trim()
+        const title = sepMatch[2].replace(/\s*\(.*?\)/, '').trim()
+        if (name.length >= 3 && title.length >= 3) {
+          extractedContacts.push({ name, title })
+        }
+      }
+    }
+  }
+
+  // Pattern 2: Scan full text for "Role / Title:" header followed by value (Sales Agent CRM format)
+  const titlePattern = /\*{0,2}(?:Role|Title|Role\s*\/\s*Title)\s*(?:\/\s*Title)?:?\*{0,2}\s*(.+)/i
+  const emailPattern = /\*{0,2}Email:?\*{0,2}\s*<?([^\s<>@]+@[^\s<>]+)>?/i
+
+  // Split by markdown headers to find contact blocks
+  const contactBlocks = rawText.split(/(?=###?\s)/)
+  for (const block of contactBlocks) {
+    const nameMatch = block.match(/###?\s*\*{0,2}([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\*{0,2}/)
+    if (!nameMatch) continue
+    const name = nameMatch[1].trim()
+    const titleMatch = block.match(titlePattern)
+    if (!titleMatch) continue
+    const title = titleMatch[1].replace(/\s*\(.*?\)/, '').trim()
+    const emailMatch = block.match(emailPattern)
+    const email = emailMatch ? emailMatch[1].trim() : undefined
+    // Avoid duplicates
+    if (!extractedContacts.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+      extractedContacts.push({ name, title, email })
+    }
+  }
+
+  // Pattern 3: Inline "Name (Title)" anywhere in text
+  if (extractedContacts.length === 0) {
+    const inlinePattern = /([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\s*\((?:CTO|CIO|CDO|CISO|CFO|CEO|VP|SVP|EVP|Director|Sr\.?\s*Director|Chief\s+\w+\s*Officer)[^)]*\)/g
+    let m
+    while ((m = inlinePattern.exec(rawText)) !== null) {
+      const name = m[0].match(/^[^(]+/)?.[0]?.trim() || ''
+      const title = m[0].match(/\(([^)]+)\)/)?.[1]?.trim() || ''
+      if (name && title && !extractedContacts.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+        extractedContacts.push({ name, title })
+      }
+    }
+  }
+
+  if (extractedContacts.length > 0) {
+    contacts = {
+      value: extractedContacts.slice(0, 10),
+      confidence: extractedContacts.length >= 3 ? 'high' : extractedContacts.length >= 2 ? 'medium' : 'low',
+    }
+  }
+
+  return { companyName, industryId, companySize, priorities, suggestedChallengeIds, suggestedUseCaseIds, contacts }
 }
 
 /**

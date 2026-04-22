@@ -10,12 +10,20 @@ export interface WizardData {
   // Smart Fill
   smartFillRaw: string
   confidence: Record<string, 'high' | 'medium' | 'low'>
+  // CRM Contacts (from Smart Fill)
+  crmContacts: CRMContact[]
   // Step 2: Challenges & Use Cases
   selectedChallengeIds: string[]
   selectedUseCaseIds: string[]
   // Readiness
   readinessAnswers: Record<string, number>
   readinessTier: ReadinessTier | ''
+}
+
+export interface CRMContact {
+  name: string
+  title: string
+  email?: string
 }
 
 const INITIAL_DATA: WizardData = {
@@ -25,6 +33,7 @@ const INITIAL_DATA: WizardData = {
   priorities: '',
   smartFillRaw: '',
   confidence: {},
+  crmContacts: [],
   selectedChallengeIds: [],
   selectedUseCaseIds: [],
   readinessAnswers: {},

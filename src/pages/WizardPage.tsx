@@ -4,7 +4,6 @@ import StepCustomer from '../components/wizard/StepCustomer'
 import StepChallenges from '../components/wizard/StepChallenges'
 import StepReview from '../components/wizard/StepReview'
 import StepValueStory from '../components/wizard/StepValueStory'
-import FeedbackWidget from '../components/ui/FeedbackWidget'
 
 export default function WizardPage() {
   const wizard = useWizardState()
@@ -24,11 +23,6 @@ export default function WizardPage() {
       <div key={wizard.step} className="animate-slideUp">
         {renderStep()}
       </div>
-      <FeedbackWidget
-        wizardStep={wizard.step}
-        industry={wizard.data.industryId}
-        challenges={wizard.data.selectedChallengeIds}
-      />
     </SplitLayout>
   )
 }

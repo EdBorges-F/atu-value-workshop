@@ -41,6 +41,13 @@ export interface Evidence {
 // ─── Use Case ───────────────────────────────────────────────
 export type CompanySize = 'small' | 'mid' | 'large' | 'enterprise';
 
+// Agent capability classification on the simple→complex spectrum
+// (per Building Agents with Microsoft customer pitch deck, L200):
+//   • generation — generate summaries, images, audio, and more from instructions
+//   • retrieval  — retrieve and reason over information to produce a grounded response
+//   • action     — take actions to automate workflows and replace repetitive tasks
+export type AgentCapabilityType = 'generation' | 'retrieval' | 'action';
+
 export interface UseCase {
   id: string;
   name: string;
@@ -52,6 +59,7 @@ export interface UseCase {
   microsoftProducts: string[];
   category?: string;
   pillarId: 'enrich' | 'reshape' | 'reinvent' | 'bend' | 'security';
+  agentType?: AgentCapabilityType;
 }
 
 // ─── Challenge → Use Case Mapping ───────────────────────────
@@ -88,11 +96,35 @@ export interface TransformationStage {
   description: string;
 }
 
+export interface IQProduct {
+  tagline: string;
+  description: string;
+  components: string[];
+}
+
+export interface E7StackComponent {
+  name: string;
+  description: string;
+}
+
+export interface Agent365Data {
+  tagline: string;
+  capabilities: string[];
+}
+
 export interface FrontierVisionData {
   stats: Record<string, string>;
   transformationArc: TransformationStage[];
   solutionsOverview: string[];
   securityNarrative?: string;
+  iqProducts?: {
+    workIQ: IQProduct;
+    fabricIQ: IQProduct;
+    foundryIQ: IQProduct;
+  };
+  microsoftAgents?: string[];
+  e7Stack?: E7StackComponent[];
+  agent365?: Agent365Data;
 }
 
 // ─── Priority Keywords ──────────────────────────────────────

@@ -6,10 +6,10 @@ import { extractSmartFill, type SmartFillResult } from '../../lib/smartFillEngin
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
 const SIZE_OPTIONS = [
-  { value: 'small', label: 'Small', desc: '< 500 employees' },
-  { value: 'mid', label: 'Mid-Market', desc: '500 – 2,500' },
-  { value: 'large', label: 'Large', desc: '2,500 – 10,000' },
-  { value: 'enterprise', label: 'Enterprise', desc: '10,000+' },
+  { value: 'small', label: '< 500 employees', desc: '' },
+  { value: 'mid', label: '500 – 2,500 employees', desc: '' },
+  { value: 'large', label: '2,500 – 10,000 employees', desc: '' },
+  { value: 'enterprise', label: '10,000+ employees', desc: '' },
 ] as const
 
 const CONFIDENCE_BADGE: Record<string, { label: string; color: string }> = {
@@ -40,6 +40,7 @@ const COPILOT_GATHER_PROMPT = `@Sales Agent — I'm preparing a Frontier Transfo
 3. **Company Size** — Employee count estimate (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
 4. **Strategic Priorities** — Their top 3-5 business priorities or transformation initiatives based on conversations and public sources
 5. **Key Challenges** — Business pain points, blockers, or pressures they face
+6. **Key Stakeholders** — Senior decision-makers involved in AI or digital transformation (Name, Title if available). Check CRM contacts, recent emails, and meeting attendees for CTO, CIO, CDO, CISO, CFO, or VP-level sponsors
 
 Format as plain text only — no links, no URLs, no source citations, no markdown formatting. At the end, do a sanity check for yourself: flag if anything looks contradictory or if you found information that wasn't captured above — but do NOT include this check in the output you give me.`
 
@@ -93,6 +94,10 @@ export default function StepCustomer({ wizard }: WizardProps) {
       updateData({
         selectedUseCaseIds: [...new Set([...data.selectedUseCaseIds, ...(item.value as string[])])],
       })
+    } else if (field === 'contacts') {
+      updateData({
+        crmContacts: (item.value as { name: string; title: string; email?: string }[]),
+      })
     }
   }
 
@@ -124,6 +129,9 @@ export default function StepCustomer({ wizard }: WizardProps) {
     }
     if (extraction.suggestedUseCaseIds) {
       update.selectedUseCaseIds = extraction.suggestedUseCaseIds.value as string[]
+    }
+    if (extraction.contacts) {
+      update.crmContacts = extraction.contacts.value as { name: string; title: string; email?: string }[]
     }
     update.confidence = conf
     updateData(update)
@@ -295,6 +303,15 @@ export default function StepCustomer({ wizard }: WizardProps) {
                     applied={(extraction.suggestedUseCaseIds.value as string[]).every((id) => data.selectedUseCaseIds.includes(id))}
                   />
                 )}
+                {extraction.contacts && (extraction.contacts.value as { name: string; title: string }[]).length > 0 && (
+                  <ExtractionRow
+                    label="Stakeholders"
+                    value={`${(extraction.contacts.value as { name: string; title: string }[]).length} contact(s) found`}
+                    confidence={extraction.contacts.confidence}
+                    onApply={() => applyField('contacts')}
+                    applied={data.crmContacts.length > 0 && (extraction.contacts.value as { name: string; title: string }[]).every(c => data.crmContacts.some(dc => dc.name === c.name))}
+                  />
+                )}
                 {extractedCount === 0 && (
                   <p className="text-sm text-text-secondary italic">
                     No fields could be extracted. Try pasting more detailed account notes.
@@ -305,6 +322,27 @@ export default function StepCustomer({ wizard }: WizardProps) {
           </div>
         )}
       </div>
+
+      {/* Key Stakeholders Card (from Smart Fill) */}
+      {data.crmContacts.length > 0 && (
+        <div className="rounded-[16px] border border-emerald-100 bg-emerald-50/50 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">👥</span>
+            <span className="text-xs font-semibold text-emerald-800">Key Stakeholders</span>
+            <span className="text-[10px] text-emerald-600">({data.crmContacts.length} contacts)</span>
+          </div>
+          <div className="space-y-1">
+            {data.crmContacts.map((c, i) => (
+              <div key={i} className="flex items-center gap-2 text-xs text-emerald-900">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                <span className="font-medium">{c.name}</span>
+                <span className="text-emerald-600">— {c.title}</span>
+                {c.email && <span className="text-emerald-500 text-[10px]">({c.email})</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Company Name */}
       <div>
@@ -359,7 +397,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
       {/* Company Size */}
       <div>
         <label className="block text-sm font-medium text-text mb-3">
-          Company Size
+          Number of Employees
           {data.confidence.companySize && (
             <ConfidenceBadge level={data.confidence.companySize} />
           )}
@@ -376,7 +414,6 @@ export default function StepCustomer({ wizard }: WizardProps) {
                 }`}
             >
               <div className="text-sm font-medium">{size.label}</div>
-              <div className="text-xs text-text-secondary">{size.desc}</div>
             </button>
           ))}
         </div>
