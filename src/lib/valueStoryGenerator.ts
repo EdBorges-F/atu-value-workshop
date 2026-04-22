@@ -234,7 +234,7 @@ const INDUSTRY_ALIAS: Record<string, string[]> = {
   'banking': ['financial-services'],
   'higher-education': ['education'],
   'consumer-goods': ['consumer-goods', 'cpg'],
-  'automotive': ['automotive', 'mobility'],
+  'automotive': ['automotive', 'mobility', 'manufacturing'],
   'professional-services': ['professional-services', 'technology'],
 }
 
