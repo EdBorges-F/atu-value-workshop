@@ -18,16 +18,16 @@ const CONFIDENCE_BADGE: Record<string, { label: string; color: string }> = {
   low: { label: 'Low', color: 'bg-red-50 text-red-600' },
 }
 
-const SAMPLE_PASTE = `Account: Carmeuse
-Industry: Manufacturing / Industrial Materials (lime, limestone, minerals)
-Carmeuse Group is a global enterprise with 5,000+ employees, headquartered in Belgium.
-Revenue: €2.5B+, operating 80+ plants and 50+ quarries worldwide.
+const SAMPLE_PASTE = `Account: Contoso Manufacturing
+Industry: Manufacturing / Industrial Materials
+Contoso Manufacturing is a global enterprise with 5,000+ employees, headquartered in Europe.
+Revenue: €2.5B+, operating 80+ plants and 50+ facilities worldwide.
 
 Strategic priorities:
 - Operational efficiency and yield optimization across production facilities
-- Predictive maintenance to reduce unplanned downtime in kilns and crushers
+- Predictive maintenance to reduce unplanned downtime in heavy equipment
 - Supply chain visibility and demand forecasting for raw materials
-- Sustainability: reducing carbon emissions in lime production (energy-intensive process)
+- Sustainability: reducing carbon emissions in energy-intensive processes
 - Digital transformation of legacy plant systems
 - Worker safety and frontline enablement across distributed sites
 
@@ -212,7 +212,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
                   onClick={() => setSmartFillText(SAMPLE_PASTE)}
                   className="text-[10px] text-primary hover:underline font-normal"
                 >
-                  or try sample (Carmeuse)
+                  or try sample (Contoso)
                 </button>
               </label>
               <textarea
@@ -357,7 +357,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
           type="text"
           value={data.companyName}
           onChange={(e) => updateData({ companyName: e.target.value })}
-          placeholder="e.g., Carmeuse"
+          placeholder="e.g., Contoso"
           className="w-full px-4 py-3 rounded-[14px] border border-gray-200 bg-white text-text 
                      placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/30 
                      focus:border-primary transition-all"
