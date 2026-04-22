@@ -244,6 +244,28 @@ function PillarCard({ section, defaultOpen }: { section: PillarSection; defaultO
                         📊 <span className="font-semibold capitalize">{fb.area}:</span> {fb.gain}
                       </p>
                     )}
+                    {/* ROI mini-card */}
+                    {uc.roiCard && (
+                      <div className="mt-2 p-2.5 rounded-lg bg-white/80 border border-gray-100">
+                        <div className="grid grid-cols-3 gap-2">
+                          <div>
+                            <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider">💰 Cost</p>
+                            <p className="text-[11px] text-text leading-snug mt-0.5">{uc.roiCard.costReduction}</p>
+                          </div>
+                          <div>
+                            <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider">⚡ Speed</p>
+                            <p className="text-[11px] text-text leading-snug mt-0.5">{uc.roiCard.speedImprovement}</p>
+                          </div>
+                          <div>
+                            <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider">✨ Quality</p>
+                            <p className="text-[11px] text-text leading-snug mt-0.5">{uc.roiCard.qualityImprovement}</p>
+                          </div>
+                        </div>
+                        <p className="text-[9px] text-gray-400 mt-1.5 flex items-center gap-1">
+                          <span>⏱️</span> Expected ROI: {uc.roiCard.roiTimeframe}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -305,6 +327,8 @@ export default function StepValueStory({ wizard }: WizardProps) {
   )
 
   const totalEvidenceCount = allEvidence.reduce((n, e) => n + e.stories.length, 0)
+  const roiCount = story.pillarSections.reduce((n, s) => n + s.useCases.filter(uc => uc.roiCard).length, 0)
+    + (story.securitySection?.useCases.filter(uc => uc.roiCard).length ?? 0)
 
   const fullStoryText = useMemo(() => {
     const lines = [
@@ -413,11 +437,12 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
 
         {/* Stats strip */}
-        <div className="mt-6 grid grid-cols-4 gap-3">
+        <div className="mt-6 grid grid-cols-5 gap-3">
           {[
             { value: story.pillarSections.reduce((sum, p) => sum + (p.useCases?.length || 0), 0) + (story.securitySection?.useCases?.length || 0), label: 'AI Use Cases' },
             { value: story.pillarSections.length + (story.securitySection ? 1 : 0), label: 'Pillars' },
             { value: totalEvidenceCount, label: 'Customer Stories' },
+            { value: roiCount, label: 'ROI Insights' },
             { value: data.industryId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), label: 'Industry Focus', isText: true },
           ].map((stat, i) => (
             <div key={i} className="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
