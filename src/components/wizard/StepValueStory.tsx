@@ -48,7 +48,7 @@ function Collapsible({ title, icon, summary, defaultOpen = false, children }: {
         {icon && <span className="text-base">{icon}</span>}
         <span className="text-sm font-bold text-text uppercase tracking-wider flex-1">{title}</span>
         {summary && !open && <span className="text-[11px] text-text-secondary">{summary}</span>}
-        <span className="text-text-secondary text-xs">{open ? '▾' : '▸'}</span>
+        <span className="text-text-secondary text-[10px]">{open ? '▾ collapse' : '▸ expand'}</span>
       </button>
       <div className={`${open ? 'px-5 py-4' : 'hidden'} print:!block print:px-5 print:py-4`}>
         {children}
