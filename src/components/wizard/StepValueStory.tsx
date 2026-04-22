@@ -42,15 +42,15 @@ function Collapsible({ title, icon, summary, defaultOpen = false, children }: {
 }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div className="collapsible-section">
+    <div className="collapsible-section rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
       <button onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-2 py-2 text-left hover:opacity-80 transition-all print:hidden">
-        {icon && <span className="text-sm">{icon}</span>}
-        <span className="text-xs font-bold text-text uppercase tracking-wider flex-1">{title}</span>
+        className="w-full flex items-center gap-2 px-5 py-3.5 text-left bg-gray-50/80 hover:bg-gray-100/80 transition-all print:hidden border-b border-gray-100">
+        {icon && <span className="text-base">{icon}</span>}
+        <span className="text-sm font-bold text-text uppercase tracking-wider flex-1">{title}</span>
         {summary && !open && <span className="text-[11px] text-text-secondary">{summary}</span>}
         <span className="text-text-secondary text-xs">{open ? '▾' : '▸'}</span>
       </button>
-      <div className={`${open ? '' : 'hidden'} print:!block`}>
+      <div className={`${open ? 'px-5 py-4' : 'hidden'} print:!block print:px-5 print:py-4`}>
         {children}
       </div>
     </div>
@@ -449,10 +449,10 @@ export default function StepValueStory({ wizard }: WizardProps) {
       <div id="plan">
       <Collapsible title="The Plan" icon="🎯"
         summary={`${story.pillarSections.length} pillars · ${story.pillarSections.reduce((n, s) => n + s.useCases.length, 0)} use cases`}
-        defaultOpen={true}>
+        defaultOpen={false}>
         <div className="space-y-4 pt-2">
-          {story.pillarSections.map((section, i) => (
-            <PillarCard key={section.pillar.id} section={section} defaultOpen={i < 2} />
+          {story.pillarSections.map((section) => (
+            <PillarCard key={section.pillar.id} section={section} defaultOpen={false} />
           ))}
 
           {/* Security Foundation */}
@@ -623,7 +623,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
 
       {/* ━━ 5. NEXT STEPS — collapsible, default open ━━ */}
       <div id="next-steps">
-      <Collapsible title="Next Steps" icon="🎯" defaultOpen={true}>
+      <Collapsible title="Next Steps" icon="🎯" defaultOpen={false}>
         <div className="space-y-4 pt-2">
           <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-6">
             <div className="space-y-3">

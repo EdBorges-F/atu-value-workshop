@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
 import { CHALLENGES } from '../../data/challenges'
 import { USE_CASES } from '../../data/use-cases'
@@ -77,7 +77,7 @@ function getEvidenceNames(uc: { id: string; name: string; challengeIds: string[]
 export default function StepChallenges({ wizard }: WizardProps) {
   const { data, updateData, prevStep, nextStep, canAdvance } = wizard
   const { industryId, priorities, selectedChallengeIds, selectedUseCaseIds } = data
-  const [viewFilter, setViewFilter] = useState<'all' | 'evidence'>('all')
+  // viewFilter removed — all UCs always visible
 
   const priorityScores = useMemo(() => scoreChallenges(priorities), [priorities])
 
@@ -215,27 +215,31 @@ export default function StepChallenges({ wizard }: WizardProps) {
                 {rankedUseCases.length > 0 && ` · ${rankedUseCases.length} total`}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <button
-                onClick={() => setViewFilter('all')}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all border
-                  ${viewFilter === 'all'
-                    ? 'bg-primary text-white border-primary shadow-sm'
-                    : 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'}`}
+                onClick={() => updateData({ selectedUseCaseIds: [] })}
+                className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
               >
-                All ({rankedUseCases.length})
+                ✕ Clear
               </button>
-              {evidenceBackedCount > 0 && (
-                <button
-                  onClick={() => setViewFilter(viewFilter === 'evidence' ? 'all' : 'evidence')}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all border
-                    ${viewFilter === 'evidence'
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                      : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'}`}
-                >
-                  ★ Evidence-Backed ({evidenceBackedCount})
-                </button>
-              )}
+              <button
+                onClick={() => {
+                  const ids = rankedUseCases.slice(0, 12).map((r) => r.uc.id)
+                  updateData({ selectedUseCaseIds: ids })
+                }}
+                className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+              >
+                ⚡ Recommended
+              </button>
+              <button
+                onClick={() => {
+                  const ids = rankedUseCases.map((r) => r.uc.id)
+                  updateData({ selectedUseCaseIds: ids })
+                }}
+                className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
+              >
+                Select All ({rankedUseCases.length})
+              </button>
             </div>
           </div>
 
@@ -246,7 +250,6 @@ export default function StepChallenges({ wizard }: WizardProps) {
           ) : (
             <div className="space-y-2">
               {rankedUseCases
-                .filter((ranked) => viewFilter === 'all' || ranked.evidenceCount > 0)
                 .map((ranked) => {
                 const { uc, evidenceCount, evidenceNames } = ranked
                 const isSelected = selectedUseCaseIds.includes(uc.id)
