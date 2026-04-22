@@ -104,11 +104,11 @@ export default function StepChallenges({ wizard }: WizardProps) {
         const evidenceNames = evidenceCount > 0 ? getEvidenceNames(uc, industryId) : []
         const challengeOverlap = uc.challengeIds.filter((cid) => selectedChallengeIds.includes(cid)).length
         const sizeMatch = uc.sizeRelevance.includes(data.companySize || 'enterprise')
-        // Scoring: evidence strength first, then challenge overlap, then size fit
+        // Scoring: challenge match first, then size fit, evidence is just a tiebreaker
         const score =
-          (evidenceCount * 100) +
-          (challengeOverlap * 10) +
-          (sizeMatch ? 5 : 0)
+          (challengeOverlap * 100) +
+          (sizeMatch ? 10 : 0) +
+          (evidenceCount * 1)
         return { uc, score, isIndustry: true, evidenceCount, evidenceNames }
       })
       .sort((a, b) => b.score - a.score)
