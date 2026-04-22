@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+/* ─── Frontier Canvas Design Tokens ─────────────────────────── */
+@theme {
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-secondary: #8b5cf6;
+  --color-accent: #22d3ee;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  --color-dark-start: #0f172a;
+  --color-dark-end: #1e1b4b;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8fafc;
+  --color-text: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-light: #f0f4ff;
+
+  --color-confidence-high: #10b981;
+  --color-confidence-medium: #f59e0b;
+  --color-confidence-low: #ef4444;
+
+  --radius-card: 20px;
+  --radius-button: 14px;
+  --radius-pill: 9999px;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --animate-fadeIn: fadeIn 0.25s ease-out;
+  --animate-slideUp: slideUp 0.3s ease-out;
+  --animate-slideIn: slideIn 0.35s ease-out;
+}
+
+/* ─── Global Styles ──────────────────────────────────────────── */
+body {
+  font-family: var(--font-sans);
+  background: var(--color-surface);
+  color: var(--color-text);
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* ─── Animations ─────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── Selection ──────────────────────────────────────────────── */
+::selection {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+
+/* ─── Focus Styles ───────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Line Clamping ──────────────────────────────────────────── */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─── Print Styles ───────────────────────────────────────────── */
+@media print {
+  .no-print, .print\:hidden { display: none !important; }
+  body { background: white !important; }
+  main { padding: 0 !important; }
+  
+  /* Hide the left sidebar navigation panel */
+  aside, nav, [class*="dark-start"], [class*="dark-end"] {
+    display: none !important;
+  }
+  
+  /* Make content full width */
+  .max-w-3xl { max-width: 100% !important; }
+  
+  /* Force all collapsed sections open for print */
+  .collapsible-section .hidden,
+  .pillar-card .hidden {
+    display: block !important;
+  }
+  .print\:\!block { display: block !important; }
+  
+  /* Allow page breaks inside long pillar cards */
+  .pillar-card { break-inside: auto; }
+  .pillar-card > button { break-after: avoid; }
+  
+  /* Avoid breaks inside small cards */
+  .rounded-xl { break-inside: avoid; }
+  
+  /* Tone down shadows for print */
+  .shadow-xl, .shadow-sm, .shadow-md, .shadow-lg {
+    box-shadow: none !important;
+  }
+  
+  /* Ensure dark backgrounds print */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  
+  /* Footer on every page */
+  @page { margin: 0.75in; }
+}
