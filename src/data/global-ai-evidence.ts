@@ -4,6 +4,20 @@
 // IMPORTANT: No individual company evidence here — only aggregated industry research
 // All company-specific evidence comes from verified Microsoft customer stories only
 
+// Feature flag: Customer Zero data is present but hidden until NDA checkbox + source decks are ready
+export const SHOW_CUSTOMER_ZERO = false
+
+// Strips Customer Zero sentences from a string when the flag is off
+export function filterCustomerZero(text: string): string {
+  if (SHOW_CUSTOMER_ZERO) return text
+  // Remove sentences containing "Customer Zero" or "Microsoft <Function>:" patterns
+  return text
+    .replace(/[.;]\s*Microsoft\s+\w[\w\s]*?:.*?(?=\.|;|$)/gi, '')
+    .replace(/\s*\(Customer Zero\)/gi, '')
+    .replace(/\s*\.\s*$/, '')
+    .trim()
+}
+
 export interface GlobalEvidence {
   id: string
   company: string
