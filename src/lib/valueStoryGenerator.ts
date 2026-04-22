@@ -111,7 +111,6 @@ export interface UseCaseEntry {
   name: string
   description: string
   evidence: string | null
-  linkedPriority: string | null
   matchedStories: MatchedStory[]
   roiCard: ROICard | null
 }
@@ -326,33 +325,6 @@ function matchStoriesToUseCase(
 }
 
 // Find the best priority match for a use case within a pillar
-function findLinkedPriority(
-  ucText: string,
-  priorities: string[]
-): string | null {
-  if (priorities.length === 0) return null
-  const ucLower = ucText.toLowerCase()
-  const ucWords = ucLower.split(/\W+/).filter((w) => w.length > 3)
-
-  let bestPriority = priorities[0]
-  let bestOverlap = 0
-  for (const priority of priorities) {
-    const pLower = priority.toLowerCase()
-    const pWords = pLower.split(/\W+/).filter((w) => w.length > 3)
-    let overlap = 0
-    for (const uw of ucWords) {
-      if (pWords.some((pw) => pw.includes(uw) || uw.includes(pw))) overlap++
-    }
-    if (overlap > bestOverlap) {
-      bestOverlap = overlap
-      bestPriority = priority
-    }
-  }
-  // Return first line/sentence, max 80 chars
-  const title = bestPriority.split(/\n/)[0].trim()
-  return title.length > 80 ? title.slice(0, 77) + '...' : title
-}
-
 // ─── ROI Template Matching ────────────────────────────────────
 // Match a use case to its ROI template by industry + challenge overlap + name similarity
 function matchROITemplate(
@@ -381,6 +353,7 @@ function matchROITemplate(
 
   if (!bestTemplate) return null
 
+  // Graceful fallback: GLOBAL_EVIDENCE is empty, so look up company names but don't break if missing
   const evidenceCompanies = bestTemplate.globalEvidence
     .map(id => GLOBAL_EVIDENCE.find(e => e.id === id))
     .filter(Boolean)
@@ -470,14 +443,13 @@ export function generateValueStory(data: WizardData): ValueStory {
     (p) => pillarPriorities[p.id].length > 0 || pillarUseCases[p.id].length > 0
   )
 
-  // Count evidence-backed stories
+  // Count evidence-backed stories using the same matching logic as matchStoriesToUseCase
+  // (previously this was looser — any 1 shared challengeId counted)
   const evidenceStories = new Set<string>()
   for (const uc of useCases) {
-    for (const story of CUSTOMER_STORIES) {
-      if (!isIndustryMatch(story.industry, industryId)) continue
-      if (story.challengeIds.some((cid) => uc.challengeIds.includes(cid))) {
-        evidenceStories.add(story.id)
-      }
+    const matched = matchStoriesToUseCase(uc, industryId)
+    for (const m of matched) {
+      evidenceStories.add(m.company)
     }
   }
 
@@ -495,20 +467,8 @@ export function generateValueStory(data: WizardData): ValueStory {
     ? topPillars.map((p) => `${p.fullName}`).join(', ')
     : 'transformation across key business dimensions'
   
-  // Count evidence from ALL sources (customer stories + Hero AI)
-  const heroMatches = new Set<string>()
-  for (const uc of useCases) {
-    const ucWords = uc.name.toLowerCase().split(/\s+/).filter(w => w.length > 4)
-    for (const hero of HERO_USE_CASES) {
-      if (!isIndustryMatch(hero.industry, industryId)) continue
-      const heroWords = hero.title.toLowerCase().split(/\s+/).filter(w => w.length > 4)
-      const overlap = ucWords.filter(w => heroWords.some(hw => hw.includes(w) || w.includes(hw)))
-      if (overlap.length >= 2) {
-        hero.customers.forEach(c => heroMatches.add(c.name))
-      }
-    }
-  }
-  const totalEvidence = evidenceStories.size + heroMatches.size
+  // matchStoriesToUseCase already includes hero use cases, so totalEvidence = evidenceStories
+  const totalEvidence = evidenceStories.size
   const evidencePhrase = totalEvidence > 0
     ? ` Backed by ${totalEvidence} published customer ${totalEvidence === 1 ? 'story' : 'stories'} from ${industryName}, these use cases represent proven paths to measurable outcomes.`
     : ''
@@ -550,7 +510,6 @@ export function generateValueStory(data: WizardData): ValueStory {
         name: uc.name,
         description: uc.description.split('.')[0] + '.',
         evidence: uc.evidence.length > 0 ? uc.evidence[0] : null,
-        linkedPriority: findLinkedPriority(uc.name + ' ' + uc.description, effectivePriorities),
         matchedStories: matchStoriesToUseCase(uc, industryId),
         roiCard: matchROITemplate(uc, industryId),
       }))
@@ -588,7 +547,6 @@ export function generateValueStory(data: WizardData): ValueStory {
         name: uc.name,
         description: uc.description.split('.')[0] + '.',
         evidence: uc.evidence.length > 0 ? uc.evidence[0] : null,
-        linkedPriority: findLinkedPriority(uc.name + ' ' + uc.description, effectiveSecPriorities),
         matchedStories: matchStoriesToUseCase(uc, industryId),
         roiCard: null,
       }))
@@ -596,7 +554,6 @@ export function generateValueStory(data: WizardData): ValueStory {
         name: 'AI Governance & Security Posture',
         description: 'Secure governance of AI workloads, agent observability, and data protection across the AI stack.',
         evidence: null,
-        linkedPriority: null,
         matchedStories: [] as MatchedStory[],
         roiCard: null,
       }]
@@ -694,20 +651,28 @@ export function generateValueStory(data: WizardData): ValueStory {
     `Design a pilot scope with ${companyName}'s team — clear outcomes, owners, and timeline`,
   ]
 
-  // Build ROI context string for prompts
+  // Build ROI context string for prompts — use qualitative ranges from templates even when no named evidence exists
   const roiContext: string[] = []
   for (const ps of pillarSections) {
     for (const uc of ps.useCases) {
       if (uc.roiCard) {
-        roiContext.push(`${uc.name}: ${uc.roiCard.costReduction} cost reduction, ${uc.roiCard.speedImprovement}, ROI in ${uc.roiCard.roiTimeframe}`)
+        const evidenceNote = uc.roiCard.evidenceCompanies.length > 0
+          ? ` (evidence: ${uc.roiCard.evidenceCompanies.join(', ')})`
+          : ' (based on industry benchmarks for similar deployments)'
+        roiContext.push(`${uc.name}: ${uc.roiCard.costReduction} cost reduction, ${uc.roiCard.speedImprovement}, quality: ${uc.roiCard.qualityImprovement}, ROI in ${uc.roiCard.roiTimeframe}${evidenceNote}`)
       }
     }
   }
-  const roiBlock = roiContext.length > 0 ? `\n\nROI EVIDENCE:\n${roiContext.map(r => `- ${r}`).join('\n')}` : ''
+  const roiBlock = roiContext.length > 0
+    ? `\n\nROI EVIDENCE (indicative ranges from industry benchmarks and similar deployments):\n${roiContext.map(r => `- ${r}`).join('\n')}`
+    : '\n\nROI EVIDENCE:\nFrame value qualitatively using industry benchmarks and customer reference stories. Use percentage improvement ranges (e.g., "15-30% reduction") rather than absolute figures.'
 
-  // Stakeholder context for prompts
-  const stakeholderBlock = stakeholderMap.length > 0
-    ? `\n\nSTAKEHOLDERS IDENTIFIED:\n${stakeholderMap.map(s => `- ${s.pillar}: ${s.roles.join(', ')} (${s.areas.join(', ')})`).join('\n')}`
+  // Stakeholder context for prompts — include CRM contacts if available
+  const crmContactBlock = data.crmContacts && data.crmContacts.length > 0
+    ? `\n\nCRM CONTACTS (extracted from account data):\n${data.crmContacts.map(c => `- ${c.name} — ${c.title}${c.email ? ` (${c.email})` : ''}`).join('\n')}`
+    : ''
+  const stakeholderBlock = stakeholderMap.length > 0 || crmContactBlock
+    ? `${crmContactBlock}${stakeholderMap.length > 0 ? `\n\nSUGGESTED STAKEHOLDERS BY PILLAR:\n${stakeholderMap.map(s => `- ${s.pillar}: ${s.roles.join(', ')} (${s.areas.join(', ')})`).join('\n')}` : ''}`
     : ''
 
   // Industry benchmark context for prompts
@@ -783,14 +748,14 @@ LEGAL: "© ${new Date().getFullYear()} Microsoft Corporation. All rights reserve
       label: 'Value Proposition Deck',
       icon: '📊',
       description: 'Generate an HTML presentation to present to the customer',
-      prompt: `${fullContext}\n\nTASK: Create a 5-8 section presentation for ${companyName} as a single, self-contained HTML page with professional styling. Title: "${companyName} — AI Transformation Opportunity".\n\nSection structure:\n1. Title slide with "Estimated Value Scenarios" subtitle\n2. Industry context + market urgency (use benchmark data as reference points)\n3-6. One section per active Frontier pillar — their priorities, matched use cases, indicative ROI ranges, and customer reference stories\n7. Stakeholder alignment + suggested areas to explore\n8. Proposed next steps with owners and timeline\n\nInclude speaker notes below each section. Products appear only as "powered by" footnotes. Frame all numbers as estimates and references.\n\nOUTPUT: Create this as a single HTML file (.html) with embedded CSS — professional, clean design with Microsoft branding colors (#0078D4, #243A5E, #50E6FF). The HTML should be presentation-ready: open it in a browser to present full-screen, or print to PDF as a handout. Include page-break CSS hints for printing. No external dependencies — everything inline.`,
+      prompt: `${fullContext}\n\nTASK: Create a 5-8 section presentation for ${companyName} as a single, self-contained HTML page with professional styling. Title: "${companyName} — AI Transformation Opportunity".\n\nSection structure:\n1. Title slide with "Estimated Value Scenarios" subtitle\n2. Industry context + market urgency (use benchmark data as reference points)\n3-6. One section per active Frontier pillar — their priorities, matched use cases, indicative ROI ranges, and customer reference stories\n7. Stakeholder alignment + suggested areas to explore\n8. Proposed next steps with owners and timeline\n\nProducts appear only as "powered by" footnotes. Frame all numbers as estimates and references.\n\nOUTPUT: Create this as a single HTML file (.html) with embedded CSS — professional, clean design with Microsoft branding colors (#0078D4, #243A5E, #50E6FF). The HTML should be presentation-ready: open it in a browser to present full-screen, or print to PDF as a handout. Include page-break CSS hints for printing. No external dependencies — everything inline.`,
     },
     {
       id: 'business-case',
       label: 'Business Case',
       icon: '💰',
       description: 'Generate an HTML business case to present to the customer',
-      prompt: `${fullContext}\n\nTASK: Generate an estimated business case and value proposal for ${companyName}'s AI investment as a single, self-contained HTML page. Title: "Estimated Business Case — ${companyName} AI Transformation".\n\nInclude:\n1. Executive summary — why now, market context\n2. Investment thesis — reference the ROI evidence above as indicative benchmarks\n3. Estimated 3-year value scenarios based on the ROI metrics (present as ranges, not exact figures)\n4. "Delay risk" — competitive and operational cost of inaction\n5. Indicative implementation cost considerations for a ${data.companySize} company\n6. Estimated break-even range and risk-adjusted scenarios\n7. Suggested investment phasing aligned to the roadmap\n\nUse conservative estimates. Label all figures as "estimated" or "indicative". Cite industry benchmarks and customer reference stories.\n\nOUTPUT: Create this as a single HTML file (.html) with embedded CSS — executive-ready design with professional charts and tables. Open in a browser to present to the CFO, or print to PDF. Use Microsoft branding colors (#0078D4, #243A5E, #50E6FF). No external dependencies — everything inline.`,
+      prompt: `${fullContext}\n\nTASK: Generate an estimated business case and value proposal for ${companyName}'s AI investment as a single, self-contained HTML page. Title: "Estimated Business Case — ${companyName} AI Transformation".\n\nFINANCIAL GROUNDING — IMPORTANT:\n- First, look up ${companyName}'s publicly available financial data (10-K, annual reports, earnings). If found, use their actual revenue, headcount, and cost structure as the baseline for projections.\n- If no public financial data is available (private company), present ALL projections as percentage improvements only (e.g., "15-25% reduction in X") — NEVER fabricate absolute dollar figures.\n- Always state the baseline assumption explicitly: "Based on ${companyName}'s reported $X revenue..." OR "Based on industry averages for a ${data.companySize} ${industryName} company..."\n- Cite the source of every number: customer reference story, industry benchmark, or public financial filing.\n\nInclude:\n1. Executive summary — why now, market context\n2. Investment thesis — reference the ROI evidence above as indicative benchmarks\n3. Estimated value scenarios using percentage improvement ranges per use case. If public financials are available, translate percentages into indicative dollar ranges. If not, keep as percentages.\n4. "Delay risk" — competitive and operational cost of inaction\n5. Indicative implementation cost considerations for a ${data.companySize} company\n6. Risk-adjusted scenarios (conservative / moderate / optimistic percentage ranges)\n7. Suggested investment phasing aligned to the roadmap\n\nUse conservative estimates. Label all figures as "estimated" or "indicative". Cite every source.\n\nOUTPUT: Create this as a single HTML file (.html) with embedded CSS — executive-ready design with professional charts and tables. Open in a browser to present to the CFO, or print to PDF. Use Microsoft branding colors (#0078D4, #243A5E, #50E6FF). No external dependencies — everything inline.`,
     },
     {
       id: 'customer-alignment',
@@ -804,7 +769,7 @@ LEGAL: "© ${new Date().getFullYear()} Microsoft Corporation. All rights reserve
       label: 'Follow-Up Email',
       icon: '📨',
       description: 'Draft an Outlook email with recap and action items',
-      prompt: `${fullContext}\n\nTASK: Write a follow-up email after meeting with ${companyName}. Structure:\n1. Thank them and reference a specific insight from the conversation\n2. Recap their top 3 priorities (use their words)\n3. Confirm the use cases aligned per pillar with expected ROI\n4. List agreed next steps with owners and dates\n5. Attach context: "See attached Value Story and Business Case"\n6. Propose next meeting focused on [top priority pillar]\n\nTone: Confident partner, not vendor. Under 300 words.\n\nOUTPUT: Create this as a draft email in Outlook, ready to review, attach files to, and send.`,
+      prompt: `${fullContext}\n\nTASK: Write a follow-up email after meeting with ${companyName}. Structure:\n1. Thank them and reference a specific insight from the conversation\n2. Recap their top 3 priorities (use their words)\n3. Confirm the use cases aligned per pillar with expected ROI\n4. List agreed next steps with owners and dates\n5. Propose next meeting focused on [top priority pillar]\n\nTone: Confident partner, not vendor. Under 300 words.\n\nOUTPUT: Create this as a draft email in Outlook, ready to review, attach files to, and send.`,
     },
     {
       id: 'uc-expansion',

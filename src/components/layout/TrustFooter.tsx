@@ -45,7 +45,7 @@ export default function TrustFooter() {
           <p className="text-xs text-white/70 font-semibold">About Frontier Canvas</p>
           <p className="text-[11px] text-white/50 leading-relaxed">
             Frontier Canvas helps Microsoft Account Executives create evidence-based AI Value Stories
-            for customer conversations. It surfaces curated use cases, challenges, and Microsoft
+            for customer Industry conversations. It surfaces curated use cases, challenges, and Microsoft
             technology recommendations based on industry context.
           </p>
           <div className="space-y-2">
@@ -92,18 +92,6 @@ export default function TrustFooter() {
               <span className="hidden xl:inline">{badge.label}</span>
             </a>
           ))}
-          <span className="text-white/10">|</span>
-          <button
-            onClick={() => {
-              const msg = 'Feedback is saved locally. Press Ctrl+Shift+F to export as CSV.'
-              alert(msg)
-            }}
-            className="flex items-center gap-1 text-xs text-white/40 hover:text-white/70 transition-colors"
-            title="Export collected feedback as CSV (Ctrl+Shift+F)"
-          >
-            <span>📋</span>
-            <span className="hidden xl:inline">Feedback</span>
-          </button>
         </div>
         <button
           onClick={() => setAboutOpen(!aboutOpen)}

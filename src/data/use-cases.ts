@@ -17,8 +17,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['operational-efficiency', 'cost-optimization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Reducing unplanned downtime by 30-50% with Azure IoT and AI predictive models'],
-    microsoftProducts: ['Azure IoT', 'Azure AI', 'Copilot'],
+    microsoftProducts: ['Azure IoT', 'Azure AI', 'Copilot', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'mfg-quality-inspection',
@@ -30,6 +31,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Manufacturers achieving 99%+ defect detection rates with Azure AI Vision'],
     microsoftProducts: ['Azure AI Vision', 'Azure IoT Edge'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'mfg-product-engineering',
@@ -39,8 +41,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['innovation-speed', 'revenue-growth', 'customer-experience'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Engineering teams reducing design cycles by 40% with AI-assisted simulation'],
-    microsoftProducts: ['Microsoft Copilot', 'Azure AI', 'GitHub Copilot'],
+    microsoftProducts: ['Microsoft Copilot', 'Azure AI', 'GitHub Copilot', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'generation',
   },
   {
     id: 'mfg-supply-chain-visibility',
@@ -50,8 +53,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['supply-chain', 'operational-efficiency'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Achieving 25% improvement in forecast accuracy with AI-driven demand sensing'],
-    microsoftProducts: ['Azure AI', 'Dynamics 365 Supply Chain Management', 'Dynamics 365'],
+    microsoftProducts: ['Azure AI', 'Dynamics 365 Supply Chain Management', 'Dynamics 365', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'mfg-connected-worker',
@@ -61,8 +65,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization', 'field-operations'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Frontline productivity gains of 20-30% with Teams and Copilot for frontline'],
-    microsoftProducts: ['Microsoft Teams', 'Microsoft Copilot', 'Power Platform'],
+    microsoftProducts: ['Microsoft Teams', 'Microsoft Copilot', 'Power Platform', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'action',
   },
   {
     id: 'mfg-production-analytics',
@@ -72,8 +77,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['data-analytics', 'cost-optimization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Process manufacturers improving yields by 5-15% with AI optimization'],
-    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Power BI'],
+    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Power BI', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'mfg-smart-factory',
@@ -83,8 +89,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['autonomous-systems', 'digital-transformation'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Digital twins reducing commissioning time by 30% and improving OEE'],
-    microsoftProducts: ['Azure Digital Twins', 'Azure IoT', 'Azure AI'],
+    microsoftProducts: ['Azure Digital Twins', 'Azure IoT', 'Azure AI', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'action',
   },
   {
     id: 'mfg-sustainability-reporting',
@@ -94,8 +101,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['sustainability', 'security-compliance'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Automating ESG reporting with Microsoft Cloud for Sustainability'],
-    microsoftProducts: ['Microsoft Cloud for Sustainability', 'Microsoft Fabric'],
+    microsoftProducts: ['Microsoft Cloud for Sustainability', 'Microsoft Fabric', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -111,6 +119,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Banks reducing fraud losses by 60% while cutting false positives by 50%'],
     microsoftProducts: ['Azure AI', 'Microsoft Fabric'],
     pillarId: 'security',
+    agentType: 'retrieval',
   },
   {
     id: 'banking-relationship-mgmt',
@@ -120,8 +129,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['customer-experience', 'workforce-modernization', 'knowledge-management'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Relationship managers saving 5+ hours per week with Copilot for client prep'],
-    microsoftProducts: ['Microsoft Copilot', 'Dynamics 365', 'Microsoft Teams'],
+    microsoftProducts: ['Microsoft Copilot', 'Dynamics 365', 'Microsoft Teams', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'retrieval',
   },
   {
     id: 'banking-regulatory-compliance',
@@ -131,8 +141,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['security-compliance', 'innovation-speed', 'cost-optimization'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Compliance teams reducing report preparation time by 70% with AI automation'],
-    microsoftProducts: ['Microsoft Purview', 'Azure AI', 'Microsoft Copilot'],
+    microsoftProducts: ['Microsoft Purview', 'Azure AI', 'Microsoft Copilot', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'banking-risk-analytics',
@@ -144,6 +155,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Risk assessment time reduced from days to minutes with Azure AI'],
     microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Power BI'],
     pillarId: 'security',
+    agentType: 'retrieval',
   },
   {
     id: 'banking-legacy-modernization',
@@ -153,8 +165,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['digital-transformation', 'innovation-speed'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Banks modernizing core systems 3x faster with GitHub Copilot and Azure'],
-    microsoftProducts: ['GitHub Copilot', 'Azure', 'Microsoft Copilot'],
+    microsoftProducts: ['GitHub Copilot', 'Azure', 'Microsoft Copilot', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'generation',
   },
   {
     id: 'banking-copilot-productivity',
@@ -164,8 +177,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization', 'cost-optimization', 'knowledge-management'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Banking teams saving 5+ hours per week per employee with M365 Copilot adoption'],
-    microsoftProducts: ['Microsoft 365 Copilot', 'Copilot Studio', 'Microsoft Teams'],
+    microsoftProducts: ['Microsoft 365 Copilot', 'Copilot Studio', 'Microsoft Teams', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'generation',
   },
   {
     id: 'banking-cloud-cost-optimization',
@@ -177,6 +191,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Banks achieving 20-40% cloud cost reduction through AI-driven FinOps and automated optimization'],
     microsoftProducts: ['Azure Cost Management', 'Azure Advisor', 'Microsoft Copilot'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -190,8 +205,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['customer-experience', 'revenue-growth'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Retailers achieving 15-30% increase in conversion rates with AI personalization'],
-    microsoftProducts: ['Azure AI', 'Dynamics 365', 'Microsoft Copilot'],
+    microsoftProducts: ['Azure AI', 'Dynamics 365', 'Microsoft Copilot', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'retrieval',
   },
   {
     id: 'retail-demand-forecasting',
@@ -201,8 +217,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['data-analytics', 'supply-chain'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Forecast accuracy improvements of 20-40% with AI-powered demand sensing'],
-    microsoftProducts: ['Microsoft Fabric', 'Azure AI', 'Dynamics 365'],
+    microsoftProducts: ['Microsoft Fabric', 'Azure AI', 'Dynamics 365', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'retail-store-operations',
@@ -212,8 +229,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['operational-efficiency', 'field-operations'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Store operations teams reducing labor costs by 10-15% with AI scheduling'],
-    microsoftProducts: ['Microsoft Teams', 'Azure AI', 'Power Platform'],
+    microsoftProducts: ['Microsoft Teams', 'Azure AI', 'Power Platform', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'retail-inventory-optimization',
@@ -223,8 +241,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['supply-chain', 'cost-optimization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Reducing inventory carrying costs by 15-25% with AI-driven allocation'],
-    microsoftProducts: ['Dynamics 365', 'Azure AI', 'Microsoft Fabric'],
+    microsoftProducts: ['Dynamics 365', 'Azure AI', 'Microsoft Fabric', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'retail-associate-enablement',
@@ -234,8 +253,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Associates resolving customer queries 40% faster with AI-assisted tools'],
-    microsoftProducts: ['Microsoft Copilot', 'Microsoft Teams', 'Dynamics 365'],
+    microsoftProducts: ['Microsoft Copilot', 'Microsoft Teams', 'Dynamics 365', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'generation',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -249,8 +269,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['operational-efficiency', 'cost-optimization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Energy companies reducing maintenance costs by 25-30% with predictive AI'],
-    microsoftProducts: ['Azure IoT', 'Azure AI', 'Azure Digital Twins'],
+    microsoftProducts: ['Azure IoT', 'Azure AI', 'Azure Digital Twins', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'energy-field-service',
@@ -260,8 +281,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['field-operations'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['First-time fix rates improving by 20% with AI-guided field service'],
-    microsoftProducts: ['Dynamics 365 Field Service', 'Microsoft Teams', 'Azure AI'],
+    microsoftProducts: ['Dynamics 365 Field Service', 'Microsoft Teams', 'Azure AI', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'action',
   },
   {
     id: 'energy-critical-infrastructure',
@@ -273,6 +295,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['OT security teams detecting threats 80% faster with AI-powered monitoring'],
     microsoftProducts: ['Microsoft Defender for IoT', 'Microsoft Sentinel', 'Azure AI'],
     pillarId: 'security',
+    agentType: 'retrieval',
   },
   {
     id: 'energy-emissions-tracking',
@@ -282,8 +305,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['sustainability'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Automating Scope 1-3 emissions tracking with Microsoft Sustainability Manager'],
-    microsoftProducts: ['Microsoft Cloud for Sustainability', 'Azure AI', 'Power BI'],
+    microsoftProducts: ['Microsoft Cloud for Sustainability', 'Azure AI', 'Power BI', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'energy-operations-analytics',
@@ -293,8 +317,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['data-analytics'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Production optimization yielding 5-10% efficiency gains with Azure AI'],
-    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Azure IoT'],
+    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Azure IoT', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'energy-safety-monitoring',
@@ -306,6 +331,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Safety incidents reduced by 40% with AI-powered hazard detection'],
     microsoftProducts: ['Azure AI Vision', 'Azure IoT', 'Power Platform'],
     pillarId: 'security',
+    agentType: 'retrieval',
   },
   {
     id: 'energy-autonomous-operations',
@@ -315,8 +341,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['autonomous-systems'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Remote operations reducing on-site personnel needs by 30-50%'],
-    microsoftProducts: ['Azure IoT', 'Azure AI', 'Azure Digital Twins'],
+    microsoftProducts: ['Azure IoT', 'Azure AI', 'Azure Digital Twins', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'action',
   },
   {
     id: 'energy-procurement-optimization',
@@ -326,8 +353,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['supply-chain', 'cost-optimization'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Procurement teams achieving 10-15% cost savings with AI-assisted sourcing'],
-    microsoftProducts: ['Dynamics 365', 'Microsoft Copilot', 'Azure AI'],
+    microsoftProducts: ['Dynamics 365', 'Microsoft Copilot', 'Azure AI', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -343,6 +371,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Clinicians saving 2+ hours daily on documentation with AI scribes'],
     microsoftProducts: ['Microsoft Copilot', 'DAX Copilot', 'Azure AI'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'healthcare-clinical-insights',
@@ -352,8 +381,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['data-analytics', 'patient-outcomes', 'knowledge-management'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Clinical decision support improving diagnosis accuracy by 15-20%'],
-    microsoftProducts: ['Azure Health Data Services', 'Azure AI', 'Microsoft Fabric'],
+    microsoftProducts: ['Azure Health Data Services', 'Azure AI', 'Microsoft Fabric', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'retrieval',
   },
   {
     id: 'healthcare-clinician-experience',
@@ -363,8 +393,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['70% of clinicians reporting reduced burnout with DAX Copilot'],
-    microsoftProducts: ['DAX Copilot', 'Microsoft Teams', 'Microsoft Copilot'],
+    microsoftProducts: ['DAX Copilot', 'Microsoft Teams', 'Microsoft Copilot', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'generation',
   },
   {
     id: 'healthcare-care-coordination',
@@ -374,8 +405,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['patient-outcomes', 'customer-experience'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Patient engagement platforms reducing readmission rates by 15-25%'],
-    microsoftProducts: ['Microsoft Cloud for Healthcare', 'Dynamics 365', 'Azure AI'],
+    microsoftProducts: ['Microsoft Cloud for Healthcare', 'Dynamics 365', 'Azure AI', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'action',
   },
   {
     id: 'healthcare-remote-care',
@@ -385,8 +417,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['field-operations', 'patient-outcomes'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Remote monitoring reducing ER visits by 30% for chronic care patients'],
-    microsoftProducts: ['Microsoft Teams', 'Azure IoT', 'Azure Health Data Services'],
+    microsoftProducts: ['Microsoft Teams', 'Azure IoT', 'Azure Health Data Services', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'retrieval',
   },
   {
     id: 'healthcare-data-privacy',
@@ -398,6 +431,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Healthcare orgs achieving HIPAA compliance 50% faster with Microsoft Purview'],
     microsoftProducts: ['Microsoft Purview', 'Microsoft Defender', 'Azure AI'],
     pillarId: 'security',
+    agentType: 'retrieval',
   },
   {
     id: 'healthcare-ehr-optimization',
@@ -407,8 +441,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['digital-transformation'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Health systems achieving 80% data interoperability with Azure Health Data Services'],
-    microsoftProducts: ['Azure Health Data Services', 'Microsoft Fabric', 'Azure AI'],
+    microsoftProducts: ['Azure Health Data Services', 'Microsoft Fabric', 'Azure AI', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -422,8 +457,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['innovation-speed'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Pharma companies reducing early-stage discovery by 12-18 months with AI'],
-    microsoftProducts: ['Azure AI', 'Azure HPC', 'GitHub Copilot'],
+    microsoftProducts: ['Azure AI', 'Azure HPC', 'GitHub Copilot', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'retrieval',
   },
   {
     id: 'medtech-supply-traceability',
@@ -433,8 +469,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['supply-chain', 'security-compliance'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Medical device companies achieving 100% lot traceability with Azure IoT'],
-    microsoftProducts: ['Azure IoT', 'Dynamics 365', 'Microsoft Fabric'],
+    microsoftProducts: ['Azure IoT', 'Dynamics 365', 'Microsoft Fabric', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'medtech-patient-engagement',
@@ -444,8 +481,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['patient-outcomes', 'data-analytics'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Connected devices generating 10x more real-world evidence data for trials'],
-    microsoftProducts: ['Azure Health Data Services', 'Azure IoT', 'Power Platform'],
+    microsoftProducts: ['Azure Health Data Services', 'Azure IoT', 'Power Platform', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'retrieval',
   },
   {
     id: 'medtech-regulatory-automation',
@@ -457,6 +495,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Regulatory teams reducing submission prep time by 40% with AI assistance'],
     microsoftProducts: ['Microsoft Copilot', 'Azure AI', 'Microsoft Purview'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -470,8 +509,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['data-analytics', 'revenue-growth'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Research teams producing insights 5x faster with AI-assisted analysis'],
-    microsoftProducts: ['Microsoft Copilot', 'Azure AI', 'Microsoft Fabric'],
+    microsoftProducts: ['Microsoft Copilot', 'Azure AI', 'Microsoft Fabric', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'retrieval',
   },
   {
     id: 'capital-markets-trading-insights',
@@ -481,8 +521,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['revenue-growth', 'autonomous-systems'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Trading desks improving execution quality by 10-15% with AI optimization'],
-    microsoftProducts: ['Azure AI', 'Azure HPC', 'Microsoft Fabric'],
+    microsoftProducts: ['Azure AI', 'Azure HPC', 'Microsoft Fabric', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'retrieval',
   },
   {
     id: 'capital-markets-risk-modeling',
@@ -494,6 +535,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Risk models achieving 30% better tail-risk prediction with ML techniques'],
     microsoftProducts: ['Azure AI', 'Azure HPC', 'Microsoft Fabric'],
     pillarId: 'security',
+    agentType: 'retrieval',
   },
   {
     id: 'capital-markets-algorithmic-trading',
@@ -503,8 +545,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['autonomous-systems'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['AI-driven systematic strategies showing measurable improvement over traditional approaches (industry research)'],
-    microsoftProducts: ['Azure AI', 'Azure HPC', 'GitHub Copilot'],
+    microsoftProducts: ['Azure AI', 'Azure HPC', 'GitHub Copilot', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'action',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -518,8 +561,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['operational-efficiency', 'cost-optimization'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Operators achieving 20-30% better network utilization with AI optimization'],
-    microsoftProducts: ['Azure AI', 'Azure Operator Nexus', 'Microsoft Fabric'],
+    microsoftProducts: ['Azure AI', 'Azure Operator Nexus', 'Microsoft Fabric', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'telecom-customer-service',
@@ -529,8 +573,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['customer-experience', 'cost-optimization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Telecom providers resolving 60% of queries through AI before agent handoff'],
-    microsoftProducts: ['Microsoft Copilot', 'Dynamics 365', 'Azure AI'],
+    microsoftProducts: ['Microsoft Copilot', 'Dynamics 365', 'Azure AI', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'action',
   },
   {
     id: 'telecom-new-services',
@@ -540,8 +585,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['revenue-growth', 'innovation-speed'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Operators generating 15%+ new revenue from AI-enabled enterprise services'],
-    microsoftProducts: ['Azure', 'Azure AI', 'Azure Operator Nexus'],
+    microsoftProducts: ['Azure', 'Azure AI', 'Azure Operator Nexus', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'generation',
   },
   {
     id: 'telecom-field-technician',
@@ -551,8 +597,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['field-operations'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Field teams improving first-time fix rates by 25% with AI-guided troubleshooting'],
-    microsoftProducts: ['Dynamics 365 Field Service', 'Microsoft Teams', 'Azure AI'],
+    microsoftProducts: ['Dynamics 365 Field Service', 'Microsoft Teams', 'Azure AI', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'retrieval',
   },
   {
     id: 'telecom-network-self-healing',
@@ -562,8 +609,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['autonomous-systems'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Mean-time-to-repair reduced by 70% with AI-driven autonomous remediation'],
-    microsoftProducts: ['Azure AI', 'Azure Operator Nexus', 'Microsoft Copilot'],
+    microsoftProducts: ['Azure AI', 'Azure Operator Nexus', 'Microsoft Copilot', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'action',
   },
   {
     id: 'telecom-service-innovation',
@@ -573,8 +621,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['innovation-speed'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['5G + AI use cases generating new enterprise revenue within 6-12 months'],
-    microsoftProducts: ['Azure', 'Azure AI', 'Azure Operator Nexus'],
+    microsoftProducts: ['Azure', 'Azure AI', 'Azure Operator Nexus', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'generation',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -588,8 +637,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['customer-experience', 'operational-efficiency'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Claims cycle time reduced by 50% with AI-powered straight-through processing'],
-    microsoftProducts: ['Azure AI', 'Dynamics 365', 'Microsoft Copilot'],
+    microsoftProducts: ['Azure AI', 'Dynamics 365', 'Microsoft Copilot', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'action',
   },
   {
     id: 'insurance-underwriting-automation',
@@ -599,8 +649,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['cost-optimization', 'data-analytics'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Underwriting decisions made 3x faster with AI-assisted risk scoring'],
-    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Microsoft Copilot'],
+    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Microsoft Copilot', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'insurance-fraud-detection',
@@ -612,6 +663,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Insurers detecting 40% more fraud with AI while reducing false positives'],
     microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Microsoft Sentinel'],
     pillarId: 'security',
+    agentType: 'retrieval',
   },
   {
     id: 'insurance-actuarial-modeling',
@@ -621,8 +673,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['data-analytics', 'risk-management'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Actuarial teams achieving 20% better loss prediction with ML models'],
-    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Azure HPC'],
+    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Azure HPC', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'insurance-policy-knowledge',
@@ -632,8 +685,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['knowledge-management'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Policy inquiries resolved 60% faster with AI-powered knowledge bases'],
-    microsoftProducts: ['Microsoft Copilot', 'Azure AI Search', 'Power Platform'],
+    microsoftProducts: ['Microsoft Copilot', 'Azure AI Search', 'Power Platform', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'retrieval',
   },
   {
     id: 'insurance-platform-modernization',
@@ -643,8 +697,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['digital-transformation'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Insurers modernizing core platforms 2x faster with GitHub Copilot'],
-    microsoftProducts: ['GitHub Copilot', 'Azure', 'Microsoft Copilot'],
+    microsoftProducts: ['GitHub Copilot', 'Azure', 'Microsoft Copilot', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'action',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -660,6 +715,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Government agencies reducing processing times by 60-80% with AI automation'],
     microsoftProducts: ['Power Platform', 'Azure AI', 'Microsoft Copilot'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'gov-digital-services',
@@ -669,8 +725,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['digital-transformation', 'customer-experience'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Citizen satisfaction scores improving 30%+ with AI-powered digital services'],
-    microsoftProducts: ['Azure AI', 'Power Platform', 'Dynamics 365'],
+    microsoftProducts: ['Azure AI', 'Power Platform', 'Dynamics 365', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'action',
   },
   {
     id: 'gov-security-operations',
@@ -682,6 +739,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['SOC teams detecting threats 65% faster with Microsoft Security Copilot'],
     microsoftProducts: ['Microsoft Security Copilot', 'Microsoft Sentinel', 'Microsoft Defender'],
     pillarId: 'security',
+    agentType: 'action',
   },
   {
     id: 'gov-employee-enablement',
@@ -691,8 +749,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Government employees saving 4+ hours per week with Microsoft Copilot'],
-    microsoftProducts: ['Microsoft Copilot', 'Microsoft Teams', 'Power Platform'],
+    microsoftProducts: ['Microsoft Copilot', 'Microsoft Teams', 'Power Platform', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'generation',
   },
   {
     id: 'gov-institutional-knowledge',
@@ -702,8 +761,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['knowledge-management'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Knowledge retrieval time reduced by 80% with AI-powered institutional search'],
-    microsoftProducts: ['Azure AI Search', 'Microsoft Copilot', 'SharePoint Premium'],
+    microsoftProducts: ['Azure AI Search', 'Microsoft Copilot', 'SharePoint Premium', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'retrieval',
   },
   {
     id: 'gov-threat-intelligence',
@@ -715,6 +775,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Threat assessment accuracy improving 40% with AI-powered fusion analysis'],
     microsoftProducts: ['Microsoft Sentinel', 'Azure AI', 'Microsoft Security Copilot'],
     pillarId: 'security',
+    agentType: 'retrieval',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -730,6 +791,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['CPG companies identifying trends 6 months earlier with AI-driven insights'],
     microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Microsoft Copilot'],
     pillarId: 'reinvent',
+    agentType: 'retrieval',
   },
   {
     id: 'cpg-product-development',
@@ -739,8 +801,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['innovation-speed'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Product development cycles shortened by 30% with AI-assisted formulation'],
-    microsoftProducts: ['Azure AI', 'Azure HPC', 'Microsoft Copilot'],
+    microsoftProducts: ['Azure AI', 'Azure HPC', 'Microsoft Copilot', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'generation',
   },
   {
     id: 'cpg-revenue-management',
@@ -750,8 +813,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['revenue-growth', 'data-analytics'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['CPG companies achieving 3-5% revenue uplift with AI-optimized trade promotion'],
-    microsoftProducts: ['Microsoft Fabric', 'Azure AI', 'Power BI'],
+    microsoftProducts: ['Microsoft Fabric', 'Azure AI', 'Power BI', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'cpg-demand-planning',
@@ -761,8 +825,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['supply-chain'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Demand forecast accuracy improving 25-35% with AI-powered sensing'],
-    microsoftProducts: ['Dynamics 365', 'Azure AI', 'Microsoft Fabric'],
+    microsoftProducts: ['Dynamics 365', 'Azure AI', 'Microsoft Fabric', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'cpg-sustainable-supply',
@@ -772,8 +837,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['sustainability'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Companies achieving Scope 3 visibility 3x faster with AI-powered tracking'],
-    microsoftProducts: ['Microsoft Cloud for Sustainability', 'Azure AI', 'Microsoft Fabric'],
+    microsoftProducts: ['Microsoft Cloud for Sustainability', 'Azure AI', 'Microsoft Fabric', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -787,8 +853,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['innovation-speed'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Vehicle programs reducing validation time by 40% with AI-powered simulation'],
-    microsoftProducts: ['Azure HPC', 'Azure AI', 'GitHub Copilot'],
+    microsoftProducts: ['Azure HPC', 'Azure AI', 'GitHub Copilot', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'generation',
   },
   {
     id: 'auto-supply-chain-resilience',
@@ -798,8 +865,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['supply-chain'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['OEMs reducing supply disruption impact by 30% with AI early warning systems'],
-    microsoftProducts: ['Azure AI', 'Dynamics 365', 'Microsoft Fabric'],
+    microsoftProducts: ['Azure AI', 'Dynamics 365', 'Microsoft Fabric', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'auto-autonomous-driving',
@@ -809,8 +877,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['autonomous-systems'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['AV development teams processing 10x more simulation miles with Azure HPC'],
-    microsoftProducts: ['Azure HPC', 'Azure AI', 'Azure IoT'],
+    microsoftProducts: ['Azure HPC', 'Azure AI', 'Azure IoT', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'action',
   },
   {
     id: 'auto-ev-transition',
@@ -820,8 +889,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['sustainability', 'innovation-speed'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Battery R&D cycles shortened by 25% with AI-powered materials discovery'],
-    microsoftProducts: ['Azure HPC', 'Azure AI', 'Microsoft Cloud for Sustainability'],
+    microsoftProducts: ['Azure HPC', 'Azure AI', 'Microsoft Cloud for Sustainability', 'Foundry IQ'],
     pillarId: 'bend',
+    agentType: 'action',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -835,8 +905,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['patient-outcomes', 'data-analytics'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Universities improving retention rates by 10-15% with AI early alert systems'],
-    microsoftProducts: ['Azure AI', 'Power BI', 'Microsoft Copilot'],
+    microsoftProducts: ['Azure AI', 'Power BI', 'Microsoft Copilot', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'retrieval',
   },
   {
     id: 'edu-faculty-productivity',
@@ -846,8 +917,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Faculty reporting 30% time savings on administrative tasks with Copilot'],
-    microsoftProducts: ['Microsoft Copilot', 'Microsoft Teams', 'Azure AI'],
+    microsoftProducts: ['Microsoft Copilot', 'Microsoft Teams', 'Azure AI', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'generation',
   },
   {
     id: 'edu-research-acceleration',
@@ -857,8 +929,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['knowledge-management', 'innovation-speed'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Research teams accelerating literature reviews by 5x with AI assistance'],
-    microsoftProducts: ['Azure AI', 'Azure HPC', 'Microsoft Copilot'],
+    microsoftProducts: ['Azure AI', 'Azure HPC', 'Microsoft Copilot', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'retrieval',
   },
   {
     id: 'edu-digital-campus',
@@ -870,6 +943,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Smart campus reducing facility operating costs by 20% with AI optimization'],
     microsoftProducts: ['Azure IoT', 'Microsoft Teams', 'Power Platform'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -883,8 +957,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['innovation-speed'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Content production cycles reduced by 40% with AI-assisted creative tools'],
-    microsoftProducts: ['Azure AI', 'Microsoft Copilot', 'GitHub Copilot'],
+    microsoftProducts: ['Azure AI', 'Microsoft Copilot', 'GitHub Copilot', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'generation',
   },
   {
     id: 'media-audience-engagement',
@@ -894,8 +969,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['customer-experience'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Streaming services increasing engagement by 25% with AI personalization'],
-    microsoftProducts: ['Azure AI', 'Azure AI Video Indexer', 'Microsoft Fabric'],
+    microsoftProducts: ['Azure AI', 'Azure AI Video Indexer', 'Microsoft Fabric', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'retrieval',
   },
   {
     id: 'media-content-monetization',
@@ -905,8 +981,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['revenue-growth'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Media companies increasing ad revenue by 20% with AI-driven targeting'],
-    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Power BI'],
+    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Power BI', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'media-asset-management',
@@ -916,8 +993,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['knowledge-management'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Media organizations finding content 80% faster with AI-powered asset search'],
-    microsoftProducts: ['Azure AI', 'Azure AI Video Indexer', 'Microsoft Copilot'],
+    microsoftProducts: ['Azure AI', 'Azure AI Video Indexer', 'Microsoft Copilot', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'retrieval',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -931,8 +1009,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['customer-experience'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Hospitality brands increasing guest satisfaction by 20% with AI personalization'],
-    microsoftProducts: ['Azure AI', 'Dynamics 365', 'Microsoft Copilot'],
+    microsoftProducts: ['Azure AI', 'Dynamics 365', 'Microsoft Copilot', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'retrieval',
   },
   {
     id: 'travel-operations-efficiency',
@@ -942,8 +1021,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['operational-efficiency', 'field-operations', 'cost-optimization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Airlines reducing disruption costs by 30% with AI-powered recovery systems'],
-    microsoftProducts: ['Azure AI', 'Dynamics 365', 'Microsoft Teams'],
+    microsoftProducts: ['Azure AI', 'Dynamics 365', 'Microsoft Teams', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'travel-revenue-optimization',
@@ -953,8 +1033,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['revenue-growth', 'data-analytics'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Revenue management teams achieving 5-8% yield improvement with AI pricing'],
-    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Power BI'],
+    microsoftProducts: ['Azure AI', 'Microsoft Fabric', 'Power BI', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'travel-fleet-optimization',
@@ -964,8 +1045,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['sustainability', 'cost-optimization'],
     sizeRelevance: ['large', 'enterprise'],
     evidence: ['Fleet operators reducing fuel consumption by 10-15% with AI route optimization'],
-    microsoftProducts: ['Azure AI', 'Azure IoT', 'Azure Digital Twins'],
+    microsoftProducts: ['Azure AI', 'Azure IoT', 'Azure Digital Twins', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -979,8 +1061,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization', 'knowledge-management'],
     sizeRelevance: ['small', 'mid', 'large', 'enterprise'],
     evidence: ['Professional services firms reporting 30-40% productivity gains with Copilot'],
-    microsoftProducts: ['Microsoft Copilot', 'Microsoft Teams', 'Microsoft 365'],
+    microsoftProducts: ['Microsoft Copilot', 'Microsoft Teams', 'Microsoft 365', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'generation',
   },
   {
     id: 'proserv-client-engagement',
@@ -990,8 +1073,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['revenue-growth', 'customer-experience'],
     sizeRelevance: ['small', 'mid', 'large', 'enterprise'],
     evidence: ['Consulting firms winning 20% more deals with AI-powered proposal generation'],
-    microsoftProducts: ['Microsoft Copilot', 'Dynamics 365', 'Azure AI'],
+    microsoftProducts: ['Microsoft Copilot', 'Dynamics 365', 'Azure AI', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'generation',
   },
   {
     id: 'proserv-project-efficiency',
@@ -1003,6 +1087,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Project delivery teams improving utilization by 10-15% with AI scheduling'],
     microsoftProducts: ['Dynamics 365', 'Microsoft Copilot', 'Power BI'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'proserv-talent-development',
@@ -1012,8 +1097,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Firms reducing attrition by 15% with AI-powered career development platforms'],
-    microsoftProducts: ['Microsoft Viva', 'Microsoft Copilot', 'LinkedIn Learning'],
+    microsoftProducts: ['Microsoft Viva', 'Microsoft Copilot', 'LinkedIn Learning', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'retrieval',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -1027,8 +1113,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization', 'cost-optimization', 'knowledge-management'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Organizations reporting 5+ hours saved per employee per week with M365 Copilot'],
-    microsoftProducts: ['Microsoft 365 Copilot', 'Copilot Studio', 'Microsoft Teams', 'Microsoft Viva'],
+    microsoftProducts: ['Microsoft 365 Copilot', 'Copilot Studio', 'Microsoft Teams', 'Microsoft Viva', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'generation',
   },
   {
     id: 'hz-cloud-cost-optimization',
@@ -1040,6 +1127,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Organizations achieving 20-40% cloud cost reduction through AI-driven FinOps and automated optimization'],
     microsoftProducts: ['Azure Cost Management', 'Azure Advisor', 'Microsoft Copilot'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
   {
     id: 'hz-ai-adoption-change-management',
@@ -1049,8 +1137,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization', 'innovation-speed', 'knowledge-management'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Organizations with structured AI adoption programs see 3x higher Copilot engagement and faster time-to-value'],
-    microsoftProducts: ['Microsoft Viva Insights', 'Copilot Dashboard', 'Microsoft 365 Copilot', 'Copilot Studio'],
+    microsoftProducts: ['Microsoft Viva Insights', 'Copilot Dashboard', 'Microsoft 365 Copilot', 'Copilot Studio', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'action',
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -1067,8 +1156,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization', 'revenue-growth'],
     sizeRelevance: ['small', 'mid', 'large', 'enterprise'],
     evidence: ['Sales teams saving 90 minutes per day with Copilot for Sales and CRM automation'],
-    microsoftProducts: ['Microsoft Copilot for Sales', 'Dynamics 365 Sales', 'Microsoft Teams'],
+    microsoftProducts: ['Microsoft Copilot for Sales', 'Dynamics 365 Sales', 'Microsoft Teams', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'generation',
   },
   {
     id: 'fn-sales-pipeline-intelligence',
@@ -1078,8 +1168,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['revenue-growth', 'data-analytics'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Organizations improving forecast accuracy by 30% with AI-powered pipeline analytics'],
-    microsoftProducts: ['Dynamics 365 Sales', 'Microsoft Fabric', 'Power BI'],
+    microsoftProducts: ['Dynamics 365 Sales', 'Microsoft Fabric', 'Power BI', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
 
   // ── Marketing & Communications ──
@@ -1091,8 +1182,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['customer-experience', 'revenue-growth'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Marketing teams increasing campaign ROI by 20-30% with AI-driven personalization'],
-    microsoftProducts: ['Dynamics 365 Customer Insights', 'Microsoft Copilot', 'Azure AI'],
+    microsoftProducts: ['Dynamics 365 Customer Insights', 'Microsoft Copilot', 'Azure AI', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'retrieval',
   },
   {
     id: 'fn-marketing-content-generation',
@@ -1102,8 +1194,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization', 'innovation-speed'],
     sizeRelevance: ['small', 'mid', 'large', 'enterprise'],
     evidence: ['Marketing teams producing content 3x faster with Microsoft Copilot'],
-    microsoftProducts: ['Microsoft Copilot', 'Copilot Studio', 'Microsoft Designer'],
+    microsoftProducts: ['Microsoft Copilot', 'Copilot Studio', 'Microsoft Designer', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'generation',
   },
 
   // ── HR & People ──
@@ -1115,8 +1208,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Organizations reducing new-hire time-to-productivity by 30% with AI-powered onboarding'],
-    microsoftProducts: ['Microsoft Viva', 'Microsoft Copilot', 'Microsoft Teams'],
+    microsoftProducts: ['Microsoft Viva', 'Microsoft Copilot', 'Microsoft Teams', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'action',
   },
   {
     id: 'fn-hr-talent-analytics',
@@ -1126,8 +1220,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['workforce-modernization', 'data-analytics'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['HR teams reducing attrition by 15-20% with AI-powered talent insights'],
-    microsoftProducts: ['Microsoft Viva Insights', 'Power BI', 'Microsoft Fabric'],
+    microsoftProducts: ['Microsoft Viva Insights', 'Power BI', 'Microsoft Fabric', 'Fabric IQ'],
     pillarId: 'reshape',
+    agentType: 'retrieval',
   },
 
   // ── Finance & Accounting ──
@@ -1141,6 +1236,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Finance teams reducing month-end close by 30-50% with AI-powered automation'],
     microsoftProducts: ['Dynamics 365 Finance', 'Power Automate', 'Microsoft Copilot'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'fn-finance-copilot-insights',
@@ -1150,8 +1246,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['data-analytics', 'knowledge-management'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Finance leaders generating reports 5x faster with Copilot in Excel and Power BI'],
-    microsoftProducts: ['Microsoft Copilot', 'Power BI', 'Microsoft Fabric'],
+    microsoftProducts: ['Microsoft Copilot', 'Power BI', 'Microsoft Fabric', 'Work IQ'],
     pillarId: 'enrich',
+    agentType: 'retrieval',
   },
 
   // ── IT & Infrastructure ──
@@ -1165,6 +1262,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['IT teams resolving 50% of tickets automatically with AI-powered service agents'],
     microsoftProducts: ['Copilot Studio', 'Microsoft Copilot', 'Power Platform'],
     pillarId: 'reshape',
+    agentType: 'action',
   },
   {
     id: 'fn-it-security-posture',
@@ -1176,6 +1274,7 @@ export const USE_CASES: UseCase[] = [
     evidence: ['SOC teams responding to threats 65% faster with Microsoft Security Copilot'],
     microsoftProducts: ['Microsoft Security Copilot', 'Microsoft Defender', 'Microsoft Sentinel'],
     pillarId: 'security',
+    agentType: 'action',
   },
 
   // ── Customer Service & Support ──
@@ -1187,8 +1286,9 @@ export const USE_CASES: UseCase[] = [
     challengeIds: ['customer-experience', 'cost-optimization'],
     sizeRelevance: ['mid', 'large', 'enterprise'],
     evidence: ['Service teams reducing average handle time by 30% with Copilot for Service'],
-    microsoftProducts: ['Microsoft Copilot for Service', 'Dynamics 365 Customer Service', 'Copilot Studio'],
+    microsoftProducts: ['Microsoft Copilot for Service', 'Dynamics 365 Customer Service', 'Copilot Studio', 'Foundry IQ'],
     pillarId: 'reinvent',
+    agentType: 'action',
   },
   {
     id: 'fn-customer-360',
@@ -1200,5 +1300,6 @@ export const USE_CASES: UseCase[] = [
     evidence: ['Companies achieving 25% higher customer lifetime value with unified AI-powered customer profiles'],
     microsoftProducts: ['Dynamics 365 Customer Insights', 'Microsoft Fabric', 'Power BI'],
     pillarId: 'reinvent',
+    agentType: 'retrieval',
   },
 ];

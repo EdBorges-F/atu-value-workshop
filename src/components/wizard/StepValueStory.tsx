@@ -1,9 +1,32 @@
 import { useMemo, useState, useRef } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
-import { generateValueStory, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory, type ROICard, type StakeholderEntry } from '../../lib/valueStoryGenerator'
-import PostGenSurvey from '../ui/PostGenSurvey'
+import { generateValueStory, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory, type StakeholderEntry } from '../../lib/valueStoryGenerator'
+import { CHALLENGES } from '../../data/challenges'
+import { FUNCTION_BENCHMARKS } from '../../data/global-ai-evidence'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
+
+// ─── Function benchmark matching ─────────────────────────────
+const STOP_WORDS = new Set(['with', 'from', 'into', 'that', 'this', 'their', 'your', 'based', 'using', 'across', 'powered'])
+function matchFunctionBenchmark(ucName: string, ucDescription: string): { area: string; gain: string } | null {
+  const text = `${ucName} ${ucDescription}`.toLowerCase()
+  const words = text.split(/\s+/).filter(w => w.length > 3 && !STOP_WORDS.has(w))
+  let best: typeof FUNCTION_BENCHMARKS[0] | null = null
+  let bestScore = 0
+  for (const fb of FUNCTION_BENCHMARKS) {
+    const areaWords = fb.functionArea.split('-')
+    const ucWords = fb.topUseCases.join(' ').toLowerCase().split(/\s+/).filter(w => w.length > 3)
+    const areaMatch = areaWords.some(aw => text.includes(aw)) ? 5 : 0
+    const ucMatch = ucWords.filter(w => words.some(tw => tw.includes(w) || w.includes(tw))).length
+    const score = areaMatch + ucMatch * 3
+    if (score > bestScore && score >= 6) {
+      bestScore = score
+      best = fb
+    }
+  }
+  if (!best) return null
+  return { area: best.functionArea.replace(/-/g, ' '), gain: best.productivityGain }
+}
 
 // ─── Pillar accent colors ──────────────────────────────────
 const PILLAR_STYLES: Record<string, { gradient: string; accent: string; light: string; border: string }> = {
@@ -116,43 +139,6 @@ function EvidenceCard({ story }: { story: MatchedStory }) {
   )
 }
 
-function ROIBadge({ roi }: { roi: ROICard }) {
-  return (
-    <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-100">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm">💰</span>
-        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">ROI Projection</span>
-        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-medium">
-          {roi.roiTimeframe}
-        </span>
-      </div>
-      <div className="grid grid-cols-3 gap-2">
-        <div>
-          <p className="text-[10px] text-text-secondary font-medium">Cost Reduction</p>
-          <p className="text-xs font-bold text-indigo-700">{roi.costReduction}</p>
-        </div>
-        <div>
-          <p className="text-[10px] text-text-secondary font-medium">Speed</p>
-          <p className="text-xs font-bold text-indigo-700">{roi.speedImprovement}</p>
-        </div>
-        <div>
-          <p className="text-[10px] text-text-secondary font-medium">Quality</p>
-          <p className="text-xs font-bold text-indigo-700">{roi.qualityImprovement}</p>
-        </div>
-      </div>
-      {roi.evidenceCompanies.length > 0 ? (
-        <p className="text-[10px] text-indigo-500 mt-2">
-          Based on: {roi.evidenceCompanies.join(', ')}
-        </p>
-      ) : (
-        <p className="text-[10px] text-indigo-400 mt-2">
-          Based on industry research and benchmarks
-        </p>
-      )}
-    </div>
-  )
-}
-
 function StakeholderMapCard({ entries }: { entries: StakeholderEntry[] }) {
   if (entries.length === 0) return null
   return (
@@ -186,7 +172,7 @@ function StakeholderMapCard({ entries }: { entries: StakeholderEntry[] }) {
                   <p className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider mb-1">Use Cases</p>
                   <div className="space-y-0.5">
                     {entry.useCases.slice(0, 3).map((uc, j) => (
-                      <p key={j} className="text-xs text-text truncate">{uc}</p>
+                      <p key={j} className="text-xs text-text">{uc}</p>
                     ))}
                   </div>
                 </div>
@@ -204,7 +190,6 @@ function PillarCard({ section, defaultOpen }: { section: PillarSection; defaultO
   const [open, setOpen] = useState(defaultOpen)
 
   const ucCount = section.useCases.length
-  const evidenceCount = section.pillarStories.length + section.useCases.reduce((n, uc) => n + uc.matchedStories.length, 0)
 
   return (
     <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm pillar-card">
@@ -217,7 +202,6 @@ function PillarCard({ section, defaultOpen }: { section: PillarSection; defaultO
           {!open && (
             <p className="text-white/70 text-xs mt-0.5">
               {ucCount} use case{ucCount !== 1 ? 's' : ''}
-              {evidenceCount > 0 ? ` · ${evidenceCount} evidence points` : ''}
               {section.customerPriorities.length > 0 ? ` · ${section.customerPriorities.length} priorities` : ''}
             </p>
           )}
@@ -236,61 +220,33 @@ function PillarCard({ section, defaultOpen }: { section: PillarSection; defaultO
             {section.customerPriorities.map((p, i) => (
               <li key={i} className="flex items-start gap-2">
                 <span className={`mt-1 w-1.5 h-1.5 rounded-full bg-gradient-to-r ${style.gradient} flex-shrink-0`} />
-                <span className="text-sm text-text leading-snug">
-                  {p.length > 100 ? p.slice(0, 97) + '...' : p}
-                </span>
+                <span className="text-sm text-text leading-snug">{p}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Use Cases */}
+        {/* Use Cases — clean, no evidence/ROI here */}
         {section.useCases.length > 0 && (
           <div>
             <p className="text-[11px] uppercase tracking-wider text-text-secondary font-semibold mb-3">
               Enabling Use Cases
             </p>
             <div className="space-y-3">
-              {section.useCases.map((uc, i) => (
-                <div key={i} className={`p-4 rounded-xl ${style.light} border ${style.border}`}>
-                  <p className="text-sm font-bold text-text">{uc.name}</p>
-                  <p className="text-xs text-text-secondary mt-1 leading-relaxed">{uc.description}</p>
-                  {uc.linkedPriority && (
-                    <p className={`text-[11px] ${style.accent} mt-1.5 font-medium`}>
-                      → Aligned to: {uc.linkedPriority}
-                    </p>
-                  )}
-                  {uc.evidence && (
-                    <p className="text-[11px] text-emerald-600 mt-1 font-medium">📊 {uc.evidence}</p>
-                  )}
-                  {uc.roiCard && (
-                    <div className="mt-2">
-                      <ROIBadge roi={uc.roiCard} />
-                    </div>
-                  )}
-                  {uc.matchedStories.length > 0 && (
-                    <div className="grid gap-2 mt-3">
-                      {uc.matchedStories.map((s, j) => (
-                        <EvidenceCard key={j} story={s} />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Pillar-level evidence */}
-        {section.pillarStories.length > 0 && (
-          <div>
-            <p className="text-[11px] uppercase tracking-wider text-text-secondary font-semibold mb-2">
-              Industry Evidence
-            </p>
-            <div className="grid gap-2">
-              {section.pillarStories.map((s, i) => (
-                <EvidenceCard key={i} story={s} />
-              ))}
+              {section.useCases.map((uc, i) => {
+                const fb = matchFunctionBenchmark(uc.name, uc.description)
+                return (
+                  <div key={i} className={`p-4 rounded-xl ${style.light} border ${style.border}`}>
+                    <p className="text-sm font-bold text-text">{uc.name}</p>
+                    <p className="text-xs text-text-secondary mt-1 leading-relaxed">{uc.description}</p>
+                    {fb && (
+                      <p className="text-[11px] text-emerald-700 mt-1.5 leading-snug">
+                        📊 <span className="font-semibold capitalize">{fb.area}:</span> {fb.gain}
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
@@ -307,6 +263,48 @@ export default function StepValueStory({ wizard }: WizardProps) {
   const handlePrint = () => {
     window.print()
   }
+
+  // Consolidated evidence across all pillars for "The Proof" section (deduped by company)
+  const allEvidence = useMemo(() => {
+    const seen = new Set<string>()
+    const items: { pillar: string; pillarIcon: string; stories: MatchedStory[] }[] = []
+    for (const ps of story.pillarSections) {
+      const raw = [
+        ...ps.pillarStories,
+        ...ps.useCases.flatMap(uc => uc.matchedStories),
+      ]
+      const unique = raw.filter(s => {
+        const key = s.company.toLowerCase()
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+      if (unique.length > 0) {
+        items.push({ pillar: ps.pillar.fullName, pillarIcon: ps.pillar.icon, stories: unique })
+      }
+    }
+    if (story.securitySection) {
+      const raw = story.securitySection.useCases.flatMap(uc => uc.matchedStories)
+      const unique = raw.filter(s => {
+        const key = s.company.toLowerCase()
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+      if (unique.length > 0) {
+        items.push({ pillar: 'Security Foundation', pillarIcon: SECURITY_FOUNDATION.icon, stories: unique })
+      }
+    }
+    return items
+  }, [story])
+
+  // Consolidated ROI across all pillars for "The Return" section (deduped by UC name)
+  const challenges = useMemo(
+    () => CHALLENGES.filter(c => data.selectedChallengeIds.includes(c.id)),
+    [data.selectedChallengeIds]
+  )
+
+  const totalEvidenceCount = allEvidence.reduce((n, e) => n + e.stories.length, 0)
 
   const fullStoryText = useMemo(() => {
     const lines = [
@@ -336,11 +334,9 @@ export default function StepValueStory({ wizard }: WizardProps) {
         for (const uc of ps.useCases) {
           lines.push(`  ${uc.name}`)
           lines.push(`  ${uc.description}`)
-          if (uc.linkedPriority) lines.push(`  → Aligned to: ${uc.linkedPriority}`)
           if (uc.evidence) lines.push(`  📊 ${uc.evidence}`)
-          if (uc.roiCard) {
-            lines.push(`  💰 ROI: ${uc.roiCard.costReduction} cost reduction | ${uc.roiCard.speedImprovement} | ${uc.roiCard.roiTimeframe}`)
-          }
+          const fb = matchFunctionBenchmark(uc.name, uc.description)
+          if (fb) lines.push(`  📊 ${fb.area}: ${fb.gain}`)
           for (const s of uc.matchedStories) {
             lines.push(`  📖 ${s.company}: ${s.metric}${s.storyUrl ? ` (${s.storyUrl})` : ''}`)
           }
@@ -391,8 +387,8 @@ export default function StepValueStory({ wizard }: WizardProps) {
   }, [story])
 
   return (
-    <div className="max-w-3xl mx-auto space-y-10 print:max-w-none print:mx-0" ref={printRef}>
-      {/* ── Hero Header ── */}
+    <div className="max-w-3xl mx-auto space-y-6 print:max-w-none print:mx-0" ref={printRef}>
+      {/* ━━ HERO + EXEC SUMMARY — always visible ━━ */}
       <div className="rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8 text-white shadow-xl print:shadow-none print:rounded-none print:bg-gray-900">
         <div className="flex items-start justify-between">
           <div>
@@ -419,171 +415,276 @@ export default function StepValueStory({ wizard }: WizardProps) {
         <div className="mt-6 p-4 rounded-xl bg-white/5 border border-white/10">
           <p className="text-sm text-white/90 leading-relaxed">{story.executive_summary}</p>
         </div>
-      </div>
-
-      {/* ── Market Context Banner — 2x2 grid to avoid widow ── */}
-      <div className="rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 to-indigo-50 p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg">📈</span>
-          <h3 className="text-sm font-bold text-blue-900">Why Now — The AI Imperative</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          {story.marketContext.map((stat, i) => {
-            const mainText = stat.split('(')[0].trim()
-            const source = stat.includes('(') ? stat.split('(')[1]?.replace(')', '') : null
-            return (
-              <div key={i} className="p-2.5 rounded-xl bg-white/60 border border-blue-100/50">
-                <p className="text-xs text-blue-900 font-semibold leading-snug">{mainText}</p>
-                {source && (
-                  <p className="text-[10px] text-blue-500 mt-0.5">— {source}</p>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* ── Industry Benchmark ── */}
-      {story.industryBenchmark && (
-        <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-lg">🏆</span>
-            <h3 className="text-sm font-bold text-amber-900">
-              Industry Benchmark: {data.industryId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-            </h3>
+        {/* Challenge pills — grounding context */}
+        {challenges.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            <span className="text-[10px] text-white/40 uppercase tracking-wider font-semibold mr-1 self-center">Based on:</span>
+            {challenges.map(c => (
+              <span key={c.id} className="px-2.5 py-1 rounded-full bg-white/10 text-[11px] text-white/70 font-medium">
+                {c.name}
+              </span>
+            ))}
           </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-wider">AI Adoption Growth</p>
-              <p className="text-sm font-bold text-amber-900 mt-1">{story.industryBenchmark.adoptionGrowthRate}</p>
-            </div>
-            <div>
-              <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-wider">Average ROI</p>
-              <p className="text-sm font-bold text-amber-900 mt-1">{story.industryBenchmark.avgROI}</p>
-            </div>
-            <div>
-              <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-wider">Top Performers</p>
-              <p className="text-sm font-bold text-amber-900 mt-1">{story.industryBenchmark.topPerformerMultiple}</p>
-            </div>
-          </div>
-          {story.industryBenchmark.marketProjection && (
-            <p className="text-xs text-amber-700 mt-3 pt-3 border-t border-amber-200">
-              📊 {story.industryBenchmark.marketProjection}
-            </p>
-          )}
-          <p className="text-[9px] text-amber-500 mt-2">Sources: IDC, Forrester, McKinsey, BCG industry research</p>
-        </div>
-      )}
-
-      {/* ── Pillar Sections (collapsible) ── */}
-      <div className="space-y-4">
-        {story.pillarSections.map((section, i) => (
-          <PillarCard key={section.pillar.id} section={section} defaultOpen={i < 2} />
-        ))}
+        )}
       </div>
 
-      {/* ── Security Foundation (collapsible) ── */}
-      {story.securitySection && (
-        <div className="rounded-2xl overflow-hidden border-2 border-dashed border-gray-300">
-          <Collapsible title="Security Foundation" icon={SECURITY_FOUNDATION.icon}
-            summary={`${story.securitySection.useCases.length} security use cases`} defaultOpen={false}>
-            <div className="p-6 space-y-4 bg-white">
-              <ul className="space-y-1.5">
-                {story.securitySection.customerPriorities.map((p, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-rose-500 flex-shrink-0" />
-                    <span className="text-sm text-text leading-snug">
-                      {p.length > 100 ? p.slice(0, 97) + '...' : p}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              {story.securitySection.useCases.length > 0 && (
-                <div className="space-y-3">
-                  {story.securitySection.useCases.map((uc, i) => (
-                    <div key={i} className="p-4 rounded-xl bg-rose-50 border border-rose-100">
-                      <p className="text-sm font-bold text-text">{uc.name}</p>
-                      <p className="text-xs text-text-secondary mt-1 leading-relaxed">{uc.description}</p>
-                      {uc.matchedStories.length > 0 && (
-                        <div className="grid gap-2 mt-3">
-                          {uc.matchedStories.map((s, j) => (
-                            <EvidenceCard key={j} story={s} />
-                          ))}
+      {/* ━━ 2. THE PLAN — Pillars (open by default) ━━ */}
+      <Collapsible title="The Plan" icon="🎯"
+        summary={`${story.pillarSections.length} pillars · ${story.pillarSections.reduce((n, s) => n + s.useCases.length, 0)} use cases`}
+        defaultOpen={true}>
+        <div className="space-y-4 pt-2">
+          {story.pillarSections.map((section, i) => (
+            <PillarCard key={section.pillar.id} section={section} defaultOpen={i < 2} />
+          ))}
+
+          {/* Security Foundation */}
+          {story.securitySection && (
+            <div className="rounded-2xl overflow-hidden border-2 border-dashed border-gray-300">
+              <Collapsible title="Security Foundation" icon={SECURITY_FOUNDATION.icon}
+                summary={`${story.securitySection.useCases.length} security use cases`} defaultOpen={false}>
+                <div className="p-6 space-y-4 bg-white">
+                  <ul className="space-y-1.5">
+                    {story.securitySection.customerPriorities.map((p, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="mt-1 w-1.5 h-1.5 rounded-full bg-rose-500 flex-shrink-0" />
+                        <span className="text-sm text-text leading-snug">{p}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {story.securitySection.useCases.length > 0 && (
+                    <div className="space-y-3">
+                      {story.securitySection.useCases.map((uc, i) => (
+                        <div key={i} className="p-4 rounded-xl bg-rose-50 border border-rose-100">
+                          <p className="text-sm font-bold text-text">{uc.name}</p>
+                          <p className="text-xs text-text-secondary mt-1 leading-relaxed">{uc.description}</p>
                         </div>
-                      )}
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
+              </Collapsible>
             </div>
-          </Collapsible>
+          )}
+
+          {/* Missing Pillars Suggestion */}
+          {story.missingPillars.length > 0 && (
+            <div className="rounded-2xl border border-violet-100 bg-violet-50/50 p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-lg">💡</span>
+                <h3 className="text-sm font-bold text-violet-900">Expansion Opportunities</h3>
+              </div>
+              <p className="text-xs text-violet-700 mb-3">
+                {data.companyName}'s current priorities don't cover {story.missingPillars.length === 1 ? 'this pillar' : 'these pillars'}. 
+                Use the <strong>Use Case Discovery</strong> Cowork prompt below to explore additional value areas.
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {story.missingPillars.map((p) => (
+                  <div key={p.id} className="flex items-center gap-2 p-2.5 rounded-xl bg-white/60 border border-violet-100">
+                    <span className="text-lg">{p.icon}</span>
+                    <div>
+                      <p className="text-xs font-bold text-violet-900">{p.fullName}</p>
+                      <p className="text-[10px] text-violet-600">{p.subtitle}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </Collapsible>
+
+      {/* Thin industry evidence warning — fewer than 3 matched stories */}
+      {totalEvidenceCount < 3 && (
+        <div className="flex items-center gap-1.5 text-[11px] text-slate-400 italic px-1">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0">
+            <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm.75-11.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0zM9.25 9a.75.75 0 0 1 1.5 0v4.5a.75.75 0 0 1-1.5 0V9z" clipRule="evenodd"/>
+          </svg>
+          <span>📊 Limited evidence catalog for this industry — stories are being added regularly</span>
         </div>
       )}
 
-      {/* ── Missing Pillars Suggestion ── */}
-      {story.missingPillars.length > 0 && (
-        <div className="rounded-2xl border border-violet-100 bg-violet-50/50 p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-lg">💡</span>
-            <h3 className="text-sm font-bold text-violet-900">Expansion Opportunities</h3>
-          </div>
-          <p className="text-xs text-violet-700 mb-3">
-            {data.companyName}'s current priorities don't cover {story.missingPillars.length === 1 ? 'this pillar' : 'these pillars'}. 
-            Use the <strong>Use Case Discovery</strong> Cowork prompt below to explore additional value areas.
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            {story.missingPillars.map((p) => (
-              <div key={p.id} className="flex items-center gap-2 p-2.5 rounded-xl bg-white/60 border border-violet-100">
-                <span className="text-lg">{p.icon}</span>
-                <div>
-                  <p className="text-xs font-bold text-violet-900">{p.fullName}</p>
-                  <p className="text-[10px] text-violet-600">{p.subtitle}</p>
+      {/* ━━ 3. THE PROOF — Consolidated evidence ━━ */}
+      {totalEvidenceCount > 0 && (
+        <Collapsible title="The Proof" icon="📊"
+          summary={`${totalEvidenceCount} customer ${totalEvidenceCount === 1 ? 'story' : 'stories'}${story.industryBenchmark ? ' · Industry benchmark' : ''}`}
+          defaultOpen={false}>
+          <div className="space-y-4 pt-2">
+            <p className="text-xs text-text-secondary">
+              Companies in {data.industryId.replace(/-/g, ' ')} are already seeing results with similar use cases.
+            </p>
+            {totalEvidenceCount < 3 && (
+              <p className="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <span>ℹ️</span>
+                📊 Limited evidence catalog for this industry — stories are being added regularly
+              </p>
+            )}
+            {allEvidence.map((group, i) => (
+              <div key={i}>
+                <p className="text-[11px] uppercase tracking-wider text-text-secondary font-semibold mb-2">
+                  {group.pillarIcon} {group.pillar}
+                </p>
+                <div className="grid gap-2">
+                  {group.stories.map((s, j) => (
+                    <EvidenceCard key={j} story={s} />
+                  ))}
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      )}
 
-      {/* ── Stakeholder Map ── */}
-      <StakeholderMapCard entries={story.stakeholderMap} />
-
-      {/* ── Solution Enablement Map (collapsible) ── */}
-      {story.solutionMap.length > 0 && (
-        <Collapsible title="Solution Enablement Map" icon="🧩" summary={`${story.solutionMap.length} solutions`}>
-          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-            <div className="divide-y divide-gray-50">
-              {story.solutionMap.map((entry, i) => (
-                <div key={i} className="px-6 py-3 flex items-center gap-4">
-                  <span className="text-sm font-semibold text-text flex-1 min-w-0">{entry.useCase}</span>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-xs text-text-secondary">{entry.solutions.join(' · ')}</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-text-secondary whitespace-nowrap">
-                      {entry.pillar}
-                    </span>
+            {/* Industry Benchmark */}
+            {story.industryBenchmark && (
+              <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-lg">🏆</span>
+                  <h3 className="text-sm font-bold text-amber-900">
+                    Industry Benchmark: {data.industryId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </h3>
+                </div>
+                <div className="grid grid-cols-1 gap-3">
+                  <div>
+                    <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-wider">AI Adoption</p>
+                    <p className="text-xs text-amber-900 mt-1 leading-snug">{story.industryBenchmark.adoptionGrowthRate}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-wider">Value Potential</p>
+                    <p className="text-xs text-amber-900 mt-1 leading-snug">{story.industryBenchmark.avgROI}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-wider">Key Insight</p>
+                    <p className="text-xs text-amber-900 mt-1 leading-snug">{story.industryBenchmark.topPerformerMultiple}</p>
                   </div>
                 </div>
-              ))}
-            </div>
+                {story.industryBenchmark.marketProjection && (
+                  <p className="text-xs text-amber-700 mt-3 pt-3 border-t border-amber-200">
+                    📊 {story.industryBenchmark.marketProjection}
+                  </p>
+                )}
+                <p className="text-[9px] text-amber-500 mt-2">Based on published industry research from McKinsey, BCG, IDC, and Forrester</p>
+              </div>
+            )}
           </div>
         </Collapsible>
       )}
 
-      {/* ── Next Steps (collapsible) ── */}
-      <Collapsible title="Recommended Next Steps" icon="🎯" defaultOpen={true}>
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-6">
-          <div className="space-y-3">
-            {story.nextSteps.map((step, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <span className="w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center flex-shrink-0">
-                  {i + 1}
-                </span>
-                <p className="text-sm text-text leading-relaxed pt-1">{step}</p>
-              </div>
-            ))}
+      {/* Thin industry warning when no evidence at all */}
+      {totalEvidenceCount === 0 && (
+        <div className="px-4 py-2">
+          <p className="text-[11px] text-slate-400 flex items-center gap-1.5">
+            <span>ℹ️</span>
+            📊 Limited evidence catalog for this industry — stories are being added regularly
+          </p>
+        </div>
+      )}
+
+      {/* ━━ 4. MARKET CONTEXT — Why Now ━━ */}
+      <Collapsible title="Why Now" icon="📈"
+        summary={`${story.marketContext.length} market signals`}
+        defaultOpen={false}>
+        <div className="space-y-4 pt-2">
+          <div className="grid grid-cols-2 gap-3">
+            {story.marketContext.map((stat, i) => {
+              const mainText = stat.split('(')[0].trim()
+              const source = stat.includes('(') ? stat.split('(')[1]?.replace(')', '') : null
+              return (
+                <div key={i} className="p-2.5 rounded-xl bg-blue-50/60 border border-blue-100/50">
+                  <p className="text-[11px] text-blue-900 font-semibold leading-snug">{mainText}</p>
+                  {source && (
+                    <p className="text-[10px] text-blue-500 mt-0.5">— {source}</p>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
       </Collapsible>
+
+      {/* ━━ 5. NEXT STEPS — collapsible, default open ━━ */}
+      <Collapsible title="Next Steps" icon="🎯" defaultOpen={true}>
+        <div className="space-y-4 pt-2">
+          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-6">
+            <div className="space-y-3">
+              {story.nextSteps.map((step, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span className="w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center flex-shrink-0">
+                    {i + 1}
+                  </span>
+                  <p className="text-sm text-text leading-relaxed pt-1">{step}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Stakeholder Map */}
+          <StakeholderMapCard entries={story.stakeholderMap} />
+
+          {/* CRM Key Stakeholders — from Smart Fill */}
+          {data.crmContacts && data.crmContacts.length > 0 && (
+            <div className="rounded-2xl border border-emerald-100 bg-white shadow-sm overflow-hidden">
+              <div className="px-6 py-3 bg-emerald-50 border-b border-emerald-100">
+                <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">👥 Key Stakeholders (from CRM)</p>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {data.crmContacts.map((contact, i) => (
+                  <div key={i} className="px-6 py-3 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold text-emerald-700">{contact.name.charAt(0)}</span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-text">{contact.name}</p>
+                      <p className="text-[11px] text-text-secondary">{contact.title}</p>
+                    </div>
+                    {contact.email && (
+                      <a href={`mailto:${contact.email}`} className="text-[10px] text-primary hover:underline ml-auto">
+                        {contact.email}
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Solution Enablement Map */}
+          {story.solutionMap.length > 0 && (
+            <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+                <p className="text-[10px] font-bold text-text uppercase tracking-wider">🧩 Solution Enablement Map</p>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {story.solutionMap.map((entry, i) => (
+                  <div key={i} className="px-4 py-2.5">
+                    <p className="text-xs font-semibold text-text">{entry.useCase}</p>
+                    <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                      <span className="text-[10px] text-text-secondary leading-snug">{entry.solutions.join(' · ')}</span>
+                      <span className="px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-gray-100 text-text-secondary whitespace-nowrap">
+                        {entry.pillar}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </Collapsible>
+
+      {/* ━━ 6. COWORK PROMPTS ━━ */}
+      <section className="print:hidden">
+        <Collapsible title="Copilot Cowork Prompts" icon="🤖"
+          summary={`${story.coworkPrompts.length} context-rich prompts ready`} defaultOpen={false}>
+          <div className="space-y-3 pt-2">
+            <p className="text-sm text-text-secondary">
+              Each prompt generates a <strong>real deliverable</strong> — an Outlook email draft, PowerPoint deck, or Word document.
+              Copy → Paste into <a href="https://aka.ms/cowork" target="_blank" rel="noopener" className="text-primary font-semibold hover:underline">Microsoft 365 Copilot Cowork ↗</a> and it will create the file for you, pre-loaded with {data.companyName}'s full context.
+            </p>
+            <div className="grid gap-3">
+              {story.coworkPrompts.map((prompt) => (
+                <CoworkCard key={prompt.id} prompt={prompt} />
+              ))}
+            </div>
+          </div>
+        </Collapsible>
+      </section>
 
       {/* ── Disclaimer ── */}
       <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5 text-center print:border-none">
@@ -600,31 +701,18 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
       </div>
 
-      {/* ── Cowork Prompts (collapsible, hidden from print) ── */}
-      <section className="space-y-4 print:hidden">
-        <Collapsible title="Copilot Cowork Prompts" icon="✨"
-          summary={`${story.coworkPrompts.length} context-rich prompts ready`} defaultOpen={false}>
-          <div className="space-y-3">
-            <p className="text-sm text-text-secondary">
-              Each prompt generates a <strong>real deliverable</strong> — an Outlook email draft, PowerPoint deck, or Word document.
-              Copy → Paste into Microsoft 365 Copilot (Business Chat or Cowork) and it will create the file for you, pre-loaded with {data.companyName}'s full context.
-            </p>
-            <div className="grid gap-3">
-              {story.coworkPrompts.map((prompt) => (
-                <CoworkCard key={prompt.id} prompt={prompt} />
-              ))}
-            </div>
-          </div>
-        </Collapsible>
-      </section>
-
-      {/* ── Feedback Survey ── */}
-      <PostGenSurvey
-        industry={data.industryId}
-        pillarCount={story.pillarSections.length}
-        storyCount={story.pillarSections.reduce((sum, p) => sum + (p.pillarStories?.length || 0), 0)}
-        useCaseCount={story.pillarSections.reduce((sum, p) => sum + (p.useCases?.length || 0), 0)}
-      />
+      {/* ── Feedback via GitHub Issue ── */}
+      <div className="text-center print:hidden">
+        <a
+          href={`https://github.com/EdBorges-F/atu-value-workshop/issues/new?labels=feedback&title=${encodeURIComponent(`Feedback: ${data.industryId} — ${story.pillarSections.length} pillars`)}&body=${encodeURIComponent(`## Feedback on Frontier Canvas\n\n**Industry:** ${data.industryId}\n**Company Size:** ${data.companySize}\n**Pillars:** ${story.pillarSections.map(s => s.pillar.fullName).join(', ')}\n**Use Cases:** ${story.pillarSections.reduce((sum, p) => sum + (p.useCases?.length || 0), 0)}\n\n### Rating (1-5): \n\n### What worked well:\n\n### What needs improvement:\n\n### Missing content or use cases:\n\n### Other comments:\n`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-700 text-sm font-medium hover:shadow-md transition-all"
+        >
+          📋 Share Feedback on This Value Story
+        </a>
+        <p className="text-[10px] text-text-secondary mt-1.5">Opens a pre-filled GitHub Issue — takes 30 seconds</p>
+      </div>
 
       {/* ── Navigation ── */}
       <div className="flex justify-between pt-4 print:hidden">
