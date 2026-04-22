@@ -391,6 +391,18 @@ export const USE_CASE_ROI_TEMPLATES: UseCaseROITemplate[] = [
     globalEvidence: [],
     pillar: 'bend',
   },
+  {
+    id: 'roi-identity-security',
+    useCase: 'Identity & Access Management (Entra Suite)',
+    industries: ['banking', 'insurance', 'capital-markets', 'healthcare-provider', 'healthcare-medtech', 'government', 'telecommunications', 'manufacturing', 'retail'],
+    challengeIds: ['security-compliance', 'cost-optimization', 'operational-efficiency'],
+    costReduction: 'Forrester TEI (July 2025): 80% reduction in total cost of ownership through vendor consolidation and automation',
+    speedImprovement: 'Forrester TEI (July 2025): 75% faster employee onboarding through automated provisioning',
+    qualityImprovement: 'Forrester TEI (July 2025): 30% reduction in identity-related risk exposure; 90% reduction in help desk tickets',
+    roiTimeframe: '12–18 months',
+    globalEvidence: [],
+    pillar: 'reshape' as const,
+  },
 ]
 
 // ─── Market-wide stats for executive context ─────────────────
@@ -413,4 +425,17 @@ export const MARKET_STATS = {
   reinventionReady: 'Accenture 2024: 16% of organizations were "reinvention-ready," up from 9% in 2023',
   securitySignalScale: 'Microsoft internal data (October 2025): Microsoft Security processes 100 trillion daily signals to power threat intelligence across agents, apps, infrastructure, and the AI stack',
   modelChoice: 'Microsoft Foundry provides access to 11,000+ models including OpenAI and Anthropic Claude, available across Microsoft 365 Copilot and custom agents (Microsoft Frontier Solutions Deck, 2026)',
+
+  // From Security CSA / RSA 2026 deck
+  botSignupsBlocked: 'Microsoft Digital Defense Report (October 2025): 1.6 million bot-driven fake signups blocked per hour',
+
+  // From Agent 365 deck
+  unsanctionedAgents: 'Microsoft Cyber Pulse Security Report 2025: 29% of employees have turned to unsanctioned AI agents for work tasks',
+  agentGovernanceMaturity: 'Deloitte State of AI 2026: only 21% of companies report having a mature model for governance of autonomous agents',
+  aiSecurityRisk: 'Deloitte State of AI 2026: 73% of organizations say data privacy and security is the biggest AI risk',
+
+  // From Microsoft IQ deck
+  agentIntegrationIntent: 'Capgemini Research Institute (July 2024): 82% of organizations intend to integrate AI agents within 1–3 years',
+  agentProjection2028: 'IDC Info Snapshot (May 2025): 1.3 billion AI agents projected by 2028',
+  taskSpecificAgents2026: 'Gartner (August 2025): 40% of enterprise apps will integrate task-specific AI agents by 2026',
 } as const

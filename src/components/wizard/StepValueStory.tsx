@@ -3,6 +3,7 @@ import type { useWizardState } from '../../hooks/useWizardState'
 import { generateValueStory, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory, type StakeholderEntry } from '../../lib/valueStoryGenerator'
 import { CHALLENGES } from '../../data/challenges'
 import { FUNCTION_BENCHMARKS, filterCustomerZero } from '../../data/global-ai-evidence'
+import { CUSTOMER_ZERO_DEPARTMENTS, CUSTOMER_ZERO_HEADLINE_PROOF_POINTS, CUSTOMER_ZERO_PATTERNS, CUSTOMER_ZERO_RECIPES } from '../../data/customer-zero'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
@@ -473,6 +474,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
           { id: 'proof', icon: '📊', label: 'The Proof' },
           { id: 'why-now', icon: '📈', label: 'Why Now' },
           { id: 'next-steps', icon: '🎯', label: 'Next Steps' },
+          ...(data.ndaConfirmed ? [{ id: 'customer-zero', icon: '🔒', label: 'Customer Zero' }] : []),
           { id: 'cowork', icon: '🤖', label: 'Cowork Prompts' },
         ].map((s) => (
           <button key={s.id} onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' })}
@@ -728,6 +730,137 @@ export default function StepValueStory({ wizard }: WizardProps) {
           )}
         </div>
       </Collapsible>
+      </div>
+
+      {/* ━━ CUSTOMER ZERO — NDA-Gated Section ━━ */}
+      <div id="customer-zero">
+        {!data.ndaConfirmed ? (
+          <div className="rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/50 p-6 text-center">
+            <span className="text-3xl">🔒</span>
+            <h3 className="text-base font-bold text-text mt-2">Microsoft Customer Zero</h3>
+            <p className="text-xs text-text-secondary mt-1 max-w-md mx-auto">
+              Microsoft's own AI transformation results — internal metrics from 10 departments, ~100 case studies.
+              This content is approved for customers and partners with a signed NDA.
+            </p>
+            <button
+              onClick={() => wizard.updateData({ ndaConfirmed: true })}
+              className="mt-4 px-5 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-all print:hidden"
+            >
+              🔐 I confirm NDA is in place
+            </button>
+            <p className="text-[9px] text-gray-400 mt-2">
+              By confirming, you acknowledge the customer/partner has a signed NDA with Microsoft.
+            </p>
+          </div>
+        ) : (
+          <Collapsible title="Microsoft Customer Zero" icon="🔒"
+            summary={`${CUSTOMER_ZERO_DEPARTMENTS.length} departments · ${CUSTOMER_ZERO_HEADLINE_PROOF_POINTS.length} proof points`}
+            defaultOpen={false}>
+            <div className="space-y-5 pt-2">
+              <p className="text-xs text-text-secondary">
+                Microsoft's own AI transformation — internal results from ~100 case studies across {CUSTOMER_ZERO_DEPARTMENTS.length} departments.
+                <span className="text-[9px] text-gray-400 ml-1">Source: Customer Zero deck (March 2026) · NDA required</span>
+              </p>
+
+              {/* Headline Proof Points */}
+              <div className="rounded-xl border border-amber-100 bg-amber-50/50 p-4">
+                <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wider mb-3">⭐ Headline Proof Points</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {CUSTOMER_ZERO_HEADLINE_PROOF_POINTS.map((pp, i) => (
+                    <div key={i} className="p-2 rounded-lg bg-white/70">
+                      <p className="text-[10px] text-amber-600 font-semibold">{pp.department}</p>
+                      <p className="text-xs font-bold text-text">{pp.value}</p>
+                      <p className="text-[10px] text-text-secondary">{pp.headlineMetric}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* AI Adoption Patterns */}
+              <div className="rounded-xl border border-violet-100 bg-violet-50/50 p-4">
+                <p className="text-[10px] font-bold text-violet-800 uppercase tracking-wider mb-3">🔄 AI Adoption Patterns</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {CUSTOMER_ZERO_PATTERNS.map((p) => (
+                    <div key={p.id} className="p-2.5 rounded-lg bg-white/70 text-center">
+                      <p className="text-lg font-bold text-violet-600">{p.level}</p>
+                      <p className="text-xs font-bold text-text mt-1">{p.name}</p>
+                      <p className="text-[10px] text-text-secondary mt-0.5">{p.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Transformation Recipes */}
+              <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
+                <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider mb-3">🧪 Transformation Recipes (from ~100 case studies)</p>
+                <div className="space-y-2">
+                  {CUSTOMER_ZERO_RECIPES.map((r) => (
+                    <div key={r.id} className="p-2.5 rounded-lg bg-white/70">
+                      <p className="text-xs font-bold text-text">{r.name}</p>
+                      <p className="text-[10px] text-text-secondary mt-0.5">{r.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Department Details */}
+              {CUSTOMER_ZERO_DEPARTMENTS.map((dept) => (
+                <Collapsible key={dept.id} title={dept.name} icon="📋"
+                  summary={`${dept.useCases.length} use cases · ${dept.headlineMetrics.length} metrics`}
+                  defaultOpen={false}>
+                  <div className="space-y-3 pt-1">
+                    <p className="text-xs text-text-secondary">{dept.description}</p>
+
+                    {/* Headline Metrics */}
+                    <div className="grid grid-cols-2 gap-2">
+                      {dept.headlineMetrics.map((m, i) => (
+                        <div key={i} className="p-2 rounded-lg bg-gray-50">
+                          <p className="text-xs font-bold text-primary">{m.value}</p>
+                          <p className="text-[10px] text-text-secondary">{m.metric}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Use Cases */}
+                    {dept.useCases.map((uc, i) => (
+                      <div key={i} className="p-3 rounded-lg bg-gray-50/80">
+                        <p className="text-xs font-bold text-text">{uc.name}</p>
+                        <p className="text-[10px] text-text-secondary mt-0.5">{uc.description}</p>
+                        {uc.metrics.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-1.5">
+                            {uc.metrics.map((m, j) => (
+                              <span key={j} className="text-[9px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                                {m.value} — {m.metric}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    {/* Tools */}
+                    <div className="flex flex-wrap gap-1">
+                      {dept.tools.map((t, i) => (
+                        <span key={i} className="text-[9px] px-2 py-0.5 rounded-full bg-gray-100 text-text-secondary">{t}</span>
+                      ))}
+                    </div>
+
+                    {dept.quote && (
+                      <blockquote className="text-[11px] text-text-secondary italic border-l-2 border-primary/30 pl-3 mt-2">
+                        "{dept.quote}"
+                      </blockquote>
+                    )}
+                  </div>
+                </Collapsible>
+              ))}
+
+              <p className="text-[9px] text-gray-400 text-center">
+                All figures based on internal Microsoft telemetry data. Microsoft makes no warranties, express, implied or statutory.
+                Deck refreshed quarterly. Contact: mcapsaiideas@microsoft.com
+              </p>
+            </div>
+          </Collapsible>
+        )}
       </div>
 
       {/* ━━ 6. COWORK PROMPTS ━━ */}
