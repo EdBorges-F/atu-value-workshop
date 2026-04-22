@@ -428,7 +428,24 @@ export default function StepValueStory({ wizard }: WizardProps) {
         )}
       </div>
 
+      {/* ━━ Section Jump Nav ━━ */}
+      <nav className="sticky top-0 z-40 -mx-2 px-2 py-2 bg-white/80 backdrop-blur-md border-b border-gray-100 flex gap-2 overflow-x-auto print:hidden">
+        {[
+          { id: 'plan', icon: '🎯', label: 'The Plan' },
+          { id: 'proof', icon: '📊', label: 'The Proof' },
+          { id: 'why-now', icon: '📈', label: 'Why Now' },
+          { id: 'next-steps', icon: '🎯', label: 'Next Steps' },
+          { id: 'cowork', icon: '🤖', label: 'Cowork Prompts' },
+        ].map((s) => (
+          <button key={s.id} onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' })}
+            className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 hover:bg-primary/10 hover:text-primary text-text-secondary transition-all">
+            {s.icon} {s.label}
+          </button>
+        ))}
+      </nav>
+
       {/* ━━ 2. THE PLAN — Pillars (open by default) ━━ */}
+      <div id="plan">
       <Collapsible title="The Plan" icon="🎯"
         summary={`${story.pillarSections.length} pillars · ${story.pillarSections.reduce((n, s) => n + s.useCases.length, 0)} use cases`}
         defaultOpen={true}>
@@ -502,8 +519,10 @@ export default function StepValueStory({ wizard }: WizardProps) {
           <span>📊 Limited evidence catalog for this industry — stories are being added regularly</span>
         </div>
       )}
+      </div>
 
       {/* ━━ 3. THE PROOF — Consolidated evidence ━━ */}
+      <div id="proof">
       {totalEvidenceCount > 0 && (
         <Collapsible title="The Proof" icon="📊"
           summary={`${totalEvidenceCount} customer ${totalEvidenceCount === 1 ? 'story' : 'stories'}${story.industryBenchmark ? ' · Industry benchmark' : ''}`}
@@ -575,8 +594,10 @@ export default function StepValueStory({ wizard }: WizardProps) {
           </p>
         </div>
       )}
+      </div>
 
       {/* ━━ 4. MARKET CONTEXT — Why Now ━━ */}
+      <div id="why-now">
       <Collapsible title="Why Now" icon="📈"
         summary={`${story.marketContext.length} market signals`}
         defaultOpen={false}>
@@ -597,8 +618,10 @@ export default function StepValueStory({ wizard }: WizardProps) {
           </div>
         </div>
       </Collapsible>
+      </div>
 
       {/* ━━ 5. NEXT STEPS — collapsible, default open ━━ */}
+      <div id="next-steps">
       <Collapsible title="Next Steps" icon="🎯" defaultOpen={true}>
         <div className="space-y-4 pt-2">
           <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-6">
@@ -667,9 +690,10 @@ export default function StepValueStory({ wizard }: WizardProps) {
           )}
         </div>
       </Collapsible>
+      </div>
 
       {/* ━━ 6. COWORK PROMPTS ━━ */}
-      <section className="print:hidden">
+      <section id="cowork" className="print:hidden">
         <Collapsible title="Copilot Cowork Prompts" icon="🤖"
           summary={`${story.coworkPrompts.length} context-rich prompts ready`} defaultOpen={false}>
           <div className="space-y-3 pt-2">
