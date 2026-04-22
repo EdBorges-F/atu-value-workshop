@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
 import { generateValueStory, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory, type ROICard, type StakeholderEntry } from '../../lib/valueStoryGenerator'
+import PostGenSurvey from '../ui/PostGenSurvey'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
@@ -616,6 +617,14 @@ export default function StepValueStory({ wizard }: WizardProps) {
           </div>
         </Collapsible>
       </section>
+
+      {/* ── Feedback Survey ── */}
+      <PostGenSurvey
+        industry={data.industryId}
+        pillarCount={story.pillarSections.length}
+        storyCount={story.pillarSections.reduce((sum, p) => sum + (p.pillarStories?.length || 0), 0)}
+        useCaseCount={story.pillarSections.reduce((sum, p) => sum + (p.useCases?.length || 0), 0)}
+      />
 
       {/* ── Navigation ── */}
       <div className="flex justify-between pt-4 print:hidden">
