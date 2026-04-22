@@ -24,7 +24,7 @@ const INDUSTRY_KEYWORDS: Record<string, string[]> = {
   'automotive': ['automotive', 'vehicle', 'car', 'oem', 'mobility', 'motor', 'auto parts'],
   'banking': ['banking', 'bank', 'financial services', 'fintech', 'deposit', 'lending', 'mortgage'],
   'capital-markets': ['capital markets', 'asset management', 'trading', 'hedge fund', 'investment', 'brokerage', 'wealth management'],
-  'consumer-goods': ['consumer goods', 'cpg', 'fmcg', 'food and beverage', 'consumer products', 'packaged goods', 'beverage'],
+  'consumer-goods': ['consumer goods', 'cpg', 'fmcg', 'food and beverage', 'consumer products', 'packaged goods', 'beverage', 'food service', 'foodservice'],
   'energy-resources': ['energy', 'oil', 'gas', 'mining', 'utilities', 'renewable', 'power generation', 'petroleum', 'lime', 'limestone', 'minerals', 'chemicals'],
   'government': ['government', 'public sector', 'federal', 'state agency', 'municipal', 'defense', 'civic'],
   'healthcare-provider': ['healthcare', 'hospital', 'health system', 'clinical', 'patient care', 'physician', 'medical center'],
@@ -34,7 +34,7 @@ const INDUSTRY_KEYWORDS: Record<string, string[]> = {
   'manufacturing': ['manufacturing', 'factory', 'production', 'industrial', 'plant', 'assembly', 'fabrication', 'materials'],
   'media-entertainment': ['media', 'entertainment', 'broadcast', 'streaming', 'gaming', 'content', 'publishing', 'studio'],
   'mobility-travel': ['travel', 'hospitality', 'airline', 'hotel', 'transportation', 'logistics', 'fleet', 'tourism'],
-  'retail': ['retail', 'e-commerce', 'ecommerce', 'store', 'shop', 'omnichannel', 'merchandise'],
+  'retail': ['retail', 'e-commerce', 'ecommerce', 'store', 'shop', 'omnichannel', 'merchandise', 'restaurant', 'restaurants', 'dining', 'casual dining', 'quick service', 'hospitality', 'grocery'],
   'telecommunications': ['telecom', 'telecommunications', 'carrier', 'network operator', 'broadband', '5g', 'wireless'],
   'professional-services': ['consulting', 'professional services', 'legal', 'accounting', 'advisory', 'engineering services'],
 }

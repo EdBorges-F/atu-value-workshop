@@ -1,5 +1,18 @@
 # Copilot Instructions — Frontier Canvas (ATU Value Workshop)
 
+## Workflow: Plan First, Critique, Then Implement
+
+### Planning (mandatory)
+- Before implementing any changes, create a plan listing what will change, which files, and why.
+- **Stress-test the plan**: Run a rubber-duck critique to catch blind spots, risks, and logic gaps. Share findings and adjust the plan before proceeding.
+- Present the plan for my approval before writing code.
+- For multi-step tasks, break the plan into small incremental commits.
+
+### Before Committing
+- Ask whether I want a code review before committing.
+- Run all existing project checks (build, lint, tests) before committing.
+- Summarize the changes for my confirmation.
+
 ## Mandatory Workflow Rules
 
 ### Always Review Code Before Final
@@ -50,3 +63,12 @@ This is non-negotiable. The TypeScript config does NOT have `strict: true`, so m
 
 ### Known Gotcha
 `tsconfig.app.json` does NOT have `strict: true`. Undefined variable references don't cause compile errors — they crash at RUNTIME. Always test in browser after refactoring.
+
+## Microsoft Guardrails (Customer-Ready Project)
+
+This project produces **customer-facing deliverables**. In addition to the global guardrails in `~/.copilot/copilot-instructions.md`, enforce:
+
+- Include compliance disclaimers as footers in every generated deliverable (Confidentiality, Data & Privacy, Responsible AI, Projections, Trust & Security, Legal). These are already implemented in `valueStoryGenerator.ts` — preserve them.
+- All metrics must come from published Microsoft customer stories or attributed industry research.
+- Never name competitors — use the `competitorBlocklist` patterns in `src/data.js` / `src/data/`.
+- AI-generated content must carry an "AI-Assisted · Human-Reviewed" label (already in `TrustFooter.tsx` and `StepValueStory.tsx` — preserve these).

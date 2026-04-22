@@ -192,7 +192,7 @@ function PillarCard({ section, defaultOpen }: { section: PillarSection; defaultO
   const ucCount = section.useCases.length
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm pillar-card">
+    <div className="rounded-xl overflow-hidden pillar-card">
       {/* Gradient header — always visible, clickable */}
       <button onClick={() => setOpen(!open)}
         className={`w-full bg-gradient-to-r ${style.gradient} px-6 py-4 flex items-center gap-3 text-left`}>
@@ -236,7 +236,7 @@ function PillarCard({ section, defaultOpen }: { section: PillarSection; defaultO
               {section.useCases.map((uc, i) => {
                 const fb = matchFunctionBenchmark(uc.name, uc.description)
                 return (
-                  <div key={i} className={`p-4 rounded-xl ${style.light} border ${style.border}`}>
+                  <div key={i} className={`p-3 rounded-lg ${style.light}`}>
                     <p className="text-sm font-bold text-text">{uc.name}</p>
                     <p className="text-xs text-text-secondary mt-1 leading-relaxed">{uc.description}</p>
                     {fb && (
@@ -388,7 +388,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 print:max-w-none print:mx-0" ref={printRef}>
-      {/* ━━ HERO + EXEC SUMMARY — always visible ━━ */}
+      {/* ━━ HERO — Stats Card ━━ */}
       <div className="rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8 text-white shadow-xl print:shadow-none print:rounded-none print:bg-gray-900">
         <div className="flex items-start justify-between">
           <div>
@@ -401,7 +401,6 @@ export default function StepValueStory({ wizard }: WizardProps) {
               </span>
             </div>
             <h2 className="text-2xl font-bold tracking-tight">{story.title}</h2>
-            <p className="text-white/60 text-sm mt-1">{data.companyName}'s AI transformation journey</p>
           </div>
           <div className="flex gap-2 print:hidden">
             <CopyButton text={fullStoryText} label="📋 Copy" />
@@ -412,9 +411,22 @@ export default function StepValueStory({ wizard }: WizardProps) {
             </button>
           </div>
         </div>
-        <div className="mt-6 p-4 rounded-xl bg-white/5 border border-white/10">
-          <p className="text-sm text-white/90 leading-relaxed">{story.executive_summary}</p>
+
+        {/* Stats strip */}
+        <div className="mt-6 grid grid-cols-4 gap-3">
+          {[
+            { value: story.pillarSections.reduce((sum, p) => sum + (p.useCases?.length || 0), 0) + (story.securitySection?.useCases?.length || 0), label: 'AI Use Cases' },
+            { value: story.pillarSections.length + (story.securitySection ? 1 : 0), label: 'Pillars' },
+            { value: totalEvidenceCount, label: 'Customer Stories' },
+            { value: data.industryId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), label: 'Industry Focus', isText: true },
+          ].map((stat, i) => (
+            <div key={i} className="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
+              <div className={`font-bold ${stat.isText ? 'text-lg' : 'text-3xl'} text-white`}>{stat.value}</div>
+              <div className="text-[11px] text-white/50 uppercase tracking-wider mt-1">{stat.label}</div>
+            </div>
+          ))}
         </div>
+
         {/* Challenge pills — grounding context */}
         {challenges.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-1.5">
