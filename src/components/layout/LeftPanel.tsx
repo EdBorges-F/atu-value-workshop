@@ -16,7 +16,7 @@ export default function LeftPanel({ currentStep, onStepClick }: LeftPanelProps) 
             Frontier Canvas
           </h1>
           <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/20 text-accent font-medium">
-            PREVIEW
+            BETA v0.9
           </span>
         </div>
         <p className="text-sm text-white/50 mt-1">
