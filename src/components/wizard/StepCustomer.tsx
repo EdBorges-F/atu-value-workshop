@@ -46,7 +46,7 @@ Format as plain text only — no links, no URLs, no source citations, no markdow
 
 export default function StepCustomer({ wizard }: WizardProps) {
   const { data, updateData, nextStep, canAdvance } = wizard
-  const [smartFillOpen, setSmartFillOpen] = useState(false)
+  const [smartFillOpen, setSmartFillOpen] = useState(true)
   const [smartFillText, setSmartFillText] = useState(data.smartFillRaw)
   const [extraction, setExtraction] = useState<SmartFillResult | null>(null)
   const [copiedPrompt, setCopiedPrompt] = useState(false)
