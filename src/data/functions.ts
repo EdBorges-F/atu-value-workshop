@@ -1,10 +1,11 @@
 import type { FunctionVision } from './types';
+import { SHOW_CUSTOMER_ZERO } from './global-ai-evidence';
 
 // Capability descriptions sourced from the "Frontier Transformation" function
 // vision decks. Stats come from those decks (with citations preserved) and
 // from the Microsoft Customer Zero stories highlighted in each deck.
 
-export const FUNCTIONS: FunctionVision[] = [
+const ALL_FUNCTIONS: FunctionVision[] = [
   {
     id: 'customer-service',
     name: 'Customer Service',
@@ -117,3 +118,17 @@ export const FUNCTIONS: FunctionVision[] = [
     relevantUseCases: [],
   },
 ];
+
+// Filter out Customer Zero capability strings when flag is off
+// Catches: "Customer Zero", "Microsoft <Department>:", and Microsoft-internal stats (but not "Building Agents with Microsoft" deck refs)
+const isCZCapability = (c: string): boolean =>
+  /Customer Zero/i.test(c) ||
+  /— Microsoft\s+(support|cut|sees|Finance|HR|Security|Legal|Marketing)/i.test(c) ||
+  /Microsoft sees \d/i.test(c)
+
+export const FUNCTIONS: FunctionVision[] = SHOW_CUSTOMER_ZERO
+  ? ALL_FUNCTIONS
+  : ALL_FUNCTIONS.map(f => ({
+      ...f,
+      keyCapabilities: f.keyCapabilities.filter(c => !isCZCapability(c)),
+    }));

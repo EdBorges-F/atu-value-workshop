@@ -290,6 +290,7 @@ export const INDUSTRY_CONTEXTS: IndustryContext[] = [
         { pillar: 'reshape', company: 'Industry Leader', problem: 'Plant and supply chain operations were siloed and reactive.', solution: 'Reshaped operations with Microsoft Fabric, Azure AI Foundry agents, and digital twins.', impact: ['Higher OEE and first-pass yield', 'Reduced unplanned downtime', 'Improved on-time delivery'] },
       ],
       reinvent: [
+        { pillar: 'reinvent', company: 'Industry Leader', problem: 'Product development cycles were too long to keep pace with evolving complexity and customer expectations.', solution: 'Reinvented the design-to-launch process with Azure AI Foundry agents that reason across CAD, simulation, and manufacturing data.', impact: ['20-40% faster design-to-launch', 'Higher first-time-right quality', 'Reduced late-stage engineering changes'] },
       ],
       bend: [
         { pillar: 'bend', company: 'Industry Leader', problem: 'Cost-to-build grew faster than revenue under disruption.', solution: 'Bent the cost curve with agentic supply chain, autonomous warehousing, and AI-driven engineering.', impact: ['Material reduction in operations cost', 'Improved working capital', 'Higher resilience'] },
@@ -569,10 +570,13 @@ export const INDUSTRY_CONTEXTS: IndustryContext[] = [
         { pillar: 'enrich', company: 'I', problem: 'A mining operator needed step-change improvements in productivity and safety to remain competitive.', solution: 'Combined Azure IoT, Microsoft Fabric, and Azure AI Foundry to drive AI-augmented operations across the value chain.', impact: ['Material productivity gains', 'Stronger safety performance', 'Higher margin per ton'] },
       ],
       reshape: [
+        { pillar: 'reshape', company: 'Industry Leader', problem: 'Grid operations relied on disconnected monitoring and manual response, limiting reliability and safety.', solution: 'Reshaped grid operations with Azure IoT Operations, Microsoft Fabric, and AI-powered situational awareness.', impact: ['Faster outage detection and response', 'Higher grid reliability', 'Improved safety performance'] },
       ],
       reinvent: [
+        { pillar: 'reinvent', company: 'Industry Leader', problem: 'Asset management was constrained by reactive maintenance and limited predictive capability.', solution: 'Reinvented asset management with AI agents on Azure that predict failures and optimize maintenance scheduling.', impact: ['Reduced unplanned downtime', 'Extended asset life', 'Deferred capital expenditure'] },
       ],
       bend: [
+        { pillar: 'bend', company: 'Industry Leader', problem: 'Operational cost grew faster than regulated revenue under workforce pressure and aging infrastructure.', solution: 'Bent the cost curve with AI-driven operations, workforce enablement, and customer service automation.', impact: ['Material operational cost reduction', 'Higher workforce productivity', 'Improved customer satisfaction'] },
       ],
     },
     useCases: [
@@ -593,13 +597,16 @@ export const INDUSTRY_CONTEXTS: IndustryContext[] = [
     ],
     pillarStories: {
       enrich: [
+        { pillar: 'enrich', company: 'Industry Leader', problem: 'Engineering and plant teams spent significant time on manual data gathering and reporting.', solution: 'Enriched daily work with Microsoft 365 Copilot and Power BI grounded in manufacturing data.', impact: ['Significant time savings per engineer', 'Faster operational decisions', 'Improved employee experience'] },
       ],
       reshape: [
+        { pillar: 'reshape', company: 'Industry Leader', problem: 'Plant operations were siloed, with quality and process decisions made without full operational context.', solution: 'Reshaped plant operations with Azure IoT Operations, Microsoft Fabric, and AI-driven quality and process control.', impact: ['Higher OEE and first-pass yield', 'Reduced waste and variability', 'Improved safety'] },
       ],
       reinvent: [
         { pillar: 'reinvent', company: 'Autonomous supply chain networks', problem: 'An industry leader needed to scale AI productivity to a global workforce while protecting governance.', solution: 'Rolled out Microsoft 365 Copilot enterprise-wide with strong governance and adoption programs.', impact: ['96% active Copilot adoption', 'Significant time savings per employee', 'Improved employee satisfaction'] },
       ],
       bend: [
+        { pillar: 'bend', company: 'Industry Leader', problem: 'Operations and raw material costs grew faster than revenue under volatile market conditions.', solution: 'Bent the cost curve with AI-driven demand planning, process optimization, and supply chain automation.', impact: ['Material reduction in operations cost', 'Improved working capital', 'Higher margin under volatility'] },
       ],
     },
     useCases: [

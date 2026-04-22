@@ -2,7 +2,7 @@ import { useMemo, useState, useRef } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
 import { generateValueStory, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory, type StakeholderEntry } from '../../lib/valueStoryGenerator'
 import { CHALLENGES } from '../../data/challenges'
-import { FUNCTION_BENCHMARKS } from '../../data/global-ai-evidence'
+import { FUNCTION_BENCHMARKS, filterCustomerZero } from '../../data/global-ai-evidence'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
@@ -25,7 +25,7 @@ function matchFunctionBenchmark(ucName: string, ucDescription: string): { area: 
     }
   }
   if (!best) return null
-  return { area: best.functionArea.replace(/-/g, ' '), gain: best.productivityGain }
+  return { area: best.functionArea.replace(/-/g, ' '), gain: filterCustomerZero(best.productivityGain) }
 }
 
 // ─── Pillar accent colors ──────────────────────────────────
