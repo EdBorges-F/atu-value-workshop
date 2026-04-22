@@ -70,6 +70,8 @@ export function useWizardState() {
   const [step, setStep] = useState(saved?.step ?? 0)
   const [data, setData] = useState<WizardData>(saved?.data ?? INITIAL_DATA)
 
+  const MAX_STEP = 4
+
   // Persist on every change
   useEffect(() => {
     saveToStorage(step, data)
@@ -79,17 +81,25 @@ export function useWizardState() {
     setData((prev) => ({ ...prev, ...partial }))
   }, [])
 
-  const nextStep = useCallback(() => {
-    setStep((s) => Math.min(s + 1, 3))
+  // Step 1 (Customer Zero) is conditional — skip when NDA not confirmed
+  const resolveNext = useCallback((current: number, dir: 1 | -1, ndaOn: boolean): number => {
+    const target = current + dir
+    if (target === 1 && !ndaOn) return target + dir // skip CZ step
+    return Math.max(0, Math.min(target, MAX_STEP))
   }, [])
+
+  const nextStep = useCallback(() => {
+    setStep((s) => resolveNext(s, 1, data.ndaConfirmed))
+  }, [data.ndaConfirmed, resolveNext])
 
   const prevStep = useCallback(() => {
-    setStep((s) => Math.max(s - 1, 0))
-  }, [])
+    setStep((s) => resolveNext(s, -1, data.ndaConfirmed))
+  }, [data.ndaConfirmed, resolveNext])
 
   const goToStep = useCallback((s: number) => {
-    if (s >= 0 && s <= 3) setStep(s)
-  }, [])
+    if (s === 1 && !data.ndaConfirmed) return // can't navigate to CZ without NDA
+    if (s >= 0 && s <= MAX_STEP) setStep(s)
+  }, [data.ndaConfirmed])
 
   const reset = useCallback(() => {
     setStep(0)
@@ -100,9 +110,10 @@ export function useWizardState() {
   const canAdvance = useCallback(() => {
     switch (step) {
       case 0: return data.companyName.trim() !== '' && data.industryId !== ''
-      case 1: return data.selectedChallengeIds.length > 0 && data.selectedUseCaseIds.length > 0
-      case 2: return true
+      case 1: return true // CZ inspiration — always can proceed
+      case 2: return data.selectedChallengeIds.length > 0 && data.selectedUseCaseIds.length > 0
       case 3: return true
+      case 4: return true
       default: return false
     }
   }, [step, data])

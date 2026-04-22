@@ -3,10 +3,11 @@ import TrustFooter from './TrustFooter'
 
 interface LeftPanelProps {
   currentStep: number
+  ndaConfirmed?: boolean
   onStepClick?: (step: number) => void
 }
 
-export default function LeftPanel({ currentStep, onStepClick }: LeftPanelProps) {
+export default function LeftPanel({ currentStep, ndaConfirmed, onStepClick }: LeftPanelProps) {
   return (
     <aside className="flex flex-col w-full lg:w-[24%] lg:max-w-[280px] lg:min-h-screen lg:sticky lg:top-0 bg-gradient-to-b from-dark-start to-dark-end p-4 lg:p-6 no-print">
       {/* Brand */}
@@ -29,7 +30,7 @@ export default function LeftPanel({ currentStep, onStepClick }: LeftPanelProps) 
 
       {/* Progress */}
       <div className="flex-1">
-        <ProgressDots currentStep={currentStep} onStepClick={onStepClick} />
+        <ProgressDots currentStep={currentStep} ndaConfirmed={ndaConfirmed} onStepClick={onStepClick} />
       </div>
 
       {/* Trust Footer */}

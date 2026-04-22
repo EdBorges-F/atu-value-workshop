@@ -439,6 +439,53 @@ export default function StepCustomer({ wizard }: WizardProps) {
         />
       </div>
 
+      {/* NDA / Customer Zero Toggle */}
+      <div className="rounded-[16px] border border-gray-200 bg-gray-50/50 p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-lg">🔒</span>
+            <div>
+              <p className="text-sm font-medium text-text">Customer Zero Access</p>
+              <p className="text-[11px] text-text-secondary leading-snug mt-0.5">
+                Enable Microsoft's internal AI transformation data (NDA required)
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => updateData({ ndaConfirmed: !data.ndaConfirmed })}
+            className={`relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0
+              ${data.ndaConfirmed ? 'bg-primary' : 'bg-gray-300'}`}
+            role="switch"
+            aria-checked={data.ndaConfirmed}
+          >
+            <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200
+              ${data.ndaConfirmed ? 'translate-x-5' : 'translate-x-0'}`} />
+          </button>
+        </div>
+        {data.ndaConfirmed && (
+          <div className="mt-3 p-2.5 rounded-lg bg-emerald-50 border border-emerald-100">
+            <p className="text-[11px] text-emerald-700">
+              ✅ NDA confirmed — Customer Zero inspiration step will appear next.
+            </p>
+            <a
+              href="https://contracts.microsoft.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] text-primary hover:underline mt-1 inline-block"
+            >
+              Verify NDA in Legal Contracting Experience (LCE) ↗
+            </a>
+          </div>
+        )}
+        {!data.ndaConfirmed && (
+          <p className="text-[10px] text-gray-400 mt-2">
+            <a href="https://contracts.microsoft.com" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-gray-500">
+              Check NDA status in LCE ↗
+            </a>
+          </p>
+        )}
+      </div>
+
       {/* Next Button */}
       <div className="flex justify-end pt-4">
         <button
