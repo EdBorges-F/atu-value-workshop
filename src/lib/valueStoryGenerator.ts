@@ -252,9 +252,10 @@ function matchStoriesToUseCase(
   const sameIndustry: { story: CustomerStory; score: number }[] = []
   const crossIndustry: { story: CustomerStory; score: number }[] = []
 
-  // Build UC keyword set for content relevance scoring
+  // Build UC keyword set — filter out generic words that cause false matches
+  const STOP_WORDS = new Set(['using', 'based', 'powered', 'across', 'drive', 'build', 'enable', 'improve', 'teams', 'business', 'company', 'platform', 'solutions', 'tools', 'management', 'planning', 'operations', 'customer', 'process', 'digital', 'intelligence', 'optimize', 'microsoft', 'azure', 'copilot'])
   const ucText = (uc.name + ' ' + (uc.description || '')).toLowerCase()
-  const ucKeywords = ucText.split(/\s+/).filter(w => w.length > 4)
+  const ucKeywords = ucText.split(/\s+/).filter(w => w.length > 4 && !STOP_WORDS.has(w))
 
   for (const story of CUSTOMER_STORIES) {
     let challengeScore = 0
@@ -263,23 +264,25 @@ function matchStoriesToUseCase(
     }
     if (challengeScore === 0) continue
 
-    // Content relevance: check if story summary has meaningful keyword overlap with UC
+    const isSameIndustry = isIndustryMatch(story.industry, industryId)
+
+    // Content relevance: domain-specific keyword overlap
     const summaryLower = (story.summary || '').toLowerCase()
     const contentOverlap = ucKeywords.filter(kw => summaryLower.includes(kw)).length
-    // Require at least SOME content relevance — shared challengeId alone isn't enough
-    if (contentOverlap < 2 && challengeScore < 2) continue
 
-    const totalScore = challengeScore + (contentOverlap * 0.5)
-
-    if (isIndustryMatch(story.industry, industryId)) {
-      sameIndustry.push({ story, score: totalScore })
+    if (isSameIndustry) {
+      // Same industry: 1 shared challenge is enough, but prefer content overlap
+      sameIndustry.push({ story, score: challengeScore + (contentOverlap * 0.5) })
     } else {
-      crossIndustry.push({ story, score: totalScore })
+      // Cross industry: only if VERY relevant — 3+ challenges OR 2 challenges + 3+ keyword overlap
+      if (challengeScore >= 3 || (challengeScore >= 2 && contentOverlap >= 3)) {
+        crossIndustry.push({ story, score: challengeScore + (contentOverlap * 0.5) })
+      }
     }
   }
 
-  // Also match from HERO_USE_CASES (title keyword matching)
-  const ucWords = uc.name.toLowerCase().split(/\s+/).filter(w => w.length > 4)
+  // Also match from HERO_USE_CASES (same-industry only)
+  const ucWords = uc.name.toLowerCase().split(/\s+/).filter(w => w.length > 4 && !STOP_WORDS.has(w))
   for (const hero of HERO_USE_CASES) {
     if (!isIndustryMatch(hero.industry, industryId)) continue
     const heroWords = hero.title.toLowerCase().split(/\s+/).filter(w => w.length > 4)
@@ -306,11 +309,10 @@ function matchStoriesToUseCase(
     }
   }
 
-  // Prefer same-industry; only use cross-industry to fill remaining slots
+  // Only same-industry stories; cross-industry only if zero same-industry results
   const result = sameIndustry.sort((a, b) => b.score - a.score).slice(0, 3)
-  if (result.length < 2) {
-    const remaining = 2 - result.length
-    result.push(...crossIndustry.sort((a, b) => b.score - a.score).slice(0, remaining))
+  if (result.length === 0) {
+    result.push(...crossIndustry.sort((a, b) => b.score - a.score).slice(0, 2))
   }
 
   return result.map(({ story }) => ({
@@ -410,56 +412,6 @@ function getIndustryBenchmark(industryId: string): IndustryBenchmarkSummary | nu
 }
 
 // Collect stories relevant to a pillar via challenge overlap (verified Microsoft stories only)
-function matchStoriesForPillar(
-  challengeIdsInPillar: string[],
-  industryId: string,
-  _pillarId?: string
-): MatchedStory[] {
-  const results: MatchedStory[] = []
-  const seen = new Set<string>()
-
-  // Only use verified Microsoft customer stories (from customer-stories.ts)
-  if (challengeIdsInPillar.length > 0) {
-    const sameIndustry: { story: CustomerStory; score: number }[] = []
-    const crossIndustry: { story: CustomerStory; score: number }[] = []
-
-    for (const story of CUSTOMER_STORIES) {
-      if (seen.has(story.company)) continue
-      let challengeScore = 0
-      for (const cid of story.challengeIds) {
-        if (challengeIdsInPillar.includes(cid)) challengeScore++
-      }
-      if (challengeScore === 0) continue
-
-      if (isIndustryMatch(story.industry, industryId)) {
-        sameIndustry.push({ story, score: challengeScore })
-      } else {
-        crossIndustry.push({ story, score: challengeScore })
-      }
-    }
-
-    const remaining = 3 - results.length
-    if (remaining > 0) {
-      const sorted = [...sameIndustry.sort((a, b) => b.score - a.score), ...crossIndustry.sort((a, b) => b.score - a.score)]
-      for (const { story } of sorted) {
-        if (results.length >= 3) break
-        if (seen.has(story.company)) continue
-        seen.add(story.company)
-        results.push({
-          company: story.company,
-          title: story.summary ? story.summary.split(/[.!?]/)[0].trim().slice(0, 120) : '',
-          metric: bestMetric(story.keyMetrics),
-          quote: story.quotes?.[0] ?? null,
-          product: story.product,
-          storyUrl: story.storyUrl ?? null,
-        })
-      }
-    }
-  }
-
-  return results.slice(0, 3)
-}
-
 // ─── Generator ───────────────────────────────────────────────
 export function generateValueStory(data: WizardData): ValueStory {
   const industry = INDUSTRIES.find((i) => i.id === data.industryId)
@@ -540,7 +492,7 @@ export function generateValueStory(data: WizardData): ValueStory {
     ? challenges.slice(0, 3).map((c) => c.name.toLowerCase()).join(', ')
     : 'multiple strategic imperatives'
   const pillarPhrase = topPillars.length > 0
-    ? topPillars.map((p) => `${p.name} (${p.subtitle.toLowerCase()})`).join(', ')
+    ? topPillars.map((p) => `${p.fullName}`).join(', ')
     : 'transformation across key business dimensions'
   
   // Count evidence from ALL sources (customer stories + Hero AI)
@@ -580,6 +532,7 @@ export function generateValueStory(data: WizardData): ValueStory {
 
   // Build pillar sections with story matching, priority linkage, and ROI cards
   const pillarSections: PillarSection[] = []
+  const globalSeenStories = new Set<string>() // no story appears in more than one pillar
 
   for (const pillar of FRONTIER_PILLARS) {
     const priorities = pillarPriorities[pillar.id]
@@ -593,54 +546,76 @@ export function generateValueStory(data: WizardData): ValueStory {
       ? priorities
       : challenges.filter((c) => challengeIdsInPillar.includes(c.id)).map((c) => c.name)
 
-    pillarSections.push({
-      pillar,
-      customerPriorities: effectivePriorities,
-      useCases: allUCs.map((uc) => ({
+    const ucEntries = allUCs.map((uc) => ({
         name: uc.name,
         description: uc.description.split('.')[0] + '.',
         evidence: uc.evidence.length > 0 ? uc.evidence[0] : null,
         linkedPriority: findLinkedPriority(uc.name + ' ' + uc.description, effectivePriorities),
         matchedStories: matchStoriesToUseCase(uc, industryId),
         roiCard: matchROITemplate(uc, industryId),
-      })),
-      // Only show pillar-level stories when there are use cases to support
-      pillarStories: allUCs.length > 0
-        ? matchStoriesForPillar(challengeIdsInPillar, industryId, pillar.id)
-        : [],
+      }))
+
+    // Derive pillar stories from UC-matched stories (deduplicated within and across pillars)
+    const derivedPillarStories: MatchedStory[] = []
+    for (const entry of ucEntries) {
+      for (const s of entry.matchedStories) {
+        if (!globalSeenStories.has(s.company)) {
+          globalSeenStories.add(s.company)
+          derivedPillarStories.push(s)
+        }
+      }
+    }
+
+    pillarSections.push({
+      pillar,
+      customerPriorities: effectivePriorities,
+      useCases: ucEntries,
+      pillarStories: derivedPillarStories.slice(0, 3),
     })
   }
 
   // Security section — uses explicit pillarId like regular pillars
   const secPriorities = pillarPriorities.security
   const secUCs = pillarUseCases.security
-  const secChallengeIds = pillarChallenges.security
   const allSecUCs = [...secUCs]
 
   const effectiveSecPriorities = secPriorities.length > 0
     ? secPriorities
     : ['Enterprise-grade security, governance, and compliance as the foundation for AI transformation']
 
+  const secUcEntries = allSecUCs.length > 0
+    ? allSecUCs.map((uc) => ({
+        name: uc.name,
+        description: uc.description.split('.')[0] + '.',
+        evidence: uc.evidence.length > 0 ? uc.evidence[0] : null,
+        linkedPriority: findLinkedPriority(uc.name + ' ' + uc.description, effectiveSecPriorities),
+        matchedStories: matchStoriesToUseCase(uc, industryId),
+        roiCard: null,
+      }))
+    : [{
+        name: 'AI Governance & Security Posture',
+        description: 'Secure governance of AI workloads, agent observability, and data protection across the AI stack.',
+        evidence: null,
+        linkedPriority: null,
+        matchedStories: [] as MatchedStory[],
+        roiCard: null,
+      }]
+
+  // Derive security stories from UC-matched stories (deduplicated globally)
+  const derivedSecStories: MatchedStory[] = []
+  for (const entry of secUcEntries) {
+    for (const s of entry.matchedStories) {
+      if (!globalSeenStories.has(s.company)) {
+        globalSeenStories.add(s.company)
+        derivedSecStories.push(s)
+      }
+    }
+  }
+
   const securitySection: SecuritySection = {
     customerPriorities: effectiveSecPriorities,
-    useCases: allSecUCs.length > 0
-      ? allSecUCs.map((uc) => ({
-          name: uc.name,
-          description: uc.description.split('.')[0] + '.',
-          evidence: uc.evidence.length > 0 ? uc.evidence[0] : null,
-          linkedPriority: findLinkedPriority(uc.name + ' ' + uc.description, effectiveSecPriorities),
-          matchedStories: matchStoriesToUseCase(uc, industryId),
-          roiCard: null,
-        }))
-      : [{
-          name: 'AI Governance & Security Posture',
-          description: 'Secure governance of AI workloads, agent observability, and data protection across the AI stack.',
-          evidence: null,
-          linkedPriority: null,
-          matchedStories: [],
-          roiCard: null,
-        }],
-    pillarStories: matchStoriesForPillar(secChallengeIds, industryId, 'security'),
+    useCases: secUcEntries,
+    pillarStories: derivedSecStories.slice(0, 3),
   }
 
   // Solution map — full pillar names
@@ -792,7 +767,7 @@ LEGAL: "© ${new Date().getFullYear()} Microsoft Corporation. All rights reserve
   const activePillarIds = new Set(pillarSections.map(ps => ps.pillar.id))
   const missingPillars = FRONTIER_PILLARS.filter(p => !activePillarIds.has(p.id))
   const missingPillarNote = missingPillars.length > 0
-    ? `\n\nIMPORTANT — MISSING PILLARS:\n${companyName}'s current priorities don't cover these Frontier pillars: ${missingPillars.map(p => `${p.fullName} (${p.subtitle})`).join(', ')}.\nProactively suggest 2-3 use cases per missing pillar that would create additional value for a ${industryName} company of this size. Frame them as "expansion opportunities" worth exploring.`
+    ? `\n\nIMPORTANT — MISSING PILLARS:\n${companyName}'s current priorities don't cover these Frontier pillars: ${missingPillars.map(p => p.fullName).join(', ')}.\nProactively suggest 2-3 use cases per missing pillar that would create additional value for a ${industryName} company of this size. Frame them as "expansion opportunities" worth exploring.`
     : ''
 
   const coworkPrompts: CoworkPrompt[] = [
