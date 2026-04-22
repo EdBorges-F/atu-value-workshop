@@ -35,22 +35,25 @@ function countStoryEvidence(uc: { challengeIds: string[] }, industryId: string):
   return count
 }
 
-/** Count Hero AI evidence for a use case (keyword matching UC title to Hero titles) */
-function countHeroEvidence(uc: { id: string; name: string }, industryId: string): number {
-  const ucWords = uc.name.toLowerCase().split(/\s+/).filter(w => w.length > 4)
+const HERO_STOP_WORDS = new Set(['using', 'based', 'powered', 'across', 'drive', 'build', 'enable', 'improve', 'teams', 'business', 'company', 'platform', 'solutions', 'tools', 'management', 'planning', 'operations', 'customer', 'process', 'digital', 'intelligence', 'optimize', 'microsoft', 'azure', 'copilot'])
+
+/** Count Hero AI evidence for a use case (keyword matching UC name+desc to Hero title+valueProp) */
+function countHeroEvidence(uc: { id: string; name: string; description?: string }, industryId: string): number {
+  const ucText = (uc.name + ' ' + (uc.description || '')).toLowerCase()
+  const ucWords = ucText.split(/\s+/).filter(w => w.length > 4 && !HERO_STOP_WORDS.has(w))
   let count = 0
   for (const hero of HERO_USE_CASES) {
     if (!isIndustryMatch(hero.industry, industryId)) continue
-    // Match by title similarity (share 2+ substantive words)
-    const heroWords = hero.title.toLowerCase().split(/\s+/).filter(w => w.length > 4)
+    const heroText = (hero.title + ' ' + (hero.valueProp || '')).toLowerCase()
+    const heroWords = heroText.split(/\s+/).filter(w => w.length > 4 && !HERO_STOP_WORDS.has(w))
     const overlap = ucWords.filter(w => heroWords.some(hw => hw.includes(w) || w.includes(hw)))
-    if (overlap.length >= 2) count += hero.customers.length
+    if (overlap.length >= 1) count += hero.customers.length
   }
   return count
 }
 
 /** Get all evidence names for a UC (from both customer stories and Hero AI) */
-function getEvidenceNames(uc: { id: string; name: string; challengeIds: string[] }, industryId: string): string[] {
+function getEvidenceNames(uc: { id: string; name: string; description?: string; challengeIds: string[] }, industryId: string): string[] {
   const names: string[] = []
   // From customer 1-pagers
   for (const story of CUSTOMER_STORIES) {
@@ -60,12 +63,14 @@ function getEvidenceNames(uc: { id: string; name: string; challengeIds: string[]
     }
   }
   // From Hero AI decks
-  const ucWords = uc.name.toLowerCase().split(/\s+/).filter(w => w.length > 4)
+  const ucText = (uc.name + ' ' + (uc.description || '')).toLowerCase()
+  const ucWords = ucText.split(/\s+/).filter(w => w.length > 4 && !HERO_STOP_WORDS.has(w))
   for (const hero of HERO_USE_CASES) {
     if (!isIndustryMatch(hero.industry, industryId)) continue
-    const heroWords = hero.title.toLowerCase().split(/\s+/).filter(w => w.length > 4)
+    const heroText = (hero.title + ' ' + (hero.valueProp || '')).toLowerCase()
+    const heroWords = heroText.split(/\s+/).filter(w => w.length > 4 && !HERO_STOP_WORDS.has(w))
     const overlap = ucWords.filter(w => heroWords.some(hw => hw.includes(w) || w.includes(hw)))
-    if (overlap.length >= 2) {
+    if (overlap.length >= 1) {
       for (const c of hero.customers) {
         if (!names.includes(c.name)) names.push(c.name)
       }

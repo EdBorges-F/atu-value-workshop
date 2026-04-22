@@ -226,7 +226,7 @@ function bestMetric(metrics: string[]): string {
 // Normalize story industry tags to match the app's industry IDs
 const INDUSTRY_ALIAS: Record<string, string[]> = {
   'healthcare-provider': ['healthcare', 'health'],
-  'healthcare-medtech': ['healthcare', 'health', 'pharma', 'biotech', 'life-sciences'],
+  'healthcare-medtech': ['healthcare', 'health', 'pharma', 'biotech', 'life-sciences', 'healthcare-pharma'],
   'energy-resources': ['energy', 'oil-gas', 'utilities'],
   'media-entertainment': ['media', 'entertainment'],
   'mobility-travel': ['travel-hospitality', 'transportation', 'logistics'],
@@ -234,6 +234,8 @@ const INDUSTRY_ALIAS: Record<string, string[]> = {
   'banking': ['financial-services'],
   'higher-education': ['education'],
   'consumer-goods': ['consumer-goods', 'cpg'],
+  'automotive': ['automotive', 'mobility'],
+  'professional-services': ['professional-services', 'technology'],
 }
 
 export function isIndustryMatch(storyIndustry: string, appIndustryId: string): boolean {
@@ -281,12 +283,13 @@ function matchStoriesToUseCase(
   }
 
   // Also match from HERO_USE_CASES (same-industry only)
-  const ucWords = uc.name.toLowerCase().split(/\s+/).filter(w => w.length > 4 && !STOP_WORDS.has(w))
+  // Use full UC keywords (name + description) for richer matching
   for (const hero of HERO_USE_CASES) {
     if (!isIndustryMatch(hero.industry, industryId)) continue
-    const heroWords = hero.title.toLowerCase().split(/\s+/).filter(w => w.length > 4)
-    const overlap = ucWords.filter(w => heroWords.some(hw => hw.includes(w) || w.includes(hw)))
-    if (overlap.length >= 2) {
+    const heroText = (hero.title + ' ' + (hero.valueProp || '')).toLowerCase()
+    const heroWords = heroText.split(/\s+/).filter(w => w.length > 4 && !STOP_WORDS.has(w))
+    const overlap = ucKeywords.filter(w => heroWords.some(hw => hw.includes(w) || w.includes(hw)))
+    if (overlap.length >= 1) {
       for (const customer of hero.customers) {
         // Skip customers with empty outcomes or title-like names (extraction artifacts)
         if (customer.outcomes.length === 0) continue
