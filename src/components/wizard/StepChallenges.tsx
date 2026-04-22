@@ -122,9 +122,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
   if (challengeKey !== prevChallengesRef.current && rankedUseCases.length > 0) {
     prevChallengesRef.current = challengeKey
     const ids = rankedUseCases.slice(0, 12).map((r) => r.uc.id)
-    if (selectedUseCaseIds.length === 0 || !selectedUseCaseIds.some(id => ids.includes(id))) {
-      updateData({ selectedUseCaseIds: ids })
-    }
+    updateData({ selectedUseCaseIds: ids })
   }
 
   const toggleChallenge = (id: string) => {
