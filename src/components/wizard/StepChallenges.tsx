@@ -142,6 +142,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
   }
 
   // Counts for the header
+  const recommendedIds = new Set(rankedUseCases.slice(0, 12).map((r) => r.uc.id))
   const evidenceBackedCount = rankedUseCases.filter((r) => r.evidenceCount > 0).length
 
   return (
@@ -268,6 +269,11 @@ export default function StepChallenges({ wizard }: WizardProps) {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-semibold text-sm text-text">{uc.name}</p>
+                            {recommendedIds.has(uc.id) && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary">
+                                ⚡ Recommended
+                              </span>
+                            )}
                             {evidenceCount > 0 && (
                               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">
                                 📊 {evidenceCount} {evidenceCount === 1 ? 'story' : 'stories'}
