@@ -85,7 +85,7 @@ export default function StepReview({ wizard }: WizardProps) {
               <p className="text-[11px] uppercase tracking-wider text-text-secondary font-semibold">
                 Business Challenges ({challenges.length})
               </p>
-              <button onClick={() => goToStep(1)} className="text-[11px] text-primary hover:underline">Edit</button>
+              <button onClick={() => goToStep(2)} className="text-[11px] text-primary hover:underline">Edit</button>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {challenges.map((c) => (

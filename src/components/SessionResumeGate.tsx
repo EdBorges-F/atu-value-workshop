@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const STORAGE_KEY = 'frontier-wizard-data'
+const STORAGE_KEY = 'frontier-canvas-session'
 
 export default function SessionResumeGate({ children }: { children: React.ReactNode }) {
   const [showModal, setShowModal] = useState(false)
@@ -11,7 +11,7 @@ export default function SessionResumeGate({ children }: { children: React.ReactN
       const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) {
         const parsed = JSON.parse(raw)
-        const name = parsed?.companyName?.trim()
+        const name = parsed?.data?.companyName?.trim()
         if (name) {
           setCompanyName(name)
           setShowModal(true)
