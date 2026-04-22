@@ -283,10 +283,6 @@ export default function StepValueStory({ wizard }: WizardProps) {
   const story = useMemo(() => generateValueStory(data), [data])
   const printRef = useRef<HTMLDivElement>(null)
 
-  const handlePrint = () => {
-    window.print()
-  }
-
   // Consolidated evidence across all pillars for "The Proof" section (deduped by company)
   const allEvidence = useMemo(() => {
     const seen = new Set<string>()
@@ -429,11 +425,6 @@ export default function StepValueStory({ wizard }: WizardProps) {
           </div>
           <div className="flex gap-2 print:hidden">
             <CopyButton text={fullStoryText} label="📋 Copy" />
-            <button onClick={handlePrint}
-              className="px-4 py-2 rounded-xl text-xs font-semibold transition-all
-                         bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm">
-              🖨️ Print
-            </button>
           </div>
         </div>
 
@@ -739,18 +730,14 @@ export default function StepValueStory({ wizard }: WizardProps) {
             <span className="text-3xl">🔒</span>
             <h3 className="text-base font-bold text-text mt-2">Microsoft Customer Zero</h3>
             <p className="text-xs text-text-secondary mt-1 max-w-md mx-auto">
-              Microsoft's own AI transformation results — internal metrics from 10 departments, ~100 case studies.
-              This content is approved for customers and partners with a signed NDA.
+              Enable Customer Zero on the Customer Profile page to unlock Microsoft's internal AI transformation data.
             </p>
             <button
-              onClick={() => wizard.updateData({ ndaConfirmed: true })}
-              className="mt-4 px-5 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-all print:hidden"
+              onClick={() => wizard.goToStep(0)}
+              className="mt-3 px-4 py-2 rounded-xl border border-gray-300 text-sm font-medium text-text hover:bg-gray-50 transition-all print:hidden"
             >
-              🔐 I confirm NDA is in place
+              ← Go to Customer Profile
             </button>
-            <p className="text-[9px] text-gray-400 mt-2">
-              By confirming, you acknowledge the customer/partner has a signed NDA with Microsoft.
-            </p>
           </div>
         ) : (
           <Collapsible title="Microsoft Customer Zero" icon="🔒"
@@ -888,7 +875,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
           Responsible AI principles and Secure Future Initiative standards. Evidence sourced from published customer stories,
           IDC/Forrester research, and industry benchmarks. Results vary by organization. Validate with customer-specific context before sharing.
         </p>
-        <div className="flex items-center justify-center gap-4 mt-3 text-[10px] text-text-secondary">
+        <div className="flex items-center justify-center gap-3 mt-3 text-[10px] text-text-secondary flex-wrap">
           <a href="https://www.microsoft.com/ai/responsible-ai" target="_blank" rel="noopener" className="hover:text-primary">🛡️ Responsible AI</a>
           <a href="https://www.microsoft.com/en-us/trust-center/security/secure-future-initiative" target="_blank" rel="noopener" className="hover:text-primary">🔒 SFI Secure</a>
           <a href="https://www.microsoft.com/en-us/trust-center/privacy" target="_blank" rel="noopener" className="hover:text-primary">🔏 Privacy</a>

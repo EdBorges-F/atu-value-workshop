@@ -1,26 +1,30 @@
-const STEPS = [
-  { label: 'Customer Profile', short: 'Profile' },
-  { label: 'Challenges & Use Cases', short: 'Challenges' },
-  { label: 'Review', short: 'Review' },
-  { label: 'Value Story', short: 'Story' },
+const ALL_STEPS = [
+  { label: 'Customer Profile', short: 'Profile', step: 0 },
+  { label: '🔒 Customer Zero', short: 'CZ', step: 1, ndaOnly: true },
+  { label: 'Challenges & Use Cases', short: 'Challenges', step: 2 },
+  { label: 'Review', short: 'Review', step: 3 },
+  { label: 'Value Story', short: 'Story', step: 4 },
 ]
 
 interface ProgressDotsProps {
   currentStep: number
+  ndaConfirmed?: boolean
   onStepClick?: (step: number) => void
 }
 
-export default function ProgressDots({ currentStep, onStepClick }: ProgressDotsProps) {
+export default function ProgressDots({ currentStep, ndaConfirmed, onStepClick }: ProgressDotsProps) {
+  const visibleSteps = ALL_STEPS.filter((s) => !s.ndaOnly || ndaConfirmed)
+
   return (
     <nav className="flex flex-col gap-3 w-full" aria-label="Wizard progress">
-      {STEPS.map((step, idx) => {
-        const isActive = idx === currentStep
-        const isCompleted = idx < currentStep
+      {visibleSteps.map((step, displayIdx) => {
+        const isActive = step.step === currentStep
+        const isCompleted = step.step < currentStep
         return (
           <button
             key={step.label}
-            onClick={() => onStepClick?.(idx)}
-            disabled={idx > currentStep}
+            onClick={() => onStepClick?.(step.step)}
+            disabled={step.step > currentStep}
             className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all duration-200
               ${isActive ? 'bg-white/10 text-white' : ''}
               ${isCompleted ? 'text-white/80 hover:bg-white/5' : ''}
@@ -34,7 +38,7 @@ export default function ProgressDots({ currentStep, onStepClick }: ProgressDotsP
                 ${!isActive && !isCompleted ? 'bg-white/10 text-white/40' : ''}
               `}
             >
-              {isCompleted ? '✓' : idx + 1}
+              {isCompleted ? '✓' : displayIdx + 1}
             </span>
             <span className="text-sm font-medium">{step.label}</span>
           </button>
