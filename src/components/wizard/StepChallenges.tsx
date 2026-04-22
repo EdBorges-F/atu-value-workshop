@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
 import { CHALLENGES } from '../../data/challenges'
 import { USE_CASES } from '../../data/use-cases'
@@ -77,16 +77,16 @@ function getEvidenceNames(uc: { id: string; name: string; challengeIds: string[]
 export default function StepChallenges({ wizard }: WizardProps) {
   const { data, updateData, prevStep, nextStep, canAdvance } = wizard
   const { industryId, priorities, selectedChallengeIds, selectedUseCaseIds } = data
+  const [viewFilter, setViewFilter] = useState<'all' | 'evidence'>('all')
 
   const priorityScores = useMemo(() => scoreChallenges(priorities), [priorities])
 
-  // Show ALL challenges — industry-relevant first, then the rest
+  // Only show industry-relevant challenges (hide cross-industry ones to avoid confusion)
   const allChallenges = useMemo(() => {
     const industryRelevant = CHALLENGES.filter((c) => c.industryIds.includes(industryId))
-    const others = CHALLENGES.filter((c) => !c.industryIds.includes(industryId))
     const byScore = (a: typeof CHALLENGES[0], b: typeof CHALLENGES[0]) =>
       (priorityScores.get(b.id) ?? 0) - (priorityScores.get(a.id) ?? 0)
-    return [...industryRelevant.sort(byScore), ...others.sort(byScore)]
+    return industryRelevant.sort(byScore)
   }, [industryId, priorityScores])
 
   // Scored & ranked use cases
@@ -116,6 +116,17 @@ export default function StepChallenges({ wizard }: WizardProps) {
     return scored
   }, [industryId, selectedChallengeIds, data.companySize])
 
+  // Auto-select recommended use cases when challenges change
+  const prevChallengesRef = useMemo(() => ({ current: '' }), [])
+  const challengeKey = selectedChallengeIds.sort().join(',')
+  if (challengeKey !== prevChallengesRef.current && rankedUseCases.length > 0) {
+    prevChallengesRef.current = challengeKey
+    const ids = rankedUseCases.slice(0, 12).map((r) => r.uc.id)
+    if (selectedUseCaseIds.length === 0 || !selectedUseCaseIds.some(id => ids.includes(id))) {
+      updateData({ selectedUseCaseIds: ids })
+    }
+  }
+
   const toggleChallenge = (id: string) => {
     const next = selectedChallengeIds.includes(id)
       ? selectedChallengeIds.filter((cid) => cid !== id)
@@ -128,19 +139,6 @@ export default function StepChallenges({ wizard }: WizardProps) {
       ? selectedUseCaseIds.filter((uid) => uid !== id)
       : [...selectedUseCaseIds, id]
     updateData({ selectedUseCaseIds: next })
-  }
-
-  // Smart Select: evidence-backed industry UCs only
-  const selectEvidenceBacked = () => {
-    const evidenceBacked = rankedUseCases.filter((r) => r.evidenceCount > 0)
-    const ids = evidenceBacked.slice(0, 10).map((r) => r.uc.id)
-    updateData({ selectedUseCaseIds: ids })
-  }
-
-  // Select Recommended: top industry UCs by score (max 12)
-  const selectRecommended = () => {
-    const ids = rankedUseCases.slice(0, 12).map((r) => r.uc.id)
-    updateData({ selectedUseCaseIds: ids })
   }
 
   // Counts for the header
@@ -168,7 +166,6 @@ export default function StepChallenges({ wizard }: WizardProps) {
           {allChallenges.map((challenge) => {
             const isSelected = selectedChallengeIds.includes(challenge.id)
             const matchScore = priorityScores.get(challenge.id) ?? 0
-            const isIndustryRelevant = challenge.industryIds.includes(industryId)
             return (
               <button
                 key={challenge.id}
@@ -178,9 +175,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
                   px-4 py-2 rounded-full text-sm font-medium transition-all
                   ${isSelected
                     ? 'bg-primary text-white shadow-md shadow-primary/20'
-                    : isIndustryRelevant
-                      ? 'bg-surface border border-gray-200 text-text hover:border-primary/40 hover:bg-primary/5'
-                      : 'bg-surface border border-dashed border-gray-200 text-text-secondary hover:border-primary/40 hover:bg-primary/5'
+                    : 'bg-surface border border-gray-200 text-text hover:border-primary/40 hover:bg-primary/5'
                   }
                 `}
               >
@@ -221,19 +216,23 @@ export default function StepChallenges({ wizard }: WizardProps) {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={selectRecommended}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-primary/10 text-primary
-                           hover:bg-primary/20 border border-primary/20 transition-all"
+                onClick={() => setViewFilter('all')}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all border
+                  ${viewFilter === 'all'
+                    ? 'bg-primary text-white border-primary shadow-sm'
+                    : 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'}`}
               >
-                ⚡ Select Recommended
+                All ({rankedUseCases.length})
               </button>
               {evidenceBackedCount > 0 && (
                 <button
-                  onClick={selectEvidenceBacked}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700
-                             hover:bg-emerald-100 border border-emerald-200 transition-all"
+                  onClick={() => setViewFilter(viewFilter === 'evidence' ? 'all' : 'evidence')}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all border
+                    ${viewFilter === 'evidence'
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                      : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'}`}
                 >
-                  ★ Evidence-Backed Only
+                  ★ Evidence-Backed ({evidenceBackedCount})
                 </button>
               )}
             </div>
@@ -245,7 +244,9 @@ export default function StepChallenges({ wizard }: WizardProps) {
             </p>
           ) : (
             <div className="space-y-2">
-              {rankedUseCases.map((ranked) => {
+              {rankedUseCases
+                .filter((ranked) => viewFilter === 'all' || ranked.evidenceCount > 0)
+                .map((ranked) => {
                 const { uc, evidenceCount, evidenceNames } = ranked
                 const isSelected = selectedUseCaseIds.includes(uc.id)
 
