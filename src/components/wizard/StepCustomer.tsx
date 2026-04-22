@@ -158,9 +158,9 @@ export default function StepCustomer({ wizard }: WizardProps) {
             onClick={() => setSmartFillOpen(!smartFillOpen)}
             className="flex items-center gap-2 text-left hover:opacity-80 transition-all"
           >
-            <span className="text-lg">⚡</span>
-            <span className="text-sm font-semibold text-primary">Smart Fill</span>
-            <span className="text-xs text-text-secondary">Paste account notes to auto-populate</span>
+            <span className="text-lg">🚀</span>
+            <span className="text-sm font-semibold text-primary">Start Here</span>
+            <span className="text-xs text-text-secondary">Paste your Copilot account summary to auto-fill</span>
             <span className="text-text-secondary text-sm">{smartFillOpen ? '▾' : '▸'}</span>
           </button>
           <a
