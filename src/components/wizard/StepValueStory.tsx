@@ -429,7 +429,8 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </div>
 
       {/* ━━ Section Jump Nav ━━ */}
-      <nav className="sticky top-0 z-40 -mx-2 px-2 py-2 bg-white/80 backdrop-blur-md border-b border-gray-100 flex gap-2 overflow-x-auto print:hidden">
+      <nav className="sticky top-0 z-40 -mx-2 px-2 py-2 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center gap-2 overflow-x-auto print:hidden">
+        <span className="flex-shrink-0 text-xs font-semibold text-text-secondary">Jump to:</span>
         {[
           { id: 'plan', icon: '🎯', label: 'The Plan' },
           { id: 'proof', icon: '📊', label: 'The Proof' },
