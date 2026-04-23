@@ -774,6 +774,21 @@ export function generateValueStory(data: WizardData): ValueStory {
   const pillarContext = pillarSections.map((ps) => `${ps.pillar.fullName}: ${ps.customerPriorities.slice(0, 2).join(', ')}`).join('; ')
   const statedPriorities = data.priorities ? data.priorities.slice(0, 400) : challengeList
 
+  // Enrich context with discovery conversation notes
+  const discoveryBlock = data.discoveryNotes && Object.keys(data.discoveryNotes).length > 0
+    ? '\n- Discovery conversation notes:\n' + Object.entries(data.discoveryNotes)
+        .filter(([, v]) => v?.trim())
+        .map(([pillarId, note]) => {
+          const pillarNames: Record<string, string> = {
+            enrich: 'Employee Experience', reshape: 'Business Processes',
+            reinvent: 'Customer Engagement', bend: 'Innovation',
+            intelligence: 'Data & Intelligence', security: 'Security & Trust',
+          }
+          return `  ${pillarNames[pillarId] || pillarId}: ${note.trim().slice(0, 200)}`
+        })
+        .join('\n')
+    : ''
+
   const complianceBlock = `\n\nCONTENT INTEGRITY RULES — MANDATORY FOR ALL DELIVERABLES:
 
 EVIDENCE SOURCING:
@@ -814,7 +829,7 @@ TRUST & SECURITY: "Microsoft cloud services referenced in this document comply w
 
 LEGAL: "© ${new Date().getFullYear()} Microsoft Corporation. All rights reserved. This material is provided for informational purposes only. Microsoft makes no warranties, express or implied."`
 
-  const fullContext = `You are helping a Microsoft Account Executive prepare materials for ${companyName}, a ${sizeDesc} in ${industryName}.\n\nCUSTOMER CONTEXT:\n- Strategic priorities: ${statedPriorities}\n- Key challenges: ${challengeList}\n- Transformation areas:\n  ${pillarContext}${benchmarkBlock}${roiBlock}${stakeholderBlock}\n\nGUIDELINES:\n- Lead with customer's language, not Microsoft product names\n- Reference specific use cases and evidence from above\n- Keep tone consultative, not salesy\n- Include specific next steps with owners\n- IMPORTANT FRAMING: All projections, ROI figures, and timelines are ESTIMATES and REFERENCES for inspiration — use language like "estimated", "potential", "indicative range", "based on similar deployments", "for reference". Never present figures as guarantees or commitments. Titles should reflect this (e.g., "Estimated Implementation Roadmap", "Potential Value Scenarios", "Indicative ROI Range"). This is a starting point for conversation, not a binding proposal.${complianceBlock}`
+  const fullContext = `You are helping a Microsoft Account Executive prepare materials for ${companyName}, a ${sizeDesc} in ${industryName}.\n\nCUSTOMER CONTEXT:\n- Strategic priorities: ${statedPriorities}\n- Key challenges: ${challengeList}\n- Transformation areas:\n  ${pillarContext}${discoveryBlock}${benchmarkBlock}${roiBlock}${stakeholderBlock}\n\nGUIDELINES:\n- Lead with customer's language, not Microsoft product names\n- Reference specific use cases and evidence from above\n- Keep tone consultative, not salesy\n- Include specific next steps with owners\n- IMPORTANT FRAMING: All projections, ROI figures, and timelines are ESTIMATES and REFERENCES for inspiration — use language like "estimated", "potential", "indicative range", "based on similar deployments", "for reference". Never present figures as guarantees or commitments. Titles should reflect this (e.g., "Estimated Implementation Roadmap", "Potential Value Scenarios", "Indicative ROI Range"). This is a starting point for conversation, not a binding proposal.${complianceBlock}`
 
   // Identify missing pillars for suggestion
   const activePillarIds = new Set(pillarSections.map(ps => ps.pillar.id))

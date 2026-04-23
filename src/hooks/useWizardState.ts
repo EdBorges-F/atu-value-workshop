@@ -15,6 +15,8 @@ export interface WizardData {
   // Step 2: Challenges & Use Cases
   selectedChallengeIds: string[]
   selectedUseCaseIds: string[]
+  // Discovery Conversation notes (keyed by pillar ID)
+  discoveryNotes: Record<string, string>
   // Readiness
   readinessAnswers: Record<string, number>
   readinessTier: ReadinessTier | ''
@@ -38,6 +40,7 @@ const INITIAL_DATA: WizardData = {
   crmContacts: [],
   selectedChallengeIds: [],
   selectedUseCaseIds: [],
+  discoveryNotes: {},
   readinessAnswers: {},
   readinessTier: '',
   ndaConfirmed: false,
