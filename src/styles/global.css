@@ -130,13 +130,14 @@ body {
   /* ── 1-Page Executive Summary ── */
   @page { margin: 0.3in; }
 
-  /* Force shrink to 1 page */
+  /* Force shrink to 1 page — centered */
   .print-1page {
     max-height: 100vh;
     overflow: hidden;
     transform: scale(0.82);
-    transform-origin: top left;
+    transform-origin: top center;
     width: 122%; /* compensate for scale */
+    margin-left: -11%; /* center the 122% width */
   }
   .print-1page > * + * { margin-top: 0.15rem !important; }
 
