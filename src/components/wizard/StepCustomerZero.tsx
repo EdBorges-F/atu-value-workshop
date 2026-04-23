@@ -28,8 +28,17 @@ const DEPT_ICONS: Record<string, string> = {
 }
 
 export default function StepCustomerZero({ wizard }: WizardProps) {
-  const { prevStep, nextStep, data } = wizard
+  const { prevStep, nextStep, data, updateData } = wizard
   const [expandedDept, setExpandedDept] = useState<string | null>(null)
+
+  const toggleLiked = (ucId: string) => {
+    const prev = data.czLikedUseCaseIds ?? []
+    updateData({
+      czLikedUseCaseIds: prev.includes(ucId)
+        ? prev.filter(id => id !== ucId)
+        : [...prev, ucId],
+    })
+  }
 
   // Compute active pillar IDs from selected challenges
   const activePillarIds = useMemo(() => {
@@ -108,14 +117,28 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
                 {pillar.icon} {pillar.fullName}
               </p>
               <div className="grid grid-cols-2 gap-2">
-                {ucs.map((uc) => (
-                  <div key={uc.id} className="p-2 rounded-lg bg-white/70">
-                    <p className="text-xs font-bold text-text">{uc.name}</p>
-                    {uc.metrics.map((m, i) => (
-                      <p key={i} className="text-[10px] text-primary font-medium mt-0.5">📈 {m}</p>
-                    ))}
-                  </div>
-                ))}
+                {ucs.map((uc) => {
+                  const liked = (data.czLikedUseCaseIds ?? []).includes(uc.id)
+                  return (
+                    <button key={uc.id} onClick={() => toggleLiked(uc.id)}
+                      className={`p-2 rounded-lg text-left transition-all ${liked
+                        ? 'bg-white ring-2 ring-primary shadow-sm'
+                        : 'bg-white/70 hover:bg-white/90'}`}>
+                      <div className="flex items-start justify-between gap-1">
+                        <p className="text-xs font-bold text-text">{uc.name}</p>
+                        <span className={`text-sm flex-shrink-0 transition-transform ${liked ? 'scale-110' : 'opacity-40'}`}>
+                          {liked ? '💡' : '○'}
+                        </span>
+                      </div>
+                      {uc.metrics.map((m, i) => (
+                        <p key={i} className="text-[10px] text-primary font-medium mt-0.5">📈 {m}</p>
+                      ))}
+                      {liked && (
+                        <p className="text-[9px] text-primary font-semibold mt-1">✓ Customer interested — will boost related use cases</p>
+                      )}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           )
@@ -283,15 +306,41 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
         </div>
       </details>
 
-      {/* ━━ Bridge CTA ━━ */}
-      <div className="rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-5 text-center">
-        <p className="text-sm font-semibold text-blue-800">
-          💡 Now take this inspiration into use case selection
-        </p>
-        <p className="text-xs text-blue-600 mt-1">
-          Think about which patterns, recipes, and department results map to your customer's challenges.
-        </p>
-      </div>
+      {/* ━━ Bridge CTA — dynamic based on customer interest ━━ */}
+      {(data.czLikedUseCaseIds ?? []).length > 0 ? (
+        <div className="rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">💡</span>
+            <p className="text-sm font-semibold text-emerald-800">
+              {(data.czLikedUseCaseIds ?? []).length} area{(data.czLikedUseCaseIds ?? []).length > 1 ? 's' : ''} resonated with the customer
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {(data.czLikedUseCaseIds ?? []).map(id => {
+              const uc = CUSTOMER_ZERO_USE_CASES.find(u => u.id === id)
+              if (!uc) return null
+              const pillar = FRONTIER_PILLARS.find(p => p.id === uc.pillar)
+              return (
+                <span key={id} className="px-2.5 py-1 rounded-full bg-white/80 border border-emerald-200 text-[11px] font-medium text-emerald-800">
+                  {pillar?.icon} {uc.name}
+                </span>
+              )
+            })}
+          </div>
+          <p className="text-xs text-emerald-600">
+            These signals will <strong>boost related use cases</strong> in the Value Story and appear in the Executive Summary.
+          </p>
+        </div>
+      ) : (
+        <div className="rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-5 text-center">
+          <p className="text-sm font-semibold text-blue-800">
+            💡 Tap any use case above that resonates with the customer
+          </p>
+          <p className="text-xs text-blue-600 mt-1">
+            Their interest signals will boost related use cases in the Value Story.
+          </p>
+        </div>
+      )}
 
       {/* ━━ Navigation ━━ */}
       <div className="flex justify-between pt-4">

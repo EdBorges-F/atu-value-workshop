@@ -22,6 +22,8 @@ export interface WizardData {
   readinessTier: ReadinessTier | ''
   // NDA / Customer Zero
   ndaConfirmed: boolean
+  // CZ use cases the customer expressed interest in
+  czLikedUseCaseIds: string[]
 }
 
 export interface CRMContact {
@@ -44,6 +46,7 @@ const INITIAL_DATA: WizardData = {
   readinessAnswers: {},
   readinessTier: '',
   ndaConfirmed: false,
+  czLikedUseCaseIds: [],
 }
 
 const STORAGE_KEY = 'frontier-canvas-session'
