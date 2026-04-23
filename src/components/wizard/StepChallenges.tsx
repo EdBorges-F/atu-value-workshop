@@ -1,15 +1,86 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
 import { CHALLENGES } from '../../data/challenges'
 import { USE_CASES } from '../../data/use-cases'
 import { CUSTOMER_STORIES } from '../../data/customer-stories'
 import { HERO_USE_CASES } from '../../data/hero-use-cases'
 import { PRIORITY_KEYWORDS } from '../../data/priority-keywords'
-import { isIndustryMatch } from '../../lib/valueStoryGenerator'
+import { isIndustryMatch, FRONTIER_PILLARS, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION } from '../../lib/valueStoryGenerator'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
-/** Score challenges based on priority text match */
+/* ── Discovery Companion ──────────────────────────────── */
+
+const DISCOVERY_THEMES = [
+  {
+    pillarId: 'enrich',
+    name: 'Employee Experience',
+    icon: '🧠',
+    color: 'bg-violet-50 border-violet-200',
+    questions: [
+      'How do employees find information and expertise today?',
+      'Where are the biggest skill gaps or onboarding bottlenecks?',
+      'How much time do knowledge workers spend searching vs. creating?',
+    ],
+  },
+  {
+    pillarId: 'reshape',
+    name: 'Business Processes',
+    icon: '⚙️',
+    color: 'bg-blue-50 border-blue-200',
+    questions: [
+      'Which processes are most manual or error-prone?',
+      'Where do bottlenecks slow the business down?',
+      'Are there legacy systems causing friction or data silos?',
+    ],
+  },
+  {
+    pillarId: 'reinvent',
+    name: 'Customer Engagement',
+    icon: '🚀',
+    color: 'bg-rose-50 border-rose-200',
+    questions: [
+      'How do they serve customers today — and where is there friction?',
+      'What does their competition do better in the customer journey?',
+      'Where do they lose customers or miss upsell opportunities?',
+    ],
+  },
+  {
+    pillarId: 'bend',
+    name: 'Innovation & Speed',
+    icon: '💡',
+    color: 'bg-amber-50 border-amber-200',
+    questions: [
+      'How fast can they bring new products or services to market?',
+      'What blocks experimentation or rapid prototyping?',
+      'Where would they invest if cost and time were no object?',
+    ],
+  },
+  {
+    pillarId: 'intelligence',
+    name: 'Data & Intelligence',
+    icon: '🔮',
+    color: 'bg-indigo-50 border-indigo-200',
+    questions: [
+      'Is their data unified or siloed across systems and teams?',
+      'Can leaders get real-time insights or do they rely on stale reports?',
+      'What business decisions are made on gut feeling vs. data?',
+    ],
+  },
+  {
+    pillarId: 'security',
+    name: 'Security & Trust',
+    icon: '🛡️',
+    color: 'bg-slate-50 border-slate-200',
+    questions: [
+      'What regulatory pressures or compliance mandates do they face?',
+      'How mature is their security posture — Zero Trust adoption?',
+      'Any recent data breaches, audit findings, or governance gaps?',
+    ],
+  },
+] as const
+
+/** Score challenges based on free-text match against PRIORITY_KEYWORDS */
 function scoreChallenges(priorities: string) {
   const lower = priorities.toLowerCase()
   if (!lower.trim()) return new Map<string, number>()
@@ -81,10 +152,54 @@ function getEvidenceNames(uc: { id: string; name: string; description?: string; 
 
 export default function StepChallenges({ wizard }: WizardProps) {
   const { data, updateData, prevStep, nextStep, canAdvance } = wizard
-  const { industryId, priorities, selectedChallengeIds, selectedUseCaseIds } = data
-  // viewFilter removed — all UCs always visible
+  const { industryId, priorities, selectedChallengeIds, selectedUseCaseIds, discoveryNotes } = data
+  const [discoveryOpen, setDiscoveryOpen] = useState(false)
+  const [expandedTheme, setExpandedTheme] = useState<string | null>(null)
 
-  const priorityScores = useMemo(() => scoreChallenges(priorities), [priorities])
+  // Combine priorities text + all discovery notes for scoring
+  const allText = useMemo(() => {
+    const noteTexts = Object.values(discoveryNotes).filter(Boolean).join(' ')
+    return (priorities + ' ' + noteTexts).trim()
+  }, [priorities, discoveryNotes])
+
+  const priorityScores = useMemo(() => scoreChallenges(allText), [allText])
+
+  // Also compute which pillar themes have notes → which challenges they suggest
+  const discoveryInsights = useMemo(() => {
+    const insights: { challengeId: string; reason: string }[] = []
+    const allPillars = [...FRONTIER_PILLARS, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION]
+
+    for (const theme of DISCOVERY_THEMES) {
+      const note = discoveryNotes[theme.pillarId]?.toLowerCase().trim()
+      if (!note) continue
+
+      const pillar = allPillars.find(p => p.id === theme.pillarId)
+      if (!pillar) continue
+
+      // Find challenges whose pillarId matches this theme
+      for (const challenge of CHALLENGES) {
+        if (challenge.pillarId !== theme.pillarId) continue
+        if (!challenge.industryIds.includes(industryId)) continue
+        // Check if the note text has any keywords for this challenge
+        const pk = PRIORITY_KEYWORDS.find(pk => pk.challengeId === challenge.id)
+        if (!pk) continue
+        const matched = pk.keywords.filter(kw => note.includes(kw.toLowerCase()))
+        if (matched.length > 0) {
+          insights.push({
+            challengeId: challenge.id,
+            reason: `Your "${theme.name}" notes mention: ${matched.slice(0, 3).join(', ')}`,
+          })
+        }
+      }
+    }
+    return insights
+  }, [discoveryNotes, industryId])
+
+  const discoveryCount = Object.values(discoveryNotes).filter(Boolean).length
+
+  const updateNote = (pillarId: string, text: string) => {
+    updateData({ discoveryNotes: { ...discoveryNotes, [pillarId]: text } })
+  }
 
   // Only show industry-relevant challenges (hide cross-industry ones to avoid confusion)
   const allChallenges = useMemo(() => {
@@ -158,6 +273,131 @@ export default function StepChallenges({ wizard }: WizardProps) {
         </p>
       </div>
 
+      {/* Discovery Companion */}
+      <div className="rounded-[20px] border border-primary/15 bg-primary/[0.02] overflow-hidden">
+        <button
+          onClick={() => setDiscoveryOpen(!discoveryOpen)}
+          className="w-full flex items-center justify-between px-5 py-3 hover:bg-primary/[0.03] transition-all"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🎯</span>
+            <span className="text-sm font-semibold text-primary">Discovery Companion</span>
+            <span className="text-xs text-text-secondary">
+              {discoveryCount > 0
+                ? `${discoveryCount} theme${discoveryCount > 1 ? 's' : ''} captured`
+                : 'Guided questions to deepen the conversation'
+              }
+            </span>
+          </div>
+          <span className="text-text-secondary text-sm">{discoveryOpen ? '▾' : '▸'}</span>
+        </button>
+
+        {discoveryOpen && (
+          <div className="px-5 pb-5 space-y-3">
+            <p className="text-xs text-text-secondary leading-relaxed">
+              The Frontier approach: <strong>stay longer, listen more</strong>. Use these prompts during the conversation.
+              Notes you capture here will automatically suggest matching challenges below.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {DISCOVERY_THEMES.map((theme) => {
+                const isExpanded = expandedTheme === theme.pillarId
+                const hasNotes = !!discoveryNotes[theme.pillarId]?.trim()
+                const matchingInsights = discoveryInsights.filter(i =>
+                  CHALLENGES.find(c => c.id === i.challengeId)?.pillarId === theme.pillarId
+                )
+
+                return (
+                  <div
+                    key={theme.pillarId}
+                    className={`rounded-xl border transition-all ${theme.color} ${
+                      isExpanded ? 'md:col-span-2 ring-1 ring-primary/20' : ''
+                    }`}
+                  >
+                    <button
+                      onClick={() => setExpandedTheme(isExpanded ? null : theme.pillarId)}
+                      className="w-full flex items-center justify-between p-3 text-left"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>{theme.icon}</span>
+                        <span className="text-xs font-semibold text-text">{theme.name}</span>
+                        {hasNotes && (
+                          <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                        )}
+                      </div>
+                      <span className="text-[10px] text-text-secondary">
+                        {isExpanded ? '▾' : '▸'}
+                      </span>
+                    </button>
+
+                    {isExpanded && (
+                      <div className="px-3 pb-3 space-y-2">
+                        <div className="space-y-1">
+                          {theme.questions.map((q, i) => (
+                            <p key={i} className="text-[11px] text-text-secondary flex items-start gap-1.5">
+                              <span className="text-primary mt-0.5">•</span>
+                              <span className="italic">"{q}"</span>
+                            </p>
+                          ))}
+                        </div>
+                        <textarea
+                          value={discoveryNotes[theme.pillarId] || ''}
+                          onChange={(e) => updateNote(theme.pillarId, e.target.value)}
+                          placeholder="Capture what you hear..."
+                          rows={3}
+                          className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-xs text-text
+                                     placeholder:text-text-secondary/40 focus:outline-none focus:ring-1 focus:ring-primary/30
+                                     focus:border-primary transition-all resize-none"
+                        />
+                        {matchingInsights.length > 0 && (
+                          <div className="text-[11px] text-primary font-medium space-y-0.5">
+                            {matchingInsights.map((ins, i) => (
+                              <p key={i}>→ Suggests: <strong>{CHALLENGES.find(c => c.id === ins.challengeId)?.name}</strong></p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Summary of all discovery insights */}
+            {discoveryInsights.length > 0 && (
+              <div className="rounded-lg bg-primary/5 border border-primary/10 p-3 space-y-1.5">
+                <p className="text-xs font-semibold text-primary">
+                  💡 Discovery suggests {discoveryInsights.length} challenge{discoveryInsights.length > 1 ? 's' : ''}:
+                </p>
+                {discoveryInsights.map((ins, i) => {
+                  const ch = CHALLENGES.find(c => c.id === ins.challengeId)
+                  const alreadySelected = selectedChallengeIds.includes(ins.challengeId)
+                  return (
+                    <div key={i} className="flex items-center justify-between gap-2">
+                      <div className="text-[11px] text-text min-w-0">
+                        <span className="font-medium">{ch?.name}</span>
+                        <span className="text-text-secondary ml-1.5">— {ins.reason}</span>
+                      </div>
+                      {!alreadySelected && (
+                        <button
+                          onClick={() => toggleChallenge(ins.challengeId)}
+                          className="text-[10px] px-2 py-0.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-all flex-shrink-0"
+                        >
+                          + Add
+                        </button>
+                      )}
+                      {alreadySelected && (
+                        <span className="text-[10px] text-primary/60 flex-shrink-0">✓ Selected</span>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Challenge pills */}
       <section className="space-y-3">
         <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">
@@ -191,9 +431,9 @@ export default function StepChallenges({ wizard }: WizardProps) {
             )
           })}
         </div>
-        {priorityScores.size > 0 && (
+        {(priorityScores.size > 0) && (
           <p className="text-xs text-text-secondary">
-            <span className="text-accent">★</span> = Matches strategic priorities
+            <span className="text-accent">★</span> = Matches priorities{discoveryCount > 0 ? ' & discovery notes' : ''}
           </p>
         )}
       </section>
