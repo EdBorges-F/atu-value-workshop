@@ -549,7 +549,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
         <div className="mt-5 pt-4 border-t border-gray-100">
           <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-3">Your Priorities → Our Approach</p>
           <div className="space-y-3">
-            {story.pillarSections.map(section => {
+            {story.pillarSections.filter(s => s.useCases.length > 0).map(section => {
               const topUc = section.useCases[0]
               const fb = topUc ? matchFunctionBenchmark(topUc.name, topUc.description) : null
               const topMetric = topUc?.matchedStories[0]?.metric
@@ -567,13 +567,14 @@ export default function StepValueStory({ wizard }: WizardProps) {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-xs font-bold text-text">{section.pillar.fullName}</span>
                         <span className="text-[10px] text-text-secondary">· {section.useCases.length} use case{section.useCases.length !== 1 ? 's' : ''}</span>
+                        {section.useCases.reduce((n, uc) => n + uc.matchedStories.length, 0) > 0 && (
+                          <span className="text-[10px] text-emerald-600">· {section.useCases.reduce((n, uc) => n + uc.matchedStories.length, 0)} stories</span>
+                        )}
                       </div>
-                      {topUc && (
-                        <p className="text-[11px] text-text mt-1">
-                          Top: <strong>{topUc.name}</strong>
-                          {topMetric && <span className="text-emerald-600 ml-1">— {topMetric}</span>}
-                        </p>
-                      )}
+                      <p className="text-[11px] text-text mt-1">
+                        Top: <strong>{topUc.name}</strong>
+                        {topMetric && <span className="text-emerald-600 ml-1">— {topMetric}</span>}
+                      </p>
                       {fb && (
                         <p className="text-[10px] text-primary mt-0.5">
                           📊 Benchmark: {fb.gain}
@@ -584,29 +585,59 @@ export default function StepValueStory({ wizard }: WizardProps) {
                 </div>
               )
             })}
-            {story.intelligenceSection && story.intelligenceSection.useCases.length > 0 && (
-              <div className="rounded-xl bg-indigo-50/50 border border-indigo-100 p-3">
-                <div className="flex items-start gap-2">
-                  <span className="text-base mt-0.5">{INTELLIGENCE_FOUNDATION.icon}</span>
-                  <div>
-                    <span className="text-xs font-bold text-indigo-700">Intelligence & Trust Foundation</span>
-                    <span className="text-[10px] text-indigo-500 ml-2">· {story.intelligenceSection.useCases.length} use cases</span>
-                    <p className="text-[11px] text-text mt-1">
-                      Top: <strong>{story.intelligenceSection.useCases[0].name}</strong>
-                    </p>
+            {story.intelligenceSection && story.intelligenceSection.useCases.length > 0 && (() => {
+              const topUc = story.intelligenceSection!.useCases[0]
+              const fb = topUc ? matchFunctionBenchmark(topUc.name, topUc.description) : null
+              return (
+                <div className="rounded-xl bg-indigo-50/50 border border-indigo-100 p-3">
+                  <div className="flex items-start gap-2">
+                    <span className="text-base mt-0.5">{INTELLIGENCE_FOUNDATION.icon}</span>
+                    <div>
+                      <span className="text-xs font-bold text-indigo-700">Intelligence & Trust Foundation</span>
+                      <span className="text-[10px] text-indigo-500 ml-2">· {story.intelligenceSection!.useCases.length} use cases</span>
+                      <p className="text-[11px] text-text mt-1">
+                        Top: <strong>{topUc.name}</strong>
+                      </p>
+                      {fb && (
+                        <p className="text-[10px] text-primary mt-0.5">📊 Benchmark: {fb.gain}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-            {story.securitySection && story.securitySection.useCases.length > 0 && (
-              <div className="rounded-xl bg-rose-50/50 border border-rose-100 p-3">
+              )
+            })()}
+            {story.securitySection && story.securitySection.useCases.length > 0 && (() => {
+              const topUc = story.securitySection!.useCases[0]
+              const fb = topUc ? matchFunctionBenchmark(topUc.name, topUc.description) : null
+              return (
+                <div className="rounded-xl bg-rose-50/50 border border-rose-100 p-3">
+                  <div className="flex items-start gap-2">
+                    <span className="text-base mt-0.5">{SECURITY_FOUNDATION.icon}</span>
+                    <div>
+                      <span className="text-xs font-bold text-rose-700">Security Foundation</span>
+                      <span className="text-[10px] text-rose-500 ml-2">· {story.securitySection!.useCases.length} use cases</span>
+                      <p className="text-[11px] text-text mt-1">
+                        Top: <strong>{topUc.name}</strong>
+                      </p>
+                      {fb && (
+                        <p className="text-[10px] text-primary mt-0.5">📊 Benchmark: {fb.gain}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })()}
+            {/* Empty pillars — brief expansion note instead of broken promise */}
+            {story.pillarSections.filter(s => s.useCases.length === 0).length > 0 && (
+              <div className="rounded-xl bg-violet-50/50 border border-violet-100 p-3">
                 <div className="flex items-start gap-2">
-                  <span className="text-base mt-0.5">{SECURITY_FOUNDATION.icon}</span>
+                  <span className="text-base mt-0.5">💡</span>
                   <div>
-                    <span className="text-xs font-bold text-rose-700">Security Foundation</span>
-                    <span className="text-[10px] text-rose-500 ml-2">· {story.securitySection.useCases.length} use cases</span>
-                    <p className="text-[11px] text-text mt-1">
-                      Top: <strong>{story.securitySection.useCases[0].name}</strong>
+                    <p className="text-xs font-bold text-violet-800">Expansion Opportunities</p>
+                    <p className="text-[10px] text-violet-600 mt-0.5">
+                      {story.pillarSections.filter(s => s.useCases.length === 0).map(s =>
+                        `${s.pillar.icon} ${s.pillar.name}`
+                      ).join(' · ')} — priorities identified but use cases not yet selected. Explore these in the next conversation.
                     </p>
                   </div>
                 </div>
