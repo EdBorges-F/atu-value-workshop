@@ -1194,7 +1194,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </section>
 
       {/* ── Disclaimer ── */}
-      <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5 text-center print:border-none">
+      <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5 text-center print:hidden">
         <p className="text-[11px] text-text-secondary leading-relaxed">
           ⚡ AI-Assisted · Human-Reviewed — This Value Story was prepared using the ATU Value Workshop, aligned with Microsoft's
           Responsible AI principles and Secure Future Initiative standards. Evidence sourced from published customer stories,

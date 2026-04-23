@@ -93,8 +93,14 @@ body {
 
 /* ─── Print Styles ───────────────────────────────────────────── */
 @media print {
+  /* Hide everything after exec summary in print */
   .no-print, .print\:hidden { display: none !important; }
   .print\:\!block { display: block !important; }
+
+  /* Belt-and-suspenders: hide all sections by ID */
+  #plan, #proof, #why-now, #next-steps, #cowork, #customer-zero { display: none !important; }
+  nav.sticky { display: none !important; }
+  .print-1page > .rounded-2xl:last-of-type ~ * { display: none !important; }
 
   @page {
     margin: 0.5in;
