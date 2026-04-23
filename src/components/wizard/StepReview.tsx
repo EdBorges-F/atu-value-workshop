@@ -1,10 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
 import { INDUSTRIES } from '../../data/industries'
 import { CHALLENGES } from '../../data/challenges'
 import { USE_CASES } from '../../data/use-cases'
 import { classifyToPillar, FRONTIER_PILLARS, SECURITY_FOUNDATION } from '../../lib/valueStoryGenerator'
-import { CUSTOMER_ZERO_DEPARTMENTS } from '../../data/customer-zero'
+import type { CustomerZeroDepartment } from '../../data/customer-zero'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
@@ -30,12 +30,19 @@ export default function StepReview({ wizard }: WizardProps) {
     [selectedUseCaseIds]
   )
 
+  // Lazy-load CZ departments only when NDA confirmed
+  const [czDepartments, setCzDepartments] = useState<CustomerZeroDepartment[]>([])
+  useEffect(() => {
+    if (!data.ndaConfirmed) { setCzDepartments([]); return }
+    import('../../data/customer-zero').then(mod => setCzDepartments(mod.CUSTOMER_ZERO_DEPARTMENTS))
+  }, [data.ndaConfirmed])
+
   // CZ departments filtered to active pillars
   const czMatchedDepts = useMemo(() => {
-    if (!data.ndaConfirmed) return []
+    if (czDepartments.length === 0) return []
     const activePillarIds = new Set<string>(useCases.map(uc => uc.pillarId ?? classifyToPillar(uc.name + ' ' + uc.description)))
-    return CUSTOMER_ZERO_DEPARTMENTS.filter(d => d.pillarIds.some(p => activePillarIds.has(p)))
-  }, [data.ndaConfirmed, useCases])
+    return czDepartments.filter(d => d.pillarIds.some(p => activePillarIds.has(p)))
+  }, [czDepartments, useCases])
 
   // Group use cases under pillars for narrative preview
   const pillarPreview = useMemo(() => {
