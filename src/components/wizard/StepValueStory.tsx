@@ -545,106 +545,98 @@ export default function StepValueStory({ wizard }: WizardProps) {
 
         <p className="text-sm text-text leading-relaxed">{story.executive_summary}</p>
 
-        {/* ── Priority → Challenge → Pillar → Top Use Case Flow ── */}
-        <div className="mt-5 pt-4 border-t border-gray-100">
-          <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-3">Your Priorities → Our Approach</p>
-          <div className="space-y-3">
-            {story.pillarSections.filter(s => s.useCases.length > 0).map(section => {
-              const topUc = section.useCases[0]
-              const fb = topUc ? matchFunctionBenchmark(topUc.name, topUc.description) : null
-              const topMetric = topUc?.matchedStories[0]?.metric
-              return (
-                <div key={section.pillar.id} className="rounded-xl bg-gray-50 border border-gray-100 p-3">
-                  <div className="flex items-start gap-2">
-                    <span className="text-base mt-0.5">{section.pillar.icon}</span>
-                    <div className="min-w-0 flex-1">
-                      {/* Priorities that map to this pillar */}
-                      {section.customerPriorities.length > 0 && (
-                        <p className="text-[10px] text-text-secondary italic mb-1">
-                          "{section.customerPriorities[0]}"
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-bold text-text">{section.pillar.fullName}</span>
-                        <span className="text-[10px] text-text-secondary">· {section.useCases.length} use case{section.useCases.length !== 1 ? 's' : ''}</span>
-                        {section.useCases.reduce((n, uc) => n + uc.matchedStories.length, 0) > 0 && (
-                          <span className="text-[10px] text-emerald-600">· {section.useCases.reduce((n, uc) => n + uc.matchedStories.length, 0)} stories</span>
-                        )}
+        {/* ── Dynamic two-tier engagement model ── */}
+        {(() => {
+          // Build unified list of all sections with their tier placement
+          const hasUc = (ucs: { length: number }) => ucs.length > 0
+          type TierItem = { id: string; icon: string; name: string; priorities: string[]; useCases: any[]; colorScheme: 'default' | 'indigo' | 'rose' }
+          const allItems: TierItem[] = [
+            ...story.pillarSections.map(s => ({ id: s.pillar.id, icon: s.pillar.icon, name: s.pillar.fullName, priorities: s.customerPriorities, useCases: s.useCases, colorScheme: 'default' as const })),
+            ...(story.intelligenceSection ? [{ id: 'intelligence', icon: INTELLIGENCE_FOUNDATION.icon, name: 'Intelligence & Trust Foundation', priorities: [] as string[], useCases: story.intelligenceSection.useCases, colorScheme: 'indigo' as const }] : []),
+            ...(story.securitySection ? [{ id: 'security', icon: SECURITY_FOUNDATION.icon, name: 'Security Foundation', priorities: [] as string[], useCases: story.securitySection.useCases, colorScheme: 'rose' as const }] : []),
+          ]
+          const tier1 = allItems.filter(i => hasUc(i.useCases))
+          const tier2 = allItems.filter(i => !hasUc(i.useCases))
+          const colorMap = { default: { bg: 'bg-gray-50', border: 'border-gray-100', label: 'text-text', sub: 'text-text-secondary' }, indigo: { bg: 'bg-indigo-50/50', border: 'border-indigo-100', label: 'text-indigo-700', sub: 'text-indigo-500' }, rose: { bg: 'bg-rose-50/50', border: 'border-rose-100', label: 'text-rose-700', sub: 'text-rose-500' } }
+          return (
+            <>
+              {tier1.length > 0 && (
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm">🚀</span>
+                    <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Your Starting Point</p>
+                  </div>
+                  <p className="text-[10px] text-text-secondary mb-3">These scenarios are ready to explore with your team — backed by use cases, customer stories, and benchmarks.</p>
+                  <div className="space-y-3">
+                    {tier1.map(item => {
+                      const topUc = item.useCases[0]
+                      const fb = topUc ? matchFunctionBenchmark(topUc.name, topUc.description) : null
+                      const topMetric = topUc?.matchedStories?.[0]?.metric
+                      const c = colorMap[item.colorScheme]
+                      return (
+                        <div key={item.id} className={`rounded-xl ${c.bg} ${c.border} border p-3`}>
+                          <div className="flex items-start gap-2">
+                            <span className="text-base mt-0.5">{item.icon}</span>
+                            <div className="min-w-0 flex-1">
+                              {item.priorities.length > 0 && (
+                                <p className="text-[10px] text-text-secondary italic mb-1">
+                                  "{item.priorities[0]}"
+                                </p>
+                              )}
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className={`text-xs font-bold ${c.label}`}>{item.name}</span>
+                                <span className={`text-[10px] ${c.sub}`}>· {item.useCases.length} use case{item.useCases.length !== 1 ? 's' : ''}</span>
+                                {item.useCases.reduce((n: number, uc: any) => n + (uc.matchedStories?.length || 0), 0) > 0 && (
+                                  <span className="text-[10px] text-emerald-600">· {item.useCases.reduce((n: number, uc: any) => n + (uc.matchedStories?.length || 0), 0)} stories</span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-text mt-1">
+                                Top: <strong>{topUc.name}</strong>
+                                {topMetric && <span className="text-emerald-600 ml-1">— {topMetric}</span>}
+                              </p>
+                              {fb && (
+                                <p className="text-[10px] text-primary mt-0.5">📊 Benchmark: {fb.gain}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+              {tier2.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm">🤝</span>
+                    <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Your Next Conversation</p>
+                  </div>
+                  <p className="text-[10px] text-text-secondary mb-3">These priorities came up during discovery — they're the perfect agenda for a deeper co-work session with your extended team and partner.</p>
+                  <div className="space-y-2">
+                    {tier2.map(item => (
+                      <div key={item.id} className="rounded-xl bg-amber-50/60 border border-amber-200/60 p-3">
+                        <div className="flex items-start gap-2">
+                          <span className="text-base mt-0.5">{item.icon}</span>
+                          <div className="min-w-0 flex-1">
+                            {item.priorities.length > 0 && (
+                              <p className="text-[10px] text-amber-700 italic mb-1">
+                                "{item.priorities[0]}"
+                              </p>
+                            )}
+                            <span className="text-xs font-bold text-amber-900">{item.name}</span>
+                            <p className="text-[10px] text-amber-700 mt-0.5">
+                              Workshop topic — explore use cases with the broader team
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-[11px] text-text mt-1">
-                        Top: <strong>{topUc.name}</strong>
-                        {topMetric && <span className="text-emerald-600 ml-1">— {topMetric}</span>}
-                      </p>
-                      {fb && (
-                        <p className="text-[10px] text-primary mt-0.5">
-                          📊 Benchmark: {fb.gain}
-                        </p>
-                      )}
-                    </div>
+                    ))}
                   </div>
                 </div>
-              )
-            })}
-            {story.intelligenceSection && story.intelligenceSection.useCases.length > 0 && (() => {
-              const topUc = story.intelligenceSection!.useCases[0]
-              const fb = topUc ? matchFunctionBenchmark(topUc.name, topUc.description) : null
-              return (
-                <div className="rounded-xl bg-indigo-50/50 border border-indigo-100 p-3">
-                  <div className="flex items-start gap-2">
-                    <span className="text-base mt-0.5">{INTELLIGENCE_FOUNDATION.icon}</span>
-                    <div>
-                      <span className="text-xs font-bold text-indigo-700">Intelligence & Trust Foundation</span>
-                      <span className="text-[10px] text-indigo-500 ml-2">· {story.intelligenceSection!.useCases.length} use cases</span>
-                      <p className="text-[11px] text-text mt-1">
-                        Top: <strong>{topUc.name}</strong>
-                      </p>
-                      {fb && (
-                        <p className="text-[10px] text-primary mt-0.5">📊 Benchmark: {fb.gain}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )
-            })()}
-            {story.securitySection && story.securitySection.useCases.length > 0 && (() => {
-              const topUc = story.securitySection!.useCases[0]
-              const fb = topUc ? matchFunctionBenchmark(topUc.name, topUc.description) : null
-              return (
-                <div className="rounded-xl bg-rose-50/50 border border-rose-100 p-3">
-                  <div className="flex items-start gap-2">
-                    <span className="text-base mt-0.5">{SECURITY_FOUNDATION.icon}</span>
-                    <div>
-                      <span className="text-xs font-bold text-rose-700">Security Foundation</span>
-                      <span className="text-[10px] text-rose-500 ml-2">· {story.securitySection!.useCases.length} use cases</span>
-                      <p className="text-[11px] text-text mt-1">
-                        Top: <strong>{topUc.name}</strong>
-                      </p>
-                      {fb && (
-                        <p className="text-[10px] text-primary mt-0.5">📊 Benchmark: {fb.gain}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )
-            })()}
-            {/* Empty pillars — brief expansion note instead of broken promise */}
-            {story.pillarSections.filter(s => s.useCases.length === 0).length > 0 && (
-              <div className="rounded-xl bg-violet-50/50 border border-violet-100 p-3">
-                <div className="flex items-start gap-2">
-                  <span className="text-base mt-0.5">💡</span>
-                  <div>
-                    <p className="text-xs font-bold text-violet-800">Expansion Opportunities</p>
-                    <p className="text-[10px] text-violet-600 mt-0.5">
-                      {story.pillarSections.filter(s => s.useCases.length === 0).map(s =>
-                        `${s.pillar.icon} ${s.pillar.name}`
-                      ).join(' · ')} — priorities identified but use cases not yet selected. Explore these in the next conversation.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+              )}
+            </>
+          )
+        })()}
 
         {/* ── Projected Value Indicators ── */}
         {(() => {
