@@ -50,6 +50,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
   const [smartFillText, setSmartFillText] = useState(data.smartFillRaw)
   const [extraction, setExtraction] = useState<SmartFillResult | null>(null)
   const [copiedPrompt, setCopiedPrompt] = useState(false)
+  const [appliedFields, setAppliedFields] = useState<Set<string>>(new Set())
 
   const handleExtract = () => {
     if (!smartFillText.trim()) return
@@ -105,36 +106,46 @@ export default function StepCustomer({ wizard }: WizardProps) {
     if (!extraction) return
     const update: Partial<typeof data> = {}
     const conf = { ...data.confidence }
+    const fields = new Set<string>()
 
     if (extraction.companyName) {
       update.companyName = extraction.companyName.value as string
       conf.companyName = extraction.companyName.confidence
+      fields.add('companyName')
     }
     if (extraction.industryId) {
       update.industryId = extraction.industryId.value as string
       conf.industryId = extraction.industryId.confidence
+      fields.add('industryId')
     }
     if (extraction.companySize) {
       update.companySize = extraction.companySize.value as typeof data.companySize
       conf.companySize = extraction.companySize.confidence
+      fields.add('companySize')
     }
     if (extraction.priorities) {
       update.priorities = extraction.priorities.value as string
       conf.priorities = extraction.priorities.confidence
+      fields.add('priorities')
     }
     // Apply challenges and use cases (these are additive, not conflicting with industry clear)
     if (extraction.suggestedChallengeIds) {
       update.selectedChallengeIds = extraction.suggestedChallengeIds.value as string[]
       ;(conf as Record<string, string>).challenges = extraction.suggestedChallengeIds.confidence
+      fields.add('challenges')
     }
     if (extraction.suggestedUseCaseIds) {
       update.selectedUseCaseIds = extraction.suggestedUseCaseIds.value as string[]
+      fields.add('useCases')
     }
     if (extraction.contacts) {
       update.crmContacts = extraction.contacts.value as { name: string; title: string; email?: string }[]
+      fields.add('contacts')
     }
     update.confidence = conf
     updateData(update)
+    setAppliedFields(fields)
+    setSmartFillOpen(false)
   }
 
   const extractedCount = extraction
@@ -323,6 +334,41 @@ export default function StepCustomer({ wizard }: WizardProps) {
         )}
       </div>
 
+      {/* Smart Fill Verification Banner */}
+      {appliedFields.size > 0 && (
+        <div className="rounded-[16px] border border-primary/20 bg-primary/5 p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">✅</span>
+              <div>
+                <p className="text-sm font-semibold text-primary">
+                  Smart Fill applied {appliedFields.size} field{appliedFields.size > 1 ? 's' : ''}
+                </p>
+                <p className="text-[11px] text-text-secondary mt-0.5">
+                  Review the highlighted fields below — edit anything that needs adjusting
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setAppliedFields(new Set())}
+              className="text-[10px] text-text-secondary hover:text-text px-2 py-1 rounded-md
+                         hover:bg-white/50 transition-all"
+            >
+              Dismiss
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {appliedFields.has('companyName') && <AppliedTag label="Company Name" value={data.companyName} />}
+            {appliedFields.has('industryId') && <AppliedTag label="Industry" value={INDUSTRIES.find(i => i.id === data.industryId)?.name ?? data.industryId} />}
+            {appliedFields.has('companySize') && <AppliedTag label="Size" value={SIZE_OPTIONS.find(s => s.value === data.companySize)?.label ?? data.companySize} />}
+            {appliedFields.has('priorities') && <AppliedTag label="Priorities" value={data.priorities.slice(0, 50) + (data.priorities.length > 50 ? '…' : '')} />}
+            {appliedFields.has('challenges') && <AppliedTag label="Challenges" value={`${data.selectedChallengeIds.length} selected`} />}
+            {appliedFields.has('useCases') && <AppliedTag label="Use Cases" value={`${data.selectedUseCaseIds.length} matched`} />}
+            {appliedFields.has('contacts') && <AppliedTag label="Stakeholders" value={`${data.crmContacts.length} contacts`} />}
+          </div>
+        </div>
+      )}
+
       {/* Key Stakeholders Card (from Smart Fill) */}
       {data.crmContacts.length > 0 && (
         <div className="rounded-[16px] border border-emerald-100 bg-emerald-50/50 p-4">
@@ -345,7 +391,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
       )}
 
       {/* Company Name */}
-      <div>
+      <div className={appliedFields.has('companyName') ? 'ring-1 ring-primary/20 rounded-[16px] p-3 bg-primary/[0.02]' : ''}>
         <label htmlFor="company-name" className="block text-sm font-medium text-text mb-2">
           Company Name *
           {data.confidence.companyName && (
@@ -365,7 +411,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
       </div>
 
       {/* Industry Grid */}
-      <div>
+      <div className={appliedFields.has('industryId') ? 'ring-1 ring-primary/20 rounded-[16px] p-3 bg-primary/[0.02]' : ''}>
         <label className="block text-sm font-medium text-text mb-3">
           Industry *
           {data.confidence.industryId && (
@@ -395,7 +441,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
       </div>
 
       {/* Company Size */}
-      <div>
+      <div className={appliedFields.has('companySize') ? 'ring-1 ring-primary/20 rounded-[16px] p-3 bg-primary/[0.02]' : ''}>
         <label className="block text-sm font-medium text-text mb-3">
           Number of Employees
           {data.confidence.companySize && (
@@ -420,7 +466,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
       </div>
 
       {/* Strategic Priorities */}
-      <div>
+      <div className={appliedFields.has('priorities') ? 'ring-1 ring-primary/20 rounded-[16px] p-3 bg-primary/[0.02]' : ''}>
         <label htmlFor="priorities" className="block text-sm font-medium text-text mb-2">
           Strategic Priorities
           {data.confidence.priorities && (
@@ -509,6 +555,15 @@ function ConfidenceBadge({ level }: { level: 'high' | 'medium' | 'low' }) {
   return (
     <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded-full font-medium ${badge.color}`}>
       ⚡ {badge.label}
+    </span>
+  )
+}
+
+function AppliedTag({ label, value }: { label: string; value: string }) {
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-primary/10 text-[11px]">
+      <span className="font-medium text-primary">{label}:</span>
+      <span className="text-text truncate max-w-[140px]">{value}</span>
     </span>
   )
 }
