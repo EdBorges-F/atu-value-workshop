@@ -78,18 +78,18 @@ export default function TrustFooter() {
 
       {/* Badge Row */}
       <div className="flex items-center justify-between py-3 px-4 border-t border-white/10">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap min-w-0">
           {TRUST_BADGES.map((badge) => (
             <a
               key={badge.label}
               href={badge.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors"
+              className="flex items-center gap-1 text-[10px] text-white/40 hover:text-white/70 transition-colors whitespace-nowrap"
               title={`${badge.label}: ${badge.description}`}
             >
               <span>{badge.icon}</span>
-              <span className="hidden xl:inline">{badge.label}</span>
+              <span className="hidden 2xl:inline">{badge.label}</span>
             </a>
           ))}
         </div>
