@@ -487,9 +487,9 @@ export default function StepValueStory({ wizard }: WizardProps) {
   }, [story])
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 print:max-w-none print:mx-0" ref={printRef}>
+    <div className="max-w-3xl mx-auto space-y-6 print:max-w-none print:mx-0 print:space-y-1 print-1page" ref={printRef}>
       {/* ━━ HERO — Stats Card ━━ */}
-      <div className="rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8 text-white shadow-xl print:shadow-none print:rounded-none print:bg-gray-900">
+      <div className="hero-card rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8 text-white shadow-xl print:shadow-none print:rounded-none print:bg-gray-900">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -537,7 +537,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </div>
 
       {/* ━━ EXECUTIVE SUMMARY — Print-to-PDF Hero ━━ */}
-      <div id="exec-summary" className="rounded-2xl border border-gray-200 bg-white shadow-lg p-6 print:shadow-none print:border-none print:p-4 print:break-after-page">
+      <div id="exec-summary" className="rounded-2xl border border-gray-200 bg-white shadow-lg p-6 print:shadow-none print:border-none print:p-4">
         <div className="flex items-center gap-2 mb-4">
           <span className="text-lg">📋</span>
           <h3 className="text-sm font-bold text-text uppercase tracking-wider">Executive Summary</h3>
@@ -661,7 +661,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
           const hasFinancials = fbMatches.length > 0 || story.industryBenchmark || roiHighlights.length > 0
           if (!hasFinancials) return null
           return (
-            <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="value-indicators mt-4 pt-4 border-t border-gray-100">
               <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-3">📊 Projected Value Indicators</p>
               <div className="space-y-2">
                 {story.industryBenchmark && (
@@ -707,7 +707,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
         })()}
 
         {/* ── Key Stats Strip ── */}
-        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-center gap-8">
+        <div className="stats-strip mt-4 pt-4 border-t border-gray-100 flex items-center justify-center gap-8">
           <div className="text-center">
             <p className="text-2xl font-bold text-primary">{totalUseCases}</p>
             <p className="text-[10px] text-text-secondary uppercase tracking-wider">AI Use Cases</p>
