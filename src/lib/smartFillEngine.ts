@@ -272,18 +272,34 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   // 7. CRM Contacts — extract name + title pairs from stakeholder/contact sections
   let contacts: SmartFillResult['contacts'] = null
   const extractedContacts: { name: string; title: string; email?: string }[] = []
+  const addContact = (name: string, title: string, email?: string) => {
+    const clean = name.trim()
+    const cleanTitle = title
+      .replace(/\s*[-–—]\s+(?:responsible|leads?|oversee|manage|drive|focus).*/i, '') // strip descriptions
+      .replace(/\s*\(.*?\)/, '')
+      .trim()
+    if (clean.length >= 3 && cleanTitle.length >= 2 &&
+        !extractedContacts.some(c => c.name.toLowerCase() === clean.toLowerCase())) {
+      extractedContacts.push({ name: clean, title: cleanTitle, email })
+    }
+  }
+
+  // Flexible name regex: allows periods (Dr., Jr.), lowercase particles (de, van, la), 2-5 words
+  const NAME_RE = /[A-Z][a-zA-Z.''-]+(?:\s+(?:de|van|von|la|del|di|el|al|bin|da)\s+)?(?:\s+[A-Za-z.''-]+){1,4}/
 
   // Pattern 1: Structured section "Name — Title" or "Name: Title" or "Name, Title"
   if (sections.stakeholders) {
     for (const line of sections.stakeholders) {
-      // "Sam Richardson — Deputy CIO" or "Sam Richardson: Deputy CIO"
-      const sepMatch = line.match(/^([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\s*[-–—:,]\s*(.+)/i)
+      const sepMatch = line.match(new RegExp(`^(${NAME_RE.source})\\s*[-–—:,]\\s*(.+)`, 'i'))
       if (sepMatch) {
-        const name = sepMatch[1].trim()
-        const title = sepMatch[2].replace(/\s*\(.*?\)/, '').trim()
-        if (name.length >= 3 && title.length >= 3) {
-          extractedContacts.push({ name, title })
-        }
+        addContact(sepMatch[1], sepMatch[2])
+        continue
+      }
+      // Pattern 1b: "Title: Name" or "Title — Name" (title-first format)
+      const titleFirstMatch = line.match(/^((?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director|Managing Director|Chief\s+\w+\s*Officer)[^:–—,]*)\s*[-–—:,]\s*(.+)/i)
+      if (titleFirstMatch) {
+        addContact(titleFirstMatch[2], titleFirstMatch[1])
+        continue
       }
     }
   }
@@ -292,32 +308,35 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   const titlePattern = /\*{0,2}(?:Role|Title|Role\s*\/\s*Title)\s*(?:\/\s*Title)?:?\*{0,2}\s*(.+)/i
   const emailPattern = /\*{0,2}Email:?\*{0,2}\s*<?([^\s<>@]+@[^\s<>]+)>?/i
 
-  // Split by markdown headers to find contact blocks
   const contactBlocks = rawText.split(/(?=###?\s)/)
   for (const block of contactBlocks) {
-    const nameMatch = block.match(/###?\s*\*{0,2}([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\*{0,2}/)
+    const nameMatch = block.match(new RegExp(`###?\\s*\\*{0,2}(${NAME_RE.source})\\*{0,2}`))
     if (!nameMatch) continue
-    const name = nameMatch[1].trim()
     const titleMatch = block.match(titlePattern)
     if (!titleMatch) continue
-    const title = titleMatch[1].replace(/\s*\(.*?\)/, '').trim()
     const emailMatch = block.match(emailPattern)
-    const email = emailMatch ? emailMatch[1].trim() : undefined
-    // Avoid duplicates
-    if (!extractedContacts.some(c => c.name.toLowerCase() === name.toLowerCase())) {
-      extractedContacts.push({ name, title, email })
-    }
+    addContact(nameMatch[1], titleMatch[1], emailMatch ? emailMatch[1].trim() : undefined)
   }
 
-  // Pattern 3: Inline "Name (Title)" anywhere in text
-  if (extractedContacts.length === 0) {
-    const inlinePattern = /([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+){1,3})\s*\((?:CTO|CIO|CDO|CISO|CFO|CEO|VP|SVP|EVP|Director|Sr\.?\s*Director|Chief\s+\w+\s*Officer)[^)]*\)/g
-    let m
-    while ((m = inlinePattern.exec(rawText)) !== null) {
-      const name = m[0].match(/^[^(]+/)?.[0]?.trim() || ''
-      const title = m[0].match(/\(([^)]+)\)/)?.[1]?.trim() || ''
-      if (name && title && !extractedContacts.some(c => c.name.toLowerCase() === name.toLowerCase())) {
-        extractedContacts.push({ name, title })
+  // Pattern 3: Inline "Name (Title)" — ALWAYS runs (supplements, not fallback)
+  const C_TITLES = 'CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director|Sr\\.?\\s*Director|Chief\\s+\\w+\\s*Officer|Head\\s+of'
+  const inlinePattern = new RegExp(`(${NAME_RE.source})\\s*\\((?:${C_TITLES})[^)]*\\)`, 'gi')
+  let m
+  while ((m = inlinePattern.exec(rawText)) !== null) {
+    const name = m[0].match(/^[^(]+/)?.[0]?.trim() || ''
+    const title = m[0].match(/\(([^)]+)\)/)?.[1]?.trim() || ''
+    if (name && title) addContact(name, title)
+  }
+
+  // Pattern 4: Semicolon-separated contacts on one line ("Name, Title; Name, Title")
+  if (sections.stakeholders) {
+    for (const line of sections.stakeholders) {
+      if (line.includes(';')) {
+        const parts = line.split(';')
+        for (const part of parts) {
+          const pMatch = part.trim().match(new RegExp(`^(${NAME_RE.source})\\s*[-–—:,]\\s*(.+)`, 'i'))
+          if (pMatch) addContact(pMatch[1], pMatch[2])
+        }
       }
     }
   }

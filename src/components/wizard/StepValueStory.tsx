@@ -347,6 +347,21 @@ export default function StepValueStory({ wizard }: WizardProps) {
   const roiCount = story.pillarSections.reduce((n, s) => n + s.useCases.filter(uc => uc.roiCard).length, 0)
     + (story.securitySection?.useCases.filter(uc => uc.roiCard).length ?? 0)
 
+  // Top use cases across all pillars, sorted by evidence strength
+  const topUseCases = useMemo(() => {
+    const all = [
+      ...story.pillarSections.flatMap(s => s.useCases),
+      ...(story.intelligenceSection?.useCases ?? []),
+      ...(story.securitySection?.useCases ?? []),
+    ]
+    return all.sort((a, b) => {
+      const scoreA = a.matchedStories.length + (a.roiCard ? 1 : 0) + (a.evidence ? 1 : 0)
+      const scoreB = b.matchedStories.length + (b.roiCard ? 1 : 0) + (b.evidence ? 1 : 0)
+      return scoreB - scoreA
+    })
+  }, [story])
+  const totalUseCases = topUseCases.length
+
   // Lazy-load CZ data only when NDA confirmed
   const [czData, setCzData] = useState<CZData | null>(null)
   useEffect(() => {
@@ -503,10 +518,91 @@ export default function StepValueStory({ wizard }: WizardProps) {
         )}
       </div>
 
+      {/* ━━ EXECUTIVE SUMMARY — Print-to-PDF Hero ━━ */}
+      <div id="exec-summary" className="rounded-2xl border border-gray-200 bg-white shadow-lg p-6 print:shadow-none print:border-none print:p-4 print:break-after-page">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-lg">📋</span>
+          <h3 className="text-sm font-bold text-text uppercase tracking-wider">Executive Summary</h3>
+        </div>
+
+        <p className="text-sm text-text leading-relaxed">{story.executive_summary}</p>
+
+        {/* Challenge → Pillar Mapping */}
+        <div className="mt-5 pt-4 border-t border-gray-100">
+          <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-3">Challenge → Pillar Alignment</p>
+          <div className="flex flex-wrap gap-2">
+            {story.pillarSections.map(s => (
+              <div key={s.pillar.id} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-100">
+                <span>{s.pillar.icon}</span>
+                <span className="text-xs font-semibold text-text">{s.pillar.name}</span>
+                <span className="text-[10px] text-text-secondary">· {s.useCases.length} use cases</span>
+              </div>
+            ))}
+            {story.intelligenceSection && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-100">
+                <span>{INTELLIGENCE_FOUNDATION.icon}</span>
+                <span className="text-xs font-semibold text-indigo-700">Intelligence & Trust</span>
+                <span className="text-[10px] text-indigo-500">· {story.intelligenceSection.useCases.length} use cases</span>
+              </div>
+            )}
+            {story.securitySection && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 border border-rose-100">
+                <span>{SECURITY_FOUNDATION.icon}</span>
+                <span className="text-xs font-semibold text-rose-700">Security</span>
+                <span className="text-[10px] text-rose-500">· {story.securitySection.useCases.length} use cases</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Top Use Cases */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-3">Top Use Cases</p>
+          <div className="grid grid-cols-2 gap-2">
+            {topUseCases.slice(0, 6).map((uc, i) => (
+              <div key={i} className="flex items-start gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-100">
+                <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                  {i + 1}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-text leading-snug break-words">{uc.name}</p>
+                  {uc.matchedStories.length > 0 && (
+                    <p className="text-[10px] text-emerald-600 mt-0.5">
+                      {uc.matchedStories.length} customer {uc.matchedStories.length === 1 ? 'story' : 'stories'}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Evidence Summary Strip */}
+        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-center gap-8">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-primary">{totalUseCases}</p>
+            <p className="text-[10px] text-text-secondary uppercase tracking-wider">AI Use Cases</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-primary">{totalEvidenceCount}</p>
+            <p className="text-[10px] text-text-secondary uppercase tracking-wider">Customer Stories</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-primary">{roiCount}</p>
+            <p className="text-[10px] text-text-secondary uppercase tracking-wider">ROI Insights</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-primary">{story.pillarSections.length + (story.intelligenceSection ? 1 : 0) + (story.securitySection ? 1 : 0)}</p>
+            <p className="text-[10px] text-text-secondary uppercase tracking-wider">Pillars</p>
+          </div>
+        </div>
+      </div>
+
       {/* ━━ Section Jump Nav ━━ */}
       <nav className="sticky top-0 z-40 -mx-2 px-2 py-2 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center gap-2 overflow-x-auto print:hidden">
         <span className="flex-shrink-0 text-xs font-semibold text-text-secondary">Jump to:</span>
         {[
+          { id: 'exec-summary', icon: '📋', label: 'Executive Summary' },
           { id: 'plan', icon: '🎯', label: 'The Plan' },
           { id: 'proof', icon: '📊', label: 'The Proof' },
           { id: 'why-now', icon: '📈', label: 'Why Now' },
@@ -522,7 +618,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </nav>
 
       {/* ━━ 2. THE PLAN — Pillars (open by default) ━━ */}
-      <div id="plan">
+      <div id="plan" className="print:hidden">
       <Collapsible title="The Plan" icon="🎯"
         summary={`${story.pillarSections.length} pillars · ${story.pillarSections.reduce((n, s) => n + s.useCases.length, 0)} use cases`}
         defaultOpen={false}>
@@ -628,7 +724,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </div>
 
       {/* ━━ 3. THE PROOF — Consolidated evidence ━━ */}
-      <div id="proof">
+      <div id="proof" className="print:hidden">
       {totalEvidenceCount > 0 && (
         <Collapsible title="The Proof" icon="📊"
           summary={`${totalEvidenceCount} customer ${totalEvidenceCount === 1 ? 'story' : 'stories'}${story.industryBenchmark ? ' · Industry benchmark' : ''}`}
@@ -716,7 +812,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </div>
 
       {/* ━━ 4. MARKET CONTEXT — Why Now ━━ */}
-      <div id="why-now">
+      <div id="why-now" className="print:hidden">
       <Collapsible title="Why Now" icon="📈"
         summary={`${story.marketContext.length} market signals`}
         defaultOpen={false}>
@@ -740,7 +836,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </div>
 
       {/* ━━ 5. NEXT STEPS — collapsible, default open ━━ */}
-      <div id="next-steps">
+      <div id="next-steps" className="print:hidden">
       <Collapsible title="Next Steps" icon="🎯" defaultOpen={false}>
         <div className="space-y-4 pt-2">
           <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-6">
@@ -795,9 +891,9 @@ export default function StepValueStory({ wizard }: WizardProps) {
               <div className="divide-y divide-gray-50">
                 {story.solutionMap.map((entry, i) => (
                   <div key={i} className="px-4 py-2.5">
-                    <p className="text-xs font-semibold text-text">{entry.useCase}</p>
+                    <p className="text-xs font-semibold text-text break-words">{entry.useCase}</p>
                     <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                      <span className="text-[10px] text-text-secondary leading-snug">{entry.solutions.join(' · ')}</span>
+                      <span className="text-[10px] text-text-secondary leading-snug break-words">{entry.solutions.join(' · ')}</span>
                       <span className="px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-gray-100 text-text-secondary whitespace-nowrap">
                         {entry.pillar}
                       </span>
