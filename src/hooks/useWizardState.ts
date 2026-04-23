@@ -68,7 +68,7 @@ function saveToStorage(step: number, data: WizardData) {
 export function useWizardState() {
   const saved = loadFromStorage()
   const [step, setStep] = useState(saved?.step ?? 0)
-  const [data, setData] = useState<WizardData>(saved?.data ?? INITIAL_DATA)
+  const [data, setData] = useState<WizardData>({ ...INITIAL_DATA, ...(saved?.data ?? {}) })
 
   const MAX_STEP = 4
 
