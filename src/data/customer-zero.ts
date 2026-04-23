@@ -219,6 +219,7 @@ export interface CustomerZeroDepartment {
   id: string
   name: string
   description: string
+  pillarIds: string[]
   useCases: CustomerZeroDeptUseCase[]
   headlineMetrics: { metric: string; value: string; context: string }[]
   tools: string[]
@@ -234,6 +235,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-change-adoption',
     name: 'Change & Adoption',
+    pillarIds: ['enrich', 'reshape'],
     description: 'A 14-person team driving Copilot adoption across ~60,000 MCAPS employees through a six-pillar framework.',
     useCases: [
       {
@@ -299,6 +301,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-css',
     name: 'Customer Service & Support',
+    pillarIds: ['enrich', 'reinvent'],
     description: 'Reimagining customer support by unifying 16 case management systems and 500+ tools with generative AI.',
     useCases: [
       {
@@ -335,6 +338,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-developer',
     name: 'Developer (Internal Engineering)',
+    pillarIds: ['bend'],
     description: 'End-to-end AI-powered Software Development Lifecycle for internal engineering across six SDLC steps.',
     useCases: [
       {
@@ -408,6 +412,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-it',
     name: 'Information Technology',
+    pillarIds: ['enrich', 'security'],
     description: 'AI-powered network operations and proactive device health management across Microsoft corporate infrastructure.',
     useCases: [
       {
@@ -442,6 +447,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-legal',
     name: 'Legal (CELA)',
+    pillarIds: ['enrich', 'security'],
     description: 'SharePoint Agent providing instant, vetted legal guidance through natural-language queries for marketing teams.',
     useCases: [
       {
@@ -466,6 +472,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-marketing',
     name: 'Marketing',
+    pillarIds: ['enrich', 'reshape'],
     description: 'AI-powered content creation, event support, planning automation, and global event scheduling across marketing operations.',
     useCases: [
       {
@@ -518,6 +525,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-operations',
     name: 'Operations',
+    pillarIds: ['reshape', 'reinvent'],
     description: 'Eight AI-powered use cases spanning partner onboarding, contracting, BPO, trade compliance, and employee productivity automation.',
     useCases: [
       {
@@ -629,6 +637,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-responsible-ai',
     name: 'Responsible AI',
+    pillarIds: ['security'],
     description: 'Governance, security, and compliance frameworks for AI agents — including RAI risk mitigation and Secure Future Initiative.',
     useCases: [
       {
@@ -678,6 +687,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-sales',
     name: 'Sales',
+    pillarIds: ['enrich', 'reinvent'],
     description: 'Ten AI use cases across the full sales lifecycle — from seller productivity and insights to autonomous SMB agents and coaching.',
     useCases: [
       {
@@ -799,6 +809,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-supply-chain',
     name: 'Supply Chain',
+    pillarIds: ['reshape', 'reinvent'],
     description: 'Unified agent platform orchestrating supply fulfilment investigations and data center power capacity planning across 300+ facilities.',
     useCases: [
       {

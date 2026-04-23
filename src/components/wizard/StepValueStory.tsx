@@ -327,6 +327,14 @@ export default function StepValueStory({ wizard }: WizardProps) {
   const roiCount = story.pillarSections.reduce((n, s) => n + s.useCases.filter(uc => uc.roiCard).length, 0)
     + (story.securitySection?.useCases.filter(uc => uc.roiCard).length ?? 0)
 
+  // CZ departments filtered to active pillars (for nav + section rendering)
+  const czMatchedDepts = useMemo(() => {
+    if (!data.ndaConfirmed) return []
+    const activePillarIds = new Set(story.pillarSections.map(s => s.pillar.id))
+    if (story.securitySection) activePillarIds.add('security')
+    return CUSTOMER_ZERO_DEPARTMENTS.filter(d => d.pillarIds.some(p => activePillarIds.has(p)))
+  }, [data.ndaConfirmed, story])
+
   const fullStoryText = useMemo(() => {
     const lines = [
       story.title,
@@ -465,7 +473,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
           { id: 'proof', icon: '📊', label: 'The Proof' },
           { id: 'why-now', icon: '📈', label: 'Why Now' },
           { id: 'next-steps', icon: '🎯', label: 'Next Steps' },
-          ...(data.ndaConfirmed ? [{ id: 'customer-zero', icon: '🔒', label: 'Customer Zero' }] : []),
+          ...(czMatchedDepts.length > 0 ? [{ id: 'customer-zero', icon: '🔒', label: 'Customer Zero' }] : []),
           { id: 'cowork', icon: '🤖', label: 'Cowork Prompts' },
         ].map((s) => (
           <button key={s.id} onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' })}
@@ -723,37 +731,28 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </Collapsible>
       </div>
 
-      {/* ━━ CUSTOMER ZERO — NDA-Gated Section ━━ */}
+      {/* ━━ CUSTOMER ZERO — NDA-Gated, Pillar-Filtered Section ━━ */}
+      {czMatchedDepts.length > 0 && (() => {
+        const matchedDeptNames = new Set(czMatchedDepts.map(d => d.name))
+        const matchedProofPoints = CUSTOMER_ZERO_HEADLINE_PROOF_POINTS.filter(pp => matchedDeptNames.has(pp.department))
+
+        return (
       <div id="customer-zero">
-        {!data.ndaConfirmed ? (
-          <div className="rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/50 p-6 text-center">
-            <span className="text-3xl">🔒</span>
-            <h3 className="text-base font-bold text-text mt-2">Microsoft Customer Zero</h3>
-            <p className="text-xs text-text-secondary mt-1 max-w-md mx-auto">
-              Enable Customer Zero on the Customer Profile page to unlock Microsoft's internal AI transformation data.
-            </p>
-            <button
-              onClick={() => wizard.goToStep(0)}
-              className="mt-3 px-4 py-2 rounded-xl border border-gray-300 text-sm font-medium text-text hover:bg-gray-50 transition-all print:hidden"
-            >
-              ← Go to Customer Profile
-            </button>
-          </div>
-        ) : (
           <Collapsible title="Microsoft Customer Zero" icon="🔒"
-            summary={`${CUSTOMER_ZERO_DEPARTMENTS.length} departments · ${CUSTOMER_ZERO_HEADLINE_PROOF_POINTS.length} proof points`}
+            summary={`${czMatchedDepts.length} departments match your pillars · ${matchedProofPoints.length} proof points`}
             defaultOpen={false}>
             <div className="space-y-5 pt-2">
               <p className="text-xs text-text-secondary">
-                Microsoft's own AI transformation — internal results from ~100 case studies across {CUSTOMER_ZERO_DEPARTMENTS.length} departments.
+                Microsoft's own AI transformation — showing {czMatchedDepts.length} of 10 departments that align with your selected pillars.
                 <span className="text-[9px] text-gray-400 ml-1">Source: Customer Zero deck (March 2026) · NDA required</span>
               </p>
 
-              {/* Headline Proof Points */}
+              {/* Headline Proof Points — filtered */}
+              {matchedProofPoints.length > 0 && (
               <div className="rounded-xl border border-amber-100 bg-amber-50/50 p-4">
                 <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wider mb-3">⭐ Headline Proof Points</p>
                 <div className="grid grid-cols-2 gap-2">
-                  {CUSTOMER_ZERO_HEADLINE_PROOF_POINTS.map((pp, i) => (
+                  {matchedProofPoints.map((pp, i) => (
                     <div key={i} className="p-2 rounded-lg bg-white/70">
                       <p className="text-[10px] text-amber-600 font-semibold">{pp.department}</p>
                       <p className="text-xs font-bold text-text">{pp.value}</p>
@@ -762,8 +761,9 @@ export default function StepValueStory({ wizard }: WizardProps) {
                   ))}
                 </div>
               </div>
+              )}
 
-              {/* AI Adoption Patterns */}
+              {/* AI Adoption Patterns — always relevant */}
               <div className="rounded-xl border border-violet-100 bg-violet-50/50 p-4">
                 <p className="text-[10px] font-bold text-violet-800 uppercase tracking-wider mb-3">🔄 AI Adoption Patterns</p>
                 <div className="grid grid-cols-3 gap-2">
@@ -777,7 +777,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
                 </div>
               </div>
 
-              {/* Transformation Recipes */}
+              {/* Transformation Recipes — always relevant */}
               <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
                 <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider mb-3">🧪 Transformation Recipes (from ~100 case studies)</p>
                 <div className="space-y-2">
@@ -790,8 +790,8 @@ export default function StepValueStory({ wizard }: WizardProps) {
                 </div>
               </div>
 
-              {/* Department Details */}
-              {CUSTOMER_ZERO_DEPARTMENTS.map((dept) => (
+              {/* Department Details — filtered to matching pillars */}
+              {czMatchedDepts.map((dept) => (
                 <Collapsible key={dept.id} title={dept.name} icon="📋"
                   summary={`${dept.useCases.length} use cases · ${dept.headlineMetrics.length} metrics`}
                   defaultOpen={false}>
@@ -847,8 +847,9 @@ export default function StepValueStory({ wizard }: WizardProps) {
               </p>
             </div>
           </Collapsible>
-        )}
       </div>
+        )
+      })()}
 
       {/* ━━ 6. COWORK PROMPTS ━━ */}
       <section id="cowork" className="print:hidden">
