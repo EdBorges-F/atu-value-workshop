@@ -504,6 +504,12 @@ export default function StepValueStory({ wizard }: WizardProps) {
           </div>
           <div className="flex gap-2 print:hidden">
             <CopyButton text={fullStoryText} label="📋 Copy" />
+            <button
+              onClick={() => window.print()}
+              className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors"
+            >
+              📄 PDF
+            </button>
           </div>
         </div>
 
