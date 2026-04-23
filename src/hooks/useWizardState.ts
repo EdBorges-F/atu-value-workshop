@@ -50,8 +50,8 @@ function loadFromStorage(): { step: number; data: WizardData } | null {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    // Check staleness (7 days)
-    if (Date.now() - parsed.timestamp > 7 * 24 * 60 * 60 * 1000) {
+    // Check staleness (24 hours)
+    if (Date.now() - parsed.timestamp > 24 * 60 * 60 * 1000) {
       localStorage.removeItem(STORAGE_KEY)
       return null
     }
@@ -62,7 +62,9 @@ function loadFromStorage(): { step: number; data: WizardData } | null {
 }
 
 function saveToStorage(step: number, data: WizardData) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ step, data, timestamp: Date.now() }))
+  // Strip PII before persisting — crmContacts contain names/titles/emails
+  const { crmContacts: _strip, ...safeData } = data
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ step, data: { ...safeData, crmContacts: [] }, timestamp: Date.now() }))
 }
 
 export function useWizardState() {

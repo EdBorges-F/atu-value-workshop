@@ -1,11 +1,19 @@
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
 import { generateValueStory, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory, type StakeholderEntry } from '../../lib/valueStoryGenerator'
 import { CHALLENGES } from '../../data/challenges'
 import { FUNCTION_BENCHMARKS, filterCustomerZero } from '../../data/global-ai-evidence'
-import { CUSTOMER_ZERO_DEPARTMENTS, CUSTOMER_ZERO_HEADLINE_PROOF_POINTS, CUSTOMER_ZERO_PATTERNS, CUSTOMER_ZERO_RECIPES } from '../../data/customer-zero'
+import type { CustomerZeroDepartment, CustomerZeroProofPoint } from '../../data/customer-zero'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
+
+// Lazy-loaded CZ data (only fetched when ndaConfirmed)
+interface CZData {
+  departments: CustomerZeroDepartment[]
+  proofPoints: CustomerZeroProofPoint[]
+  patterns: readonly { readonly id: string; readonly name: string; readonly level: number; readonly description: string }[]
+  recipes: readonly { readonly id: string; readonly name: string; readonly description: string }[]
+}
 
 // ─── Function benchmark matching ─────────────────────────────
 const STOP_WORDS = new Set(['with', 'from', 'into', 'that', 'this', 'their', 'your', 'based', 'using', 'across', 'powered'])
@@ -327,13 +335,27 @@ export default function StepValueStory({ wizard }: WizardProps) {
   const roiCount = story.pillarSections.reduce((n, s) => n + s.useCases.filter(uc => uc.roiCard).length, 0)
     + (story.securitySection?.useCases.filter(uc => uc.roiCard).length ?? 0)
 
+  // Lazy-load CZ data only when NDA confirmed
+  const [czData, setCzData] = useState<CZData | null>(null)
+  useEffect(() => {
+    if (!data.ndaConfirmed) { setCzData(null); return }
+    import('../../data/customer-zero').then(mod => {
+      setCzData({
+        departments: mod.CUSTOMER_ZERO_DEPARTMENTS,
+        proofPoints: mod.CUSTOMER_ZERO_HEADLINE_PROOF_POINTS,
+        patterns: mod.CUSTOMER_ZERO_PATTERNS,
+        recipes: mod.CUSTOMER_ZERO_RECIPES,
+      })
+    })
+  }, [data.ndaConfirmed])
+
   // CZ departments filtered to active pillars (for nav + section rendering)
   const czMatchedDepts = useMemo(() => {
-    if (!data.ndaConfirmed) return []
+    if (!czData) return []
     const activePillarIds = new Set(story.pillarSections.map(s => s.pillar.id))
     if (story.securitySection) activePillarIds.add('security')
-    return CUSTOMER_ZERO_DEPARTMENTS.filter(d => d.pillarIds.some(p => activePillarIds.has(p)))
-  }, [data.ndaConfirmed, story])
+    return czData.departments.filter(d => d.pillarIds.some(p => activePillarIds.has(p)))
+  }, [czData, story])
 
   const fullStoryText = useMemo(() => {
     const lines = [
@@ -732,9 +754,9 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </div>
 
       {/* ━━ CUSTOMER ZERO — NDA-Gated, Pillar-Filtered Section ━━ */}
-      {czMatchedDepts.length > 0 && (() => {
+      {czMatchedDepts.length > 0 && czData && (() => {
         const matchedDeptNames = new Set(czMatchedDepts.map(d => d.name))
-        const matchedProofPoints = CUSTOMER_ZERO_HEADLINE_PROOF_POINTS.filter(pp => matchedDeptNames.has(pp.department))
+        const matchedProofPoints = czData.proofPoints.filter(pp => matchedDeptNames.has(pp.department))
 
         return (
       <div id="customer-zero">
@@ -767,7 +789,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
               <div className="rounded-xl border border-violet-100 bg-violet-50/50 p-4">
                 <p className="text-[10px] font-bold text-violet-800 uppercase tracking-wider mb-3">🔄 AI Adoption Patterns</p>
                 <div className="grid grid-cols-3 gap-2">
-                  {CUSTOMER_ZERO_PATTERNS.map((p) => (
+                  {czData.patterns.map((p) => (
                     <div key={p.id} className="p-2.5 rounded-lg bg-white/70 text-center">
                       <p className="text-lg font-bold text-violet-600">{p.level}</p>
                       <p className="text-xs font-bold text-text mt-1">{p.name}</p>
@@ -781,7 +803,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
               <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
                 <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider mb-3">🧪 Transformation Recipes (from ~100 case studies)</p>
                 <div className="space-y-2">
-                  {CUSTOMER_ZERO_RECIPES.map((r) => (
+                  {czData.recipes.map((r) => (
                     <div key={r.id} className="p-2.5 rounded-lg bg-white/70">
                       <p className="text-xs font-bold text-text">{r.name}</p>
                       <p className="text-[10px] text-text-secondary mt-0.5">{r.description}</p>
