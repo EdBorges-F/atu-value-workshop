@@ -17,7 +17,7 @@ export interface Challenge {
   name: string;
   description: string;
   industryIds: string[];
-  pillarId: 'enrich' | 'reshape' | 'reinvent' | 'bend' | 'security';
+  pillarId: 'enrich' | 'reshape' | 'reinvent' | 'bend' | 'intelligence' | 'security';
 }
 
 // ─── Evidence Provenance ────────────────────────────────────
@@ -58,7 +58,7 @@ export interface UseCase {
   evidence: string[];
   microsoftProducts: string[];
   category?: string;
-  pillarId: 'enrich' | 'reshape' | 'reinvent' | 'bend' | 'security';
+  pillarId: 'enrich' | 'reshape' | 'reinvent' | 'bend' | 'intelligence' | 'security';
   agentType?: AgentCapabilityType;
 }
 

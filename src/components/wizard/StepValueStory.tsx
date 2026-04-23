@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useEffect } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
-import { generateValueStory, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory, type StakeholderEntry } from '../../lib/valueStoryGenerator'
+import { generateValueStory, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory, type StakeholderEntry } from '../../lib/valueStoryGenerator'
 import { CHALLENGES } from '../../data/challenges'
 import { FUNCTION_BENCHMARKS, filterCustomerZero } from '../../data/global-ai-evidence'
 import type { CustomerZeroDepartment, CustomerZeroProofPoint } from '../../data/customer-zero'
@@ -310,6 +310,18 @@ export default function StepValueStory({ wizard }: WizardProps) {
         items.push({ pillar: ps.pillar.fullName, pillarIcon: ps.pillar.icon, stories: unique })
       }
     }
+    if (story.intelligenceSection) {
+      const raw = story.intelligenceSection.useCases.flatMap(uc => uc.matchedStories)
+      const unique = raw.filter(s => {
+        const key = s.company.toLowerCase()
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+      if (unique.length > 0) {
+        items.push({ pillar: 'Intelligence & Trust', pillarIcon: INTELLIGENCE_FOUNDATION.icon, stories: unique })
+      }
+    }
     if (story.securitySection) {
       const raw = story.securitySection.useCases.flatMap(uc => uc.matchedStories)
       const unique = raw.filter(s => {
@@ -514,6 +526,35 @@ export default function StepValueStory({ wizard }: WizardProps) {
           {story.pillarSections.map((section) => (
             <PillarCard key={section.pillar.id} section={section} defaultOpen={false} />
           ))}
+
+          {/* Intelligence & Trust Foundation */}
+          {story.intelligenceSection && (
+            <div className="rounded-2xl overflow-hidden border-2 border-dashed border-indigo-300">
+              <Collapsible title="Intelligence & Trust" icon={INTELLIGENCE_FOUNDATION.icon}
+                summary={`${story.intelligenceSection.useCases.length} data foundation use cases`} defaultOpen={false}>
+                <div className="p-6 space-y-4 bg-white">
+                  <ul className="space-y-1.5">
+                    {story.intelligenceSection.customerPriorities.map((p, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="mt-1 w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
+                        <span className="text-sm text-text leading-snug">{p}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {story.intelligenceSection.useCases.length > 0 && (
+                    <div className="space-y-3">
+                      {story.intelligenceSection.useCases.map((uc, i) => (
+                        <div key={i} className="p-4 rounded-xl bg-indigo-50 border border-indigo-100">
+                          <p className="text-sm font-bold text-text">{uc.name}</p>
+                          <p className="text-xs text-text-secondary mt-1 leading-relaxed">{uc.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Collapsible>
+            </div>
+          )}
 
           {/* Security Foundation */}
           {story.securitySection && (

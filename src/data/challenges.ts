@@ -38,7 +38,7 @@ export const CHALLENGES: Challenge[] = [
     name: 'Data & Analytics',
     description: 'Unlock insights from enterprise data, enable real-time decisions, and democratize analytics',
     industryIds: ['capital-markets', 'banking', 'insurance', 'retail', 'manufacturing', 'healthcare-medtech', 'energy-resources'],
-    pillarId: 'reshape',
+    pillarId: 'intelligence',
   },
   {
     id: 'workforce-modernization',
