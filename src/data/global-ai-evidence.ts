@@ -37,6 +37,7 @@ export interface IndustryBenchmark {
   avgROI: string
   topPerformerMultiple: string
   marketProjection?: string
+  frontierStats?: string[]  // Key stats from Frontier Transformation decks
 }
 
 export interface FunctionBenchmark {
@@ -85,6 +86,13 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     topUseCases: ['Claims processing automation', 'Underwriting risk assessment', 'Fraud detection at intake', 'Customer self-service'],
     avgROI: 'Value typically measured through lower leakage, faster claims handling, and improved risk selection',
     topPerformerMultiple: 'Fraud savings depend on claim volume, fraud prevalence, and false-positive rates',
+    frontierStats: [
+      '70% of health plans are prioritizing agentic AI for utilization management, prior authorization, and claims management',
+      'Leading payors have seen ~50% reduction in prior authorization review times using AI-assisted workflows',
+      '25% of payers expect to spend more than $5M on API implementation alone',
+      '~85% of insurance executives see AI as critical to future competitiveness',
+      '80% of insurance consumers expect personalized, AI-driven service experiences',
+    ],
   },
   {
     industry: 'healthcare-provider',
@@ -92,6 +100,10 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     topUseCases: ['AI diagnostics & imaging', 'Clinical documentation (ambient AI)', 'Remote patient monitoring', 'AI triage', 'Revenue cycle automation'],
     avgROI: 'Large health systems can generate meaningful savings from revenue-cycle and administrative automation; savings should be modeled from local denial rates, labor mix, and patient volume',
     topPerformerMultiple: 'Diagnostic AI performance must be stated for a named clinical task and validated dataset',
+    frontierStats: [
+      '57% of healthcare leaders ranked AI-based clinical solutions as their top technology initiative for the next two years',
+      '77% of healthcare organizations are considering hiring for AI-specific roles',
+    ],
   },
   {
     industry: 'healthcare-medtech',
@@ -99,6 +111,10 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     topUseCases: ['Drug discovery acceleration', 'Clinical trial optimization', 'Medical device intelligence', 'Patient outcome prediction'],
     avgROI: 'McKinsey estimates AI could create $60B–$110B in annual economic value across pharma and medical products',
     topPerformerMultiple: 'AI can compress early-stage target and molecule screening from months to days, but the full 10–15-year development lifecycle requires clinical trials, regulatory approval, and manufacturing scale-up',
+    frontierStats: [
+      '$1T+ in healthcare spend is shifting to digital-first, connected, data-driven care models by 2035',
+      'Healthcare generates ~30% of global data, yet data silos persist — driving demand for standards-based interoperability',
+    ],
   },
   {
     industry: 'manufacturing',
@@ -113,6 +129,13 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     topUseCases: ['Demand forecasting', 'Personalization/recommendations', 'Automated customer support', 'Dynamic pricing', 'Inventory optimization'],
     avgROI: 'Service AI ROI varies widely; model using contact volume, containment rate, handle time, and labor cost',
     topPerformerMultiple: 'Well-scoped service bots can automate a meaningful share of routine contacts; containment depends on channel mix and knowledge quality',
+    frontierStats: [
+      '70% of large retailers will use AI-based demand forecasting by 2030',
+      '55% of online shoppers will begin product research using AI assistants',
+      '30–40% of routine retail associate tasks to be AI-assisted by 2030',
+      '33% of retail leaders prioritize AI for automation',
+      '70% of retail revenue will still be generated in physical stores in 2030',
+    ],
   },
   {
     industry: 'consumer-goods',
@@ -120,6 +143,13 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     topUseCases: ['Demand forecasting', 'Content generation', 'Supply chain optimization', 'Brand and product assistants'],
     avgROI: 'GenAI can reduce content-production effort and support faster campaign cycles; model ROI separately for content cost savings and personalization-driven revenue uplift',
     topPerformerMultiple: 'Teams often see much faster first-draft creation, but end-to-end production speed depends on review, compliance, and localization',
+    frontierStats: [
+      '50%+ of marketing tasks more efficient through automation by 2035',
+      '31% of consumers to automate shopping through smart home by 2030',
+      '40% of manufacturing functions likely see more automation by 2030',
+      '30%+ productivity improvement in supply chain functions by 2030',
+      '20–40% of CG profit pool at risk without advanced revenue growth management',
+    ],
   },
   {
     industry: 'energy-resources',
@@ -438,4 +468,8 @@ export const MARKET_STATS = {
   agentIntegrationIntent: 'Capgemini Research Institute (July 2024): 82% of organizations intend to integrate AI agents within 1–3 years',
   agentProjection2028: 'IDC Info Snapshot (May 2025): 1.3 billion AI agents projected by 2028',
   taskSpecificAgents2026: 'Gartner (August 2025): 40% of enterprise apps will integrate task-specific AI agents by 2026',
+
+  // From Frontier Deck cross-industry imperatives
+  personalizationPriority: 'Frontier Transformation Deck: Delivering AI-powered, real-time personalized experiences is a top priority for 80%+ of marketing leaders',
+  marketingBudgetPressure: 'Frontier Transformation Deck: Marketing budgets average ~7.7% of company revenue — AI is key to doing more with flat or declining spend',
 } as const

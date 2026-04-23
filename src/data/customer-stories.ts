@@ -687,7 +687,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'banking',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['digital-transformation', 'customer-experience'],
+    challengeIds: ['workforce-modernization', 'operational-efficiency'],
     keyMetrics: [
       '1 million hours of productivity gained with Microsoft Copilot.',
     ],
@@ -700,7 +700,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['data-analytics', 'customer-experience', 'innovation-speed'],
     keyMetrics: [
       '95% faster access to relevant data, enabling immediate insight consumption during live discussions.',
       '98% faster comparative analysis, supporting faster alignment and confident decisions.',
@@ -714,7 +714,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['data-analytics', 'digital-transformation'],
     keyMetrics: [
 
     ],
@@ -727,7 +727,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['data-analytics', 'operational-efficiency'],
     keyMetrics: [
 
     ],
@@ -740,7 +740,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['data-analytics', 'digital-transformation', 'customer-experience'],
     keyMetrics: [
 
     ],
@@ -753,7 +753,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['workforce-modernization', 'operational-efficiency'],
     keyMetrics: [
       'Increased productivity: Employee survey respondents reported a 10%–20% productivity increase',
       'Improved job satisfaction: Increased employee job satisfaction of 68% Copilot users',
@@ -767,7 +767,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['workforce-modernization', 'cost-optimization'],
     keyMetrics: [
 
     ],
@@ -780,7 +780,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['workforce-modernization', 'digital-transformation'],
     keyMetrics: [
 
     ],
@@ -793,7 +793,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['customer-experience', 'data-analytics'],
     keyMetrics: [
 
     ],
@@ -806,7 +806,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['customer-experience', 'workforce-modernization'],
     keyMetrics: [
       'Advisors save 200 hours per year across the firm',
     ],
@@ -819,7 +819,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['knowledge-management', 'innovation-speed'],
     keyMetrics: [
       'Maintained essential trust while introducing AI into the most sensitive, high-stakes governance workflows, improving insights and cutting directors’ reading time by up to 60%',
       'Achieved 25% reduction in board prep time overall',
@@ -833,7 +833,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['customer-experience', 'cost-optimization'],
     keyMetrics: [
 
     ],
@@ -846,7 +846,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['operational-efficiency', 'innovation-speed'],
     keyMetrics: [
       'Institutions can be ready-to-trade 300–500% faster',
       'Manual paperwork reduced by 75%',
@@ -860,7 +860,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'capital-markets',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['data-analytics', 'innovation-speed'],
+    challengeIds: ['data-analytics', 'risk-management'],
     keyMetrics: [
 
     ],
@@ -873,7 +873,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'insurance',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['digital-transformation', 'customer-experience'],
+    challengeIds: ['customer-experience', 'operational-efficiency'],
     keyMetrics: [
       'Nearly 50% faster wrap‑up time across customer service and claims‑related interactions.Saved valuable minutes on every case with automatic conversation summaries.',
     ],
@@ -886,7 +886,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'insurance',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['digital-transformation', 'customer-experience'],
+    challengeIds: ['digital-transformation', 'operational-efficiency'],
     keyMetrics: [
       '30% improvement in insurance application performance.',
     ],
@@ -899,7 +899,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'insurance',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['digital-transformation', 'customer-experience'],
+    challengeIds: ['innovation-speed', 'customer-experience', 'risk-management'],
     keyMetrics: [
 
     ],
@@ -912,7 +912,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'insurance',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['digital-transformation', 'customer-experience'],
+    challengeIds: ['data-analytics', 'cost-optimization', 'innovation-speed'],
     keyMetrics: [
       'Reduced critical ETL processing times from 8–9 hours to under 2–3 hours, dramatically accelerating insight‑to‑action cycles.',
       'Achieved 25–30% reduction in data platform costs, freeing budget to reinvest in innovation, advanced analytics, and future AI initiatives.',
@@ -926,7 +926,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     industry: 'insurance',
     product: 'Microsoft AI Platform',
     storyUrl: undefined,
-    challengeIds: ['digital-transformation', 'customer-experience'],
+    challengeIds: ['operational-efficiency', 'customer-experience', 'knowledge-management'],
     keyMetrics: [
       'Saved up to 3.5 days per agency annually through automated workflows.',
     ],
