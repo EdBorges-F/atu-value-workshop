@@ -8,9 +8,9 @@
 
 ### Logical Failure #1 — Survivorship Bias Masquerading as Proof
 
-The entire evidence layer — all 56 "hero use cases" — is a **hand-picked highlight reel**. Harting's "design cycles from weeks to 10 minutes"? Northwestern's "11.3 more patients per month"? These are cherry-picked from Microsoft marketing decks. Where are the failures? Where are the implementations that cost 3x and delivered 0.5x?
+The entire evidence layer — all 56 "hero use cases" — is a **hand-picked highlight reel**. Claims such as "design cycles from weeks to 10 minutes" (attributed to published Microsoft customer stories) and similar outcomes are cherry-picked from Microsoft marketing decks. Where are the failures? Where are the implementations that cost 3x and delivered 0.5x?
 
-You are presenting **survivor outcomes as base rates**. An AE walking into a healthcare system saying "Northwestern cut documentation time by 24%" is committing the same logical sin as showing someone Warren Buffett's returns and saying "investing is easy." The customer evidence isn't *wrong* — it's *unfalsifiable*, because you systematically exclude the counterexamples.
+You are presenting **survivor outcomes as base rates**. An AE walking into a healthcare system saying "Northwestern cut documentation time by 24%" is committing the same logical sin as showing someone a single investor's exceptional returns and saying "investing is easy." The customer evidence isn't *wrong* — it's *unfalsifiable*, because you systematically exclude the counterexamples.
 
 **The damage**: If even one customer Googles the evidence and finds a contradicting case study, the AE's credibility is destroyed — and with it, the deal.
 
@@ -24,7 +24,7 @@ This is classic **question-begging**: you assume the conclusion (customer should
 
 ### Logical Failure #3 — False Precision in an Uncertain Domain
 
-The main wizard (fast-wizard.html) compounds this with NPV/IRR/payback calculations using Forrester TEI methodology. But the inputs are *guesses*. An AE filling in "employees," "IT budget," and "adoption ramp" is producing spreadsheet-grade precision from cocktail-napkin-grade inputs. IRR to two decimal places based on a dropdown company size? That's not financial modeling — that's numerology.
+The main wizard (fast-wizard.html) compounds this with NPV/IRR/payback calculations using Forrester TEI methodology. But the inputs are *guesses*. An AE filling in "employees," "IT budget," and "adoption ramp" is producing spreadsheet-grade precision from cocktail-napkin-grade inputs. Presenting estimated IRR to two decimal places based on a dropdown company size — without qualifying language — risks conveying false precision. Financial projections should be presented as ranges with appropriate caveats.
 
 The lite version dodges this by not calculating ROI at all — but then what exactly is the "business case" it claims to build? It's a narrative with stats from other companies. That's a one-pager, not a business case. You've relabeled a marketing document as a strategic tool.
 
@@ -63,11 +63,11 @@ That's a 7-step workflow for a population (AEs) notorious for abandoning tools a
 
 1. **Copilot itself does this.** The Smart Fill prompt — the tool's centerpiece — is literally a prompt you paste into Copilot. If you already have Copilot, why do you need a middleman HTML file to generate a narrative? A senior AE with a good Copilot prompt library produces better, more tailored output in less time than clicking through a 3-step wizard with 56 pre-canned use cases.
 
-2. **Industry-specific pitch decks already exist.** Microsoft's corporate marketing machine produces industry vertical decks, battle cards, and customer stories at scale. The Frontier Vision Conversation Deck, the industry-specific hero decks — these are polished, reviewed, and legal-approved. F.A.S.T. repackages the same data into a less polished, un-reviewed format with no legal approval.
+2. **Industry-specific pitch decks already exist.** Microsoft's corporate marketing machine produces industry vertical decks, battle cards, and customer stories at scale. Existing published assets are polished, reviewed, and legal-approved. F.A.S.T. repackages the same data into a less polished, un-reviewed format with no legal approval.
 
-3. **The market is moving to agentic.** F.A.S.T.'s own roadmap acknowledges this — v4.0 is "Agentic Vision" with conversational mode, CRM data pull, dynamic recommendations. That *future* version is the only one that would be competitive. The current version — a static HTML wizard with hardcoded data — is a v0.5 pretending to be v1.1. By the time you build the real thing, Microsoft's own teams will have shipped something better as a Copilot Agent.
+3. **The market is moving to agentic.** F.A.S.T.'s own roadmap acknowledges this — v4.0 is "Agentic Vision" with conversational mode, CRM data pull, dynamic recommendations. That *future* version is the only one that would address current gaps. The current version — a static HTML wizard with hardcoded data — is a v0.5 pretending to be v1.1. By the time the full version is built, Microsoft's own platform teams may have shipped equivalent capabilities natively.
 
-4. **Customer Insight tools already exist inside Microsoft.** Customer Intelligence, Turing internal tools, partner-facing Dynamics 365 customer profiles — these pull *real* data. F.A.S.T. pulls nothing. It's a form you fill out yourself and then it gives you back your own inputs wrapped in prose.
+4. **Internal insight tools already exist.** Existing internal customer intelligence and analytics tools pull *real* data. F.A.S.T. pulls nothing. It's a form you fill out yourself and then it gives you back your own inputs wrapped in prose.
 
 **The steel man conclusion:** F.A.S.T. is a well-intentioned workaround for tooling gaps that are being closed by platform investments. It will be orphaned within 12-18 months by official product releases.
 
