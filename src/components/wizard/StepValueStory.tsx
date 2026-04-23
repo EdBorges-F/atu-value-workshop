@@ -735,13 +735,13 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
 
         {/* Print-only disclaimer footer */}
-        <div className="hidden print:!block mt-3 pt-2 border-t border-gray-200 text-center">
-          <p className="text-[7px] text-gray-500 font-semibold uppercase tracking-wider mb-0.5">Microsoft Confidential — For Discussion Purposes Only</p>
-          <p className="text-[6px] text-gray-400 leading-tight">
-            Prepared using ATU Value Workshop, aligned with Microsoft's Responsible AI principles and Secure Future Initiative standards.
-            Evidence sourced from published customer stories, IDC/Forrester research, and industry benchmarks.
-            Results vary by organization — validate with customer-specific context before making commitments.
-            All financial figures are directional benchmarks, not guarantees. © {new Date().getFullYear()} Microsoft Corporation.
+        <div className="hidden print:!block mt-3 pt-2 border-t border-gray-200">
+          <p className="text-[6.5px] text-gray-400 leading-tight text-center">
+            This document is intended solely for the use of {data.companyName || 'the customer'} and Microsoft and contains proprietary information.
+            ROI projections, cost estimates, and business impact figures are based on industry benchmarks and publicly available customer stories —
+            actual results will vary based on implementation scope, organizational readiness, and other factors. These figures do not constitute a guarantee of performance.
+            Microsoft's AI solutions are developed in accordance with our Responsible AI principles.
+            © {new Date().getFullYear()} Microsoft Corporation. All rights reserved. This material is provided for informational purposes only. Microsoft makes no warranties, express or implied.
           </p>
         </div>
       </div>
