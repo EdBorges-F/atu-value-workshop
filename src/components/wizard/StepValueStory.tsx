@@ -531,18 +531,15 @@ export default function StepValueStory({ wizard }: WizardProps) {
 
         {/* Challenge pills — grounding context */}
         {challenges.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-1.5 max-h-16 overflow-hidden">
-            <span className="text-[10px] text-white/40 uppercase tracking-wider font-semibold mr-1 self-center">Based on:</span>
-            {challenges.slice(0, 4).map(c => (
-              <span key={c.id} className="px-2.5 py-1 rounded-full bg-white/10 text-[11px] text-white/70 font-medium truncate max-w-[10rem]">
-                {c.name}
-              </span>
-            ))}
-            {challenges.length > 4 && (
-              <span className="px-2.5 py-1 rounded-full bg-white/10 text-[11px] text-white/50 font-medium">
-                +{challenges.length - 4} more
-              </span>
-            )}
+          <div className="mt-4">
+            <span className="text-[10px] text-white/40 uppercase tracking-wider font-semibold block text-center mb-1.5">Based on</span>
+            <div className="flex flex-wrap justify-center gap-1.5">
+              {challenges.map(c => (
+                <span key={c.id} className="px-2.5 py-1 rounded-full bg-white/10 text-[11px] text-white/70 font-medium">
+                  {c.name}
+                </span>
+              ))}
+            </div>
           </div>
         )}
       </div>
