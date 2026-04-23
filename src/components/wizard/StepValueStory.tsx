@@ -735,7 +735,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
 
         {/* Print-only disclaimer footer */}
-        <div className="hidden print:!block mt-3 pt-2 border-t border-gray-200">
+        <div className="print-disclaimer hidden print:!block mt-3 pt-2 border-t border-gray-200">
           <p className="text-[6.5px] text-gray-400 leading-tight text-center">
             This document is intended solely for the use of {data.companyName || 'the customer'} and Microsoft and contains proprietary information.
             ROI projections, cost estimates, and business impact figures are based on industry benchmarks and publicly available customer stories —
