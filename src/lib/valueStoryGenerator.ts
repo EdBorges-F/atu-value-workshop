@@ -75,10 +75,25 @@ export const FRONTIER_PILLARS: FrontierPillar[] = [
   },
 ]
 
+export const INTELLIGENCE_FOUNDATION = {
+  id: 'intelligence',
+  name: 'Intelligence & Trust',
+  subtitle: 'Data Foundation',
+  fullName: 'Intelligence & Trust',
+  icon: '🔮',
+  keywords: [
+    'data', 'analytics', 'fabric', 'foundry', 'intelligence', 'insight',
+    'warehouse', 'lake', 'estate', 'unified', 'governed', 'lineage',
+    'real-time', 'telemetry', 'reporting', 'dashboard', 'bi ',
+    'data mesh', 'data platform', 'iq', 'decision', 'context',
+  ],
+}
+
 export const SECURITY_FOUNDATION = {
   id: 'security',
   name: 'Security',
   subtitle: 'Foundation',
+  fullName: 'Security Foundation',
   icon: '🛡️',
   keywords: [
     'secur', 'compliance', 'risk', 'govern', 'privacy', 'identity',
@@ -130,7 +145,8 @@ export interface ValueStory {
   marketContext: string[]
   industryBenchmark: IndustryBenchmarkSummary | null
   pillarSections: PillarSection[]
-  securitySection: SecuritySection | null
+  intelligenceSection: FoundationSection | null
+  securitySection: FoundationSection | null
   solutionMap: SolutionMapEntry[]
   stakeholderMap: StakeholderEntry[]
   missingPillars: { id: string; name: string; fullName: string; icon: string; subtitle: string }[]
@@ -152,11 +168,14 @@ export interface PillarSection {
   pillarStories: MatchedStory[]
 }
 
-export interface SecuritySection {
+export interface FoundationSection {
   customerPriorities: string[]
   useCases: UseCaseEntry[]
   pillarStories: MatchedStory[]
 }
+
+// Legacy alias for backward compat
+export type SecuritySection = FoundationSection
 
 export interface SolutionMapEntry {
   useCase: string
@@ -178,7 +197,14 @@ export function classifyToPillar(text: string): string {
   let bestPillar = 'reshape' // default
   let bestScore = 0
 
-  // Check security first (foundation)
+  // Check intelligence first (data foundation)
+  let intScore = 0
+  for (const kw of INTELLIGENCE_FOUNDATION.keywords) {
+    if (lower.includes(kw)) intScore++
+  }
+  if (intScore >= 2) return 'intelligence'
+
+  // Check security (foundation)
   let secScore = 0
   for (const kw of SECURITY_FOUNDATION.keywords) {
     if (lower.includes(kw)) secScore++
@@ -416,7 +442,7 @@ export function generateValueStory(data: WizardData): ValueStory {
 
   // Classify each priority into a pillar
   const pillarPriorities: Record<string, string[]> = {
-    enrich: [], reshape: [], reinvent: [], bend: [], security: [],
+    enrich: [], reshape: [], reinvent: [], bend: [], intelligence: [], security: [],
   }
   for (const priority of priorityItems) {
     const pillarId = classifyToPillar(priority)
@@ -425,7 +451,7 @@ export function generateValueStory(data: WizardData): ValueStory {
 
   // Classify challenges into pillars using explicit pillarId
   const pillarChallenges: Record<string, string[]> = {
-    enrich: [], reshape: [], reinvent: [], bend: [], security: [],
+    enrich: [], reshape: [], reinvent: [], bend: [], intelligence: [], security: [],
   }
   for (const challenge of challenges) {
     const pid = challenge.pillarId ?? classifyToPillar(challenge.name + ' ' + challenge.description)
@@ -434,7 +460,7 @@ export function generateValueStory(data: WizardData): ValueStory {
 
   // Map use cases to pillars using explicit pillarId
   const pillarUseCases: Record<string, typeof useCases> = {
-    enrich: [], reshape: [], reinvent: [], bend: [], security: [],
+    enrich: [], reshape: [], reinvent: [], bend: [], intelligence: [], security: [],
   }
   for (const uc of useCases) {
     const pid = uc.pillarId ?? classifyToPillar(uc.name + ' ' + uc.description)
@@ -536,6 +562,47 @@ export function generateValueStory(data: WizardData): ValueStory {
     })
   }
 
+  // Intelligence & Trust section — data foundation layer
+  const intPriorities = pillarPriorities.intelligence
+  const intUCs = pillarUseCases.intelligence
+  const allIntUCs = [...intUCs]
+
+  const effectiveIntPriorities = intPriorities.length > 0
+    ? intPriorities
+    : ['Unified data estate and governed AI intelligence as the platform for frontier transformation']
+
+  const intUcEntries = allIntUCs.length > 0
+    ? allIntUCs.map((uc) => ({
+        name: uc.name,
+        description: uc.description.split('.')[0] + '.',
+        evidence: uc.evidence.length > 0 ? uc.evidence[0] : null,
+        matchedStories: matchStoriesToUseCase(uc, industryId),
+        roiCard: matchROITemplate(uc, industryId),
+      }))
+    : [{
+        name: 'Unified Data Estate & AI Intelligence',
+        description: 'Build a governed, unified data platform with Fabric IQ and Foundry IQ to power AI-driven decisions across the organization.',
+        evidence: null,
+        matchedStories: [] as MatchedStory[],
+        roiCard: null,
+      }]
+
+  const derivedIntStories: MatchedStory[] = []
+  for (const entry of intUcEntries) {
+    for (const s of entry.matchedStories) {
+      if (!globalSeenStories.has(s.company)) {
+        globalSeenStories.add(s.company)
+        derivedIntStories.push(s)
+      }
+    }
+  }
+
+  const intelligenceSection: FoundationSection = {
+    customerPriorities: effectiveIntPriorities,
+    useCases: intUcEntries,
+    pillarStories: derivedIntStories.slice(0, 3),
+  }
+
   // Security section — uses explicit pillarId like regular pillars
   const secPriorities = pillarPriorities.security
   const secUCs = pillarUseCases.security
@@ -572,7 +639,7 @@ export function generateValueStory(data: WizardData): ValueStory {
     }
   }
 
-  const securitySection: SecuritySection = {
+  const securitySection: FoundationSection = {
     customerPriorities: effectiveSecPriorities,
     useCases: secUcEntries,
     pillarStories: derivedSecStories.slice(0, 3),
@@ -583,6 +650,8 @@ export function generateValueStory(data: WizardData): ValueStory {
     const pid = uc.pillarId ?? classifyToPillar(uc.name + ' ' + uc.description)
     const pillar = pid === 'security'
       ? { fullName: 'Security Foundation' }
+      : pid === 'intelligence'
+      ? { fullName: 'Intelligence & Trust' }
       : (FRONTIER_PILLARS.find((p) => p.id === pid) ?? FRONTIER_PILLARS[1])
     return {
       useCase: uc.name,
@@ -609,6 +678,10 @@ export function generateValueStory(data: WizardData): ValueStory {
       areas: ['R&D', 'Product', 'Engineering', 'Innovation'],
       roles: ['CTO', 'VP of R&D', 'Chief Innovation Officer', 'Head of Product'],
     },
+    intelligence: {
+      areas: ['Data & Analytics', 'Business Intelligence', 'IT', 'Enterprise Architecture'],
+      roles: ['CDO', 'Chief Data Officer', 'VP of Analytics', 'CIO'],
+    },
     security: {
       areas: ['Information Security', 'Compliance', 'Risk', 'IT Governance'],
       roles: ['CISO', 'Chief Risk Officer', 'VP of Compliance'],
@@ -631,6 +704,16 @@ export function generateValueStory(data: WizardData): ValueStory {
         useCases: ps.useCases.map(uc => uc.name),
       })
     }
+  }
+  if (intelligenceSection.useCases.length > 0 || intelligenceSection.customerPriorities.some((p) => !p.startsWith('Unified data estate'))) {
+    pillarStakeholders.intelligence.areas.slice(0, 2).forEach((a) => activeAreas.add(a))
+    pillarStakeholders.intelligence.roles.slice(0, 1).forEach((r) => activeRoles.add(r))
+    stakeholderMap.push({
+      pillar: 'Intelligence & Trust',
+      areas: pillarStakeholders.intelligence.areas.slice(0, 3),
+      roles: pillarStakeholders.intelligence.roles.slice(0, 3),
+      useCases: intelligenceSection.useCases.map(uc => uc.name),
+    })
   }
   if (securitySection.useCases.length > 0 || securitySection.customerPriorities.some((p) => !p.startsWith('Enterprise-grade'))) {
     pillarStakeholders.security.areas.slice(0, 2).forEach((a) => activeAreas.add(a))
@@ -796,6 +879,7 @@ LEGAL: "© ${new Date().getFullYear()} Microsoft Corporation. All rights reserve
     marketContext,
     industryBenchmark,
     pillarSections,
+    intelligenceSection,
     securitySection,
     solutionMap,
     stakeholderMap,

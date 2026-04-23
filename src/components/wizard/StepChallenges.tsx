@@ -126,7 +126,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
   const challengeKey = selectedChallengeIds.sort().join(',')
   if (challengeKey !== prevChallengesRef.current && rankedUseCases.length > 0) {
     prevChallengesRef.current = challengeKey
-    const ids = rankedUseCases.slice(0, 12).map((r) => r.uc.id)
+    const ids = rankedUseCases.slice(0, 6).map((r) => r.uc.id)
     updateData({ selectedUseCaseIds: ids })
   }
 
@@ -145,7 +145,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
   }
 
   // Counts for the header
-  const recommendedIds = new Set(rankedUseCases.slice(0, 12).map((r) => r.uc.id))
+  const recommendedIds = new Set(rankedUseCases.slice(0, 6).map((r) => r.uc.id))
   const evidenceBackedCount = rankedUseCases.filter((r) => r.evidenceCount > 0).length
 
   return (
@@ -227,7 +227,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
               </button>
               <button
                 onClick={() => {
-                  const ids = rankedUseCases.slice(0, 12).map((r) => r.uc.id)
+                  const ids = rankedUseCases.slice(0, 6).map((r) => r.uc.id)
                   updateData({ selectedUseCaseIds: ids })
                 }}
                 className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"

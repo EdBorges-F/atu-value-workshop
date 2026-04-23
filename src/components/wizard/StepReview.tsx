@@ -3,7 +3,7 @@ import type { useWizardState } from '../../hooks/useWizardState'
 import { INDUSTRIES } from '../../data/industries'
 import { CHALLENGES } from '../../data/challenges'
 import { USE_CASES } from '../../data/use-cases'
-import { classifyToPillar, FRONTIER_PILLARS, SECURITY_FOUNDATION } from '../../lib/valueStoryGenerator'
+import { classifyToPillar, FRONTIER_PILLARS, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION } from '../../lib/valueStoryGenerator'
 import type { CustomerZeroDepartment } from '../../data/customer-zero'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
@@ -13,6 +13,7 @@ const PILLAR_STYLES: Record<string, { gradient: string; text: string; bg: string
   reshape:  { gradient: 'from-emerald-500 to-teal-500', text: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
   reinvent: { gradient: 'from-blue-500 to-indigo-500', text: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
   bend:     { gradient: 'from-violet-500 to-purple-500', text: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
+  intelligence: { gradient: 'from-indigo-500 to-cyan-500', text: 'text-indigo-700', bg: 'bg-indigo-50', border: 'border-indigo-200' },
   security: { gradient: 'from-rose-500 to-red-500', text: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200' },
 }
 
@@ -64,6 +65,7 @@ export default function StepReview({ wizard }: WizardProps) {
 
   const allPillarEntries = [
     ...FRONTIER_PILLARS.map((p) => ({ id: p.id, icon: p.icon, fullName: p.fullName })),
+    { id: 'intelligence', icon: INTELLIGENCE_FOUNDATION.icon, fullName: INTELLIGENCE_FOUNDATION.fullName },
     { id: 'security', icon: SECURITY_FOUNDATION.icon, fullName: 'Security Foundation' },
   ]
 

@@ -412,7 +412,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-it',
     name: 'Information Technology',
-    pillarIds: ['enrich', 'security'],
+    pillarIds: ['enrich', 'intelligence', 'security'],
     description: 'AI-powered network operations and proactive device health management across Microsoft corporate infrastructure.',
     useCases: [
       {
@@ -525,7 +525,7 @@ export const CUSTOMER_ZERO_DEPARTMENTS: CustomerZeroDepartment[] = [
   {
     id: 'dept-operations',
     name: 'Operations',
-    pillarIds: ['reshape', 'reinvent'],
+    pillarIds: ['reshape', 'reinvent', 'intelligence'],
     description: 'Eight AI-powered use cases spanning partner onboarding, contracting, BPO, trade compliance, and employee productivity automation.',
     useCases: [
       {
