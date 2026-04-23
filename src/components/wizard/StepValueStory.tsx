@@ -513,8 +513,8 @@ export default function StepValueStory({ wizard }: WizardProps) {
           </div>
         </div>
 
-        {/* Stats strip */}
-        <div className="mt-6 grid grid-cols-5 gap-3">
+        {/* Stats strip — hidden in print */}
+        <div className="mt-6 grid grid-cols-5 gap-3 print:hidden">
           {[
             { value: story.pillarSections.reduce((sum, p) => sum + (p.useCases?.length || 0), 0) + (story.securitySection?.useCases?.length || 0), label: 'AI Use Cases' },
             { value: story.pillarSections.length + (story.securitySection ? 1 : 0), label: 'Pillars' },
