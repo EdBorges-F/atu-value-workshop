@@ -137,6 +137,7 @@ export interface IndustryBenchmarkSummary {
   topPerformerMultiple: string
   marketProjection?: string
   topUseCases: string[]
+  frontierStats?: string[]
 }
 
 export interface ValueStory {
@@ -410,6 +411,7 @@ function getIndustryBenchmark(industryId: string): IndustryBenchmarkSummary | nu
     topPerformerMultiple: bench.topPerformerMultiple,
     marketProjection: bench.marketProjection,
     topUseCases: bench.topUseCases,
+    frontierStats: bench.frontierStats,
   }
 }
 

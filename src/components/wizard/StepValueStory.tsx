@@ -384,6 +384,10 @@ export default function StepValueStory({ wizard }: WizardProps) {
       lines.push(`  AI adoption growth: ${story.industryBenchmark.adoptionGrowthRate}`)
       lines.push(`  Average ROI: ${story.industryBenchmark.avgROI}`)
       lines.push(`  Top performers: ${story.industryBenchmark.topPerformerMultiple}`)
+      if (story.industryBenchmark.frontierStats?.length) {
+        lines.push('  Frontier Transformation Insights:')
+        story.industryBenchmark.frontierStats.forEach((s) => lines.push(`    ▸ ${s}`))
+      }
       lines.push('')
     }
     for (const ps of story.pillarSections) {
@@ -679,6 +683,19 @@ export default function StepValueStory({ wizard }: WizardProps) {
                   <p className="text-xs text-amber-700 mt-3 pt-3 border-t border-amber-200">
                     📊 {story.industryBenchmark.marketProjection}
                   </p>
+                )}
+                {story.industryBenchmark.frontierStats && story.industryBenchmark.frontierStats.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-amber-200">
+                    <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-wider mb-2">Frontier Transformation Insights</p>
+                    <ul className="space-y-1.5">
+                      {story.industryBenchmark.frontierStats.map((stat, i) => (
+                        <li key={i} className="text-xs text-amber-900 leading-snug flex items-start gap-1.5">
+                          <span className="text-amber-500 mt-0.5 flex-shrink-0">▸</span>
+                          {stat}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
                 <p className="text-[9px] text-amber-500 mt-2">Based on published industry research from McKinsey, BCG, IDC, and Forrester</p>
               </div>

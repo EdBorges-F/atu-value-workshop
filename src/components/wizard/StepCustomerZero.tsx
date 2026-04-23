@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
 import { FRONTIER_PILLARS } from '../../lib/valueStoryGenerator'
+import { CHALLENGES } from '../../data/challenges'
 import {
   CUSTOMER_ZERO_USE_CASES,
   CUSTOMER_ZERO_DEPARTMENTS,
@@ -27,8 +28,18 @@ const DEPT_ICONS: Record<string, string> = {
 }
 
 export default function StepCustomerZero({ wizard }: WizardProps) {
-  const { prevStep, nextStep } = wizard
+  const { prevStep, nextStep, data } = wizard
   const [expandedDept, setExpandedDept] = useState<string | null>(null)
+
+  // Compute active pillar IDs from selected challenges
+  const activePillarIds = useMemo(() => {
+    const ids = new Set<string>()
+    for (const cId of data.selectedChallengeIds) {
+      const ch = CHALLENGES.find(c => c.id === cId)
+      if (ch) ids.add(ch.pillarId)
+    }
+    return ids
+  }, [data.selectedChallengeIds])
 
   return (
     <div className="max-w-3xl mx-auto space-y-10">
@@ -163,17 +174,25 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
         <div className="grid grid-cols-2 gap-3">
           {CUSTOMER_ZERO_DEPARTMENTS.map((dept) => {
             const isExpanded = expandedDept === dept.id
+            const isRelevant = activePillarIds.size > 0 && dept.pillarIds.some(p => activePillarIds.has(p))
             return (
               <button
                 key={dept.id}
                 onClick={() => setExpandedDept(isExpanded ? null : dept.id)}
                 className={`p-3 rounded-xl border text-left transition-all ${
-                  isExpanded ? 'border-primary bg-primary/5 shadow-md col-span-2' : 'border-gray-100 bg-white shadow-sm hover:border-primary/30'
+                  isExpanded ? 'border-primary bg-primary/5 shadow-md col-span-2'
+                  : isRelevant ? 'border-primary/40 bg-primary/5 shadow-sm hover:border-primary/60 ring-1 ring-primary/20'
+                  : 'border-gray-100 bg-white shadow-sm hover:border-primary/30'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <span className="text-base">{DEPT_ICONS[dept.id] ?? '📋'}</span>
                   <p className="text-xs font-bold text-text flex-1">{dept.name}</p>
+                  {isRelevant && !isExpanded && (
+                    <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-semibold uppercase tracking-wider">
+                      Relevant
+                    </span>
+                  )}
                   <span className="text-[9px] text-gray-400">{dept.useCases.length} UCs</span>
                   <span className="text-text-secondary text-sm">{isExpanded ? '▾' : '▸'}</span>
                 </div>
