@@ -291,6 +291,45 @@ export default function StepValueStory({ wizard }: WizardProps) {
   const story = useMemo(() => generateValueStory(data), [data])
   const printRef = useRef<HTMLDivElement>(null)
 
+  // Print PDF in clean window (no browser headers/footers)
+  const handlePrintPDF = () => {
+    const heroEl = printRef.current?.querySelector('.hero-card')
+    const execEl = printRef.current?.querySelector('#exec-summary')
+    if (!heroEl || !execEl) { window.print(); return }
+
+    // Gather all stylesheets
+    const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+      .map(el => el.outerHTML).join('\n')
+
+    const win = window.open('', '_blank', 'width=900,height=700')
+    if (!win) { window.print(); return }
+
+    win.document.write(`<!DOCTYPE html><html><head>
+      <title>${data.companyName || 'Value Story'} — Executive Summary</title>
+      ${styles}
+      <style>
+        @page { margin: 0.5in; size: letter; }
+        @media print { @page { margin: 0.5in; size: letter; } }
+        body { margin: 0; padding: 0.5in; background: white; font-size: 8px; }
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        .print\\:hidden, .no-print { display: none !important; }
+        .print-disclaimer { display: block !important; }
+      </style>
+    </head><body>
+      <div class="print-1page" style="max-width:100%;">
+        ${heroEl.outerHTML}
+        <div style="margin-top:0.2rem;">${execEl.outerHTML}</div>
+      </div>
+    </body></html>`)
+    win.document.close()
+
+    // Wait for styles to load then print
+    setTimeout(() => {
+      win.print()
+      setTimeout(() => win.close(), 1000)
+    }, 500)
+  }
+
   // Consolidated evidence across all pillars for "The Proof" section (deduped by company)
   const allEvidence = useMemo(() => {
     const seen = new Set<string>()
@@ -505,7 +544,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
           <div className="flex gap-2 print:hidden">
             <CopyButton text={fullStoryText} label="📋 Copy" />
             <button
-              onClick={() => window.print()}
+              onClick={handlePrintPDF}
               className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors"
             >
               📄 PDF
