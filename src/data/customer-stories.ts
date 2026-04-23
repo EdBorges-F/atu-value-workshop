@@ -678,5 +678,345 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     quotes: [
       '"Avanade has real visibility into agent activity, the ability to govern agent sprawl, control resource usage, and manage agents as identity-aware digital entities in Microsoft Entra." — Aaron Reich, CTIO'
     ],
-  }
+  },
+
+  // ─── Frontier Deck Stories (auto-extracted) ───────────────
+  {
+    id: 'deck-barclays',
+    company: 'Barclays',
+    industry: 'banking',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['digital-transformation', 'customer-experience'],
+    keyMetrics: [
+      '1 million hours of productivity gained with Microsoft Copilot.',
+    ],
+    summary: 'Barclays aimed to simplify the way their employees work and increase productivity with AI tools. Connected to employee self-service solutions in Barclays apps as well as key partners to create a single, integrated agentic resource. 1 million hours of productivity gained with Microsoft Copilot. Enhanced employee experience via access to a comprehensive agentic dashboard in Microsoft Viva to quic...',
+    quotes: [],
+  },
+  {
+    id: 'deck-sandp-global',
+    company: 'S&P Global',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+      '95% faster access to relevant data, enabling immediate insight consumption during live discussions.',
+      '98% faster comparative analysis, supporting faster alignment and confident decisions.',
+    ],
+    summary: 'Clients struggled to engage with S&P Global’s insights at the speed of their decisions. Despite having AI‑ready data, customers had to switch tools, navigate complex interfaces, or rely on technical specialists—slowing insight consumption and limiting day‑to‑day engagement. By delivering intelligence directly into Teams, clients get: 95% faster access to relevant data, enabling immediate insigh...',
+    quotes: [],
+  },
+  {
+    id: 'deck-ubs',
+    company: 'UBS',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+
+    ],
+    summary: 'UBS faced growing complexity across the investment value chain, with fragmented data, research, and analytics limiting the ability to generate timely, consistent, and decision-ready insights from research through portfolio construction and implementation. Digitized approximately 60,000 investment advice and product documents. Azure OpenAI Service rolled out to over 30,000 employees in 10 months...',
+    quotes: [],
+  },
+  {
+    id: 'deck-blackrock',
+    company: 'Blackrock',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+
+    ],
+    summary: 'Private markets investors have challenges with data including having to manually configure visualizations, charts, and tables. Investors must navigate between different dashboards to access underlying data. The must also perform complex and manual data analyses across multiple reports and Excel files. Investors can quickly generate analytics to understand key metrics and trends in client portfo...',
+    quotes: [],
+  },
+  {
+    id: 'deck-franklin-templeton',
+    company: 'Franklin Templeton',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+
+    ],
+    summary: 'Siloed data and challenges to merge structured data with contextual financial information AI capabilities fragmented in isolated use cases rather than across end-to-end workflows Limited personalization and productivity at scale A composable business applications platform to rapidly embed AI into business processes and scale digital transformation and innovation Improve the productivity of sale...',
+    quotes: [],
+  },
+  {
+    id: 'deck-bci',
+    company: 'BCI',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+      'Increased productivity: Employee survey respondents reported a 10%–20% productivity increase',
+      'Improved job satisfaction: Increased employee job satisfaction of 68% Copilot users',
+    ],
+    summary: 'British Columbia Investment Management Corporation (BCI) was looking to elevate the employee experience and transform their operations BCI had the goal to remove manual tasks through automation to offer employees more time for strategic and creative tasks Increased productivity: Employee survey respondents reported a 10%–20% productivity increase Streamlined operations: Saved more than 2,300 pe...',
+    quotes: [],
+  },
+  {
+    id: 'deck-van-lanschot-kempen',
+    company: 'Van Lanschot Kempen',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+
+    ],
+    summary: 'One of the world’s top 10 oldest financial institutions based in the Netherlands Prioritizes the personal touch with clients Key challenge: Unautomated day-to-day tasks taking up a lot of time for their employees Minimizing cognitive burden: Reduced the time needed for daily tasks to focus on high value work Accelerated excellence: Increased advisor productivity by drafting routine corresponden...',
+    quotes: [],
+  },
+  {
+    id: 'deck-lgt-private-banking',
+    company: 'LGT Private Banking',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+
+    ],
+    summary: 'Need for modern work environment: The pandemic highlighted the necessity for a modern, flexible work environment to facilitate seamless collaboration LGT recognized the need for a comprehensive digitalization strategy to support a secure and flexible work environment for global teams Streamlined operations: Enabled employees to save an average of one hour per week by streamlining daily tasks Em...',
+    quotes: [],
+  },
+  {
+    id: 'deck-pimco',
+    company: 'PIMCO',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+
+    ],
+    summary: 'The client-facing teams at PIMCO serve hundreds of thousands of clients around the world, all of whom need accurate, up-to-date information on the products they hold. To boost the client experience, PIMCO wanted to help its associates spend less time aggregating data and more time engaging with clients. Boosted client experience: Delivered faster, more accurate responses to client inquiries thr...',
+    quotes: [],
+  },
+  {
+    id: 'deck-investec',
+    company: 'Investec',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+      'Advisors save 200 hours per year across the firm',
+    ],
+    summary: 'When a growing global business is grounded as solidly in personal relationships as Investec’s is, meeting the demand for bespoke customer experiences can seem like an insurmountable feat Enabled a single view of a client—with the full history of engagement Advisors can now manage the entire engagement process through Outlook Advisors save 200 hours per year across the firm More time to focus on...',
+    quotes: [],
+  },
+  {
+    id: 'deck-nasdaq',
+    company: 'Nasdaq',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+      'Maintained essential trust while introducing AI into the most sensitive, high-stakes governance workflows, improving insights and cutting directors’ reading time by up to 60%',
+      'Achieved 25% reduction in board prep time overall',
+    ],
+    summary: 'Nasdaq wanted to modernize its Nasdaq Boardvantage portal to reduce manual effort, accelerate decision-making, and maintain trust in high-stakes governance workflows. Maintained essential trust while introducing AI into the most sensitive, high-stakes governance workflows, improving insights and cutting directors’ reading time by up to 60% Achieved 25% reduction in board prep time overall',
+    quotes: [],
+  },
+  {
+    id: 'deck-kotak',
+    company: 'Kotak',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+
+    ],
+    summary: 'Kotak AMC needed to enhance investor servicing efficiency and reduce manual workload High volume of customer queries and operational tasks were slowing down response times The team sought scalable solutions to improve turnaround and accuracy Reduced manual effort, freeing up teams for strategic tasks. Saving 2-man months on repetitive tasks Achieved faster response times and improved client sat...',
+    quotes: [],
+  },
+  {
+    id: 'deck-saphyre',
+    company: 'Saphyre',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+      'Institutions can be ready-to-trade 300–500% faster',
+      'Manual paperwork reduced by 75%',
+    ],
+    summary: 'Industry facing delays and inefficiencies in client onboarding and trade processing due to manual workflows and fragmented systems Saphyre needed a scalable and secure platform to support rapid innovation and compliance Institutions can be ready-to-trade 300–500% faster Manual paperwork reduced by 75% Supports T+1 compliance and moving towards T+0 reality',
+    quotes: [],
+  },
+  {
+    id: 'deck-bny',
+    company: 'BNY',
+    industry: 'capital-markets',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['data-analytics', 'innovation-speed'],
+    keyMetrics: [
+
+    ],
+    summary: 'Set out to explore how to use AI to navigate complex market dynamics with precision and agility while enhancing risk management and optimizing operational efficiency. Near real‑time investment insights, improving agility in fast‑moving markets across buy‑ and sell‑side use cases Higher research and analytics efficiency through cloud‑ and AI‑enabled workflows that reduce complexity and manual ef...',
+    quotes: [],
+  },
+  {
+    id: 'deck-aia',
+    company: 'AIA',
+    industry: 'insurance',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['digital-transformation', 'customer-experience'],
+    keyMetrics: [
+      'Nearly 50% faster wrap‑up time across customer service and claims‑related interactions.Saved valuable minutes on every case with automatic conversation summaries.',
+    ],
+    summary: 'Customer service representatives lacked a unified view of the policyholder, with information fragmented across systems—slowing resolution and limiting effective customer support. Nearly 50% faster wrap‑up time across customer service and claims‑related interactions.Saved valuable minutes on every case with automatic conversation summaries. Enabled agents to focus on high‑value customer relati...',
+    quotes: [],
+  },
+  {
+    id: 'deck-aviva',
+    company: 'AVIVA',
+    industry: 'insurance',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['digital-transformation', 'customer-experience'],
+    keyMetrics: [
+      '30% improvement in insurance application performance.',
+    ],
+    summary: 'Aviva was running critical policy and customer‑facing insurance systems on a legacy hosting platform that limited scalability and performance. 4× increase in operational efficiency across insurance application development and operations. 30% improvement in insurance application performance. Delivered faster, more personalized policyholder and agent experiences by reducing call and hold times.',
+    quotes: [],
+  },
+  {
+    id: 'deck-zurich',
+    company: 'Zurich',
+    industry: 'insurance',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['digital-transformation', 'customer-experience'],
+    keyMetrics: [
+
+    ],
+    summary: 'Zurich faced growing underwriting complexity as unstructured, multilingual inputs limited real‑time insight—slowing underwriting and scaling. Accelerated underwriting turnaround times with faster, more accurate risk assessments 200+ AI tools elevated risk assessment and sped underwriting decisions. Improved customer satisfaction with enhanced personalization and responsiveness.',
+    quotes: [],
+  },
+  {
+    id: 'deck-triglav',
+    company: 'Triglav',
+    industry: 'insurance',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['digital-transformation', 'customer-experience'],
+    keyMetrics: [
+      'Reduced critical ETL processing times from 8–9 hours to under 2–3 hours, dramatically accelerating insight‑to‑action cycles.',
+      'Achieved 25–30% reduction in data platform costs, freeing budget to reinvest in innovation, advanced analytics, and future AI initiatives.',
+    ],
+    summary: 'Triglav’s fragmented data and reporting platforms made innovation slow and centralized. Reduced critical ETL processing times from 8–9 hours to under 2–3 hours, dramatically accelerating insight‑to‑action cycles. Delivered ~15× faster data processing, enabling teams to experiment, iterate, and deploy new analytics and AI use cases faster. Achieved 25–30% reduction in data platform costs, freein...',
+    quotes: [],
+  },
+  {
+    id: 'deck-nfu-mutual',
+    company: 'NFU Mutual',
+    industry: 'insurance',
+    product: 'Microsoft AI Platform',
+    storyUrl: undefined,
+    challengeIds: ['digital-transformation', 'customer-experience'],
+    keyMetrics: [
+      'Saved up to 3.5 days per agency annually through automated workflows.',
+    ],
+    summary: 'Customer service excellence was constrained by fragmented data and manual processes. Eliminated silos and created a single source of truth for underwriting and service. Saved up to 3.5 days per agency annually through automated workflows. Reduced cognitive load, improving accessibility and understanding.',
+    quotes: [],
+  },
+
+  // ─── Manual Stories from Frontier Decks ───────────────────
+  {
+    id: 'deck-bradesco',
+    company: 'Bradesco',
+    industry: 'banking',
+    product: 'Azure AI Foundry',
+    storyUrl: undefined,
+    challengeIds: ['customer-experience', 'digital-transformation'],
+    keyMetrics: [
+      'BIA serves 74 million customers',
+      '100% of initial interactions handled by AI',
+      '83% resolution of customer inquiries',
+    ],
+    summary: 'Needed more seamless and personalized cross-channel service. Streamlined customer service with Azure AI Foundry. BIA (Bradesco Intelligent Agent) serves 74 million customers with 83% resolution rate.',
+    quotes: [],
+  },
+  {
+    id: 'deck-cibc',
+    company: 'CIBC',
+    industry: 'banking',
+    product: 'Azure AI',
+    storyUrl: undefined,
+    challengeIds: ['digital-transformation', 'security-compliance'],
+    keyMetrics: [
+      '37K+ AI trainings completed',
+      '50%+ of all consumable data now in Azure',
+      '10-hour manual process reduced to 10-minute workflow',
+    ],
+    summary: 'Faced rising regulatory demands and manual operational processes. Used Azure to modernize core services, built AI-native corporate banking application turning a 10-hour manual process into a 10-minute workflow.',
+    quotes: [],
+  },
+  {
+    id: 'deck-estee-lauder',
+    company: 'Estée Lauder Companies',
+    industry: 'retail',
+    product: 'Azure OpenAI Service',
+    storyUrl: undefined,
+    challengeIds: ['innovation-speed', 'knowledge-management'],
+    keyMetrics: [
+      'Reduced data gathering from weeks to minutes',
+    ],
+    summary: 'ELC generates a high volume of insights about product development and marketing. Built an AI agent with Copilot Studio and Azure OpenAI Service that analyzes documents, identifies trends, and provides strategic recommendations, reducing data gathering from weeks to minutes.',
+    quotes: [],
+  },
+  {
+    id: 'deck-elc-cg',
+    company: 'ELC (Consumer Goods)',
+    industry: 'consumer-goods',
+    product: 'Azure OpenAI Service',
+    storyUrl: undefined,
+    challengeIds: ['innovation-speed', 'data-analytics'],
+    keyMetrics: [
+      'Data gathering reduced from weeks to minutes',
+      'Faster time to market',
+    ],
+    summary: 'Needed cheaper, quicker insights to inform consumer-centric R&D. Worked with Microsoft to build AI agent with Copilot Studio for document analysis, trend identification, and strategic recommendations.',
+    quotes: [],
+  },
+  {
+    id: 'deck-vodafone',
+    company: 'Vodafone',
+    industry: 'telecommunications',
+    product: 'Azure AI',
+    storyUrl: undefined,
+    challengeIds: ['customer-experience', 'operational-efficiency'],
+    keyMetrics: [
+      'TOBi handles millions of customer interactions',
+      'Significant reduction in call center volume',
+    ],
+    summary: 'Vodafone deployed TOBi, an AI-powered digital assistant using Azure AI, to handle customer interactions across markets, significantly reducing call center volume while improving customer satisfaction.',
+    quotes: [],
+  },
+  {
+    id: 'deck-toyota',
+    company: 'Toyota',
+    industry: 'automotive',
+    product: 'Azure AI',
+    storyUrl: undefined,
+    challengeIds: ['innovation-speed', 'autonomous-systems'],
+    keyMetrics: [
+
+    ],
+    summary: 'Toyota partnered with Microsoft on 3 flagship AI projects: edge-cloud collaboration for proactive driver support, next-generation UX through the Growing Car concept, and applications for enhancing future mobility value.',
+    quotes: [],
+  },
 ];

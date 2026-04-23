@@ -1451,4 +1451,680 @@ export const HERO_USE_CASES: HeroUseCase[] = [
     customers: [],
     products: ['Microsoft Sentinel', 'Security Copilot'],
   },
+
+  // ─── Frontier Deck Use Cases (auto-extracted) ───────────────
+  {
+    title: 'Agentic AI in engineering and development accelerates time to market',
+    industry: 'automotive',
+    valueProp: 'Agent powered R&D and digital engineering',
+    benefits: [
+      'Agent powered R&D and digital engineering',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'GitHub Copilot', 'Azure IoT', 'Foundry IQ'],
+  },
+  {
+    title: 'Agentic and autonomous supply chains',
+    industry: 'automotive',
+    valueProp: 'Agentic and autonomous supply chains',
+    benefits: [
+      'Agentic and autonomous supply chains',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'GitHub Copilot', 'Azure IoT', 'Foundry IQ'],
+  },
+  {
+    title: 'Agent powered relationship managers',
+    industry: 'banking',
+    valueProp: 'Relationship Managers are now expected to deliver personalized experiences, strengthen relationships, and identify new growth opportunities—while being stretched thin and client-related data is stored across disparate systems',
+    benefits: [
+      'Opportunity: AI agents support advisors by gathering client information, maintaining engagement, and identifying opportunities, allowing RMs to prioritize judgment, trust, and relationships',
+      'Integrated view of all clients',
+      'Integrates and standardizes data from various sources to form a continually updated client profile.',
+      '360° client view (financials, behaviors, sentiment, risk, opportunities)',
+    ],
+    customers: [
+      { name: 'Banking Industry Reference', outcomes: ['Potential 30–50% reduction in manual prep time'] }
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Dynamic, adaptive lending and mortgages with agents',
+    industry: 'banking',
+    valueProp: 'The end-to-end mortgage process remains slow, manual, and error-prone. Fragmented legacy systems, manual rekeying, and inconsistent policy interpretation creates duplicate work, errors, and compliance delays',
+    benefits: [
+      'AI Agent enhancement across the mortgage life cycle',
+      'Pre-Qualification & Application',
+      'Collects borrower data, performs instant credit and income checks, and offers pre-approval with tailored product recommendations',
+      'Classifies, OCR-extracts, and validates documents; identifies gaps; auto-requests missing items',
+    ],
+    customers: [
+      { name: 'Banking Industry Reference', outcomes: ['75% faster cycle times', '35% lower cost per loan'] }
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Transform customer self-service',
+    industry: 'banking',
+    valueProp: 'Customer experiences are fragmented, and lack of outcome-based solutions leads to unresolved issues and frequent drop-offs',
+    benefits: [
+      'Opportunity: Shift from reactive chatbots to assistants that can reason, decide, and act with Agentic AI',
+      'From Assisted Service to Autonomous ResolutionAgentic AI independently resolves the most common banking needs—accounts, payments, cards, disputes, fraud, and documents.',
+      'From Reactive Support to Proactive Financial GuidanceAI agents continuously anticipate customer needs, delivering personalized insights, alerts, and next‑best actions.',
+      'From Fragmented Tasks to End‑to‑End Digital JourneysCustomers move seamlessly from product discovery and onboarding to funding and servicing, guided by intelligent workflows.',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Empower advisory and sales roles',
+    industry: 'capital-markets',
+    valueProp: 'Prioritize and proactively manage the client base, focusing on highest-value clients and opportunities.',
+    benefits: [
+      'Prioritize and proactively manage the client base, focusing on highest-value clients and opportunities.',
+      'Build a holistic client view across multiple disparate systems (CRM, portfolios, market data, and core systems).',
+      'Dynamically model outcomes for clients and proactively provide tailored insights, ideas, and guidance to clients.',
+      'Drive higher revenue and assets per client through proactive, personalized advice —enabling advisory and sales to focus on the highest‑value opportunities and relationships.',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft Fabric', 'Microsoft 365 Copilot', 'Fabric IQ'],
+  },
+  {
+    title: 'Enhance market research and analytics',
+    industry: 'capital-markets',
+    valueProp: 'Accelerate research‑to‑decision velocity across equities, fixed income, and multi‑asset analysis.',
+    benefits: [
+      'Accelerate research‑to‑decision velocity across equities, fixed income, and multi‑asset analysis.',
+      'Scale insight generation with analyst oversight, not black‑box automation.',
+      'Generate more consistent, transparent investment views grounded in trusted data and transparent reasoning.',
+      'Deliver clear, decision‑ready intelligence in the flow of portfolio construction and governance.',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft Fabric', 'Microsoft 365 Copilot', 'Fabric IQ'],
+  },
+  {
+    title: 'Automate processes and operations',
+    industry: 'capital-markets',
+    valueProp: 'Modernize front‑to‑back execution across trading, settlement, and servicing to increase speed, resilience, and scale.',
+    benefits: [
+      'Modernize front‑to‑back execution across trading, settlement, and servicing to increase speed, resilience, and scale.',
+      'Accelerate client onboarding and counterparty readiness by automating KYC, AML, and account‑setup workflows.',
+      'Reduce trade breaks and operational risk through automated lifecycle management from capture to reconciliation.',
+      'Increase operational efficiency in middle‑ and back‑office functions by minimizing manual handoffs and exception cycles.',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft Fabric', 'Microsoft 365 Copilot', 'Fabric IQ'],
+  },
+  {
+    title: 'Activate real-time audience insights to drive smarter marketing decisions',
+    industry: 'cross-industry',
+    valueProp: 'Chief Marketing Officer focused on driving growth, brand impact, and marketing performance across channels',
+    benefits: [
+      'Chief Marketing Officer focused on driving growth, brand impact, and marketing performance across channels',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Copilot Studio', 'Fabric IQ'],
+  },
+  {
+    title: 'Accelerate content production and time-to-market',
+    industry: 'cross-industry',
+    valueProp: 'focused on scaling creative output, maintaining brand consistency, and accelerating campaign delivery',
+    benefits: [
+      'focused on scaling creative output, maintaining brand consistency, and accelerating campaign delivery',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Copilot Studio', 'Fabric IQ'],
+  },
+  {
+    title: 'Enhance brand discoverability and customer conversion',
+    industry: 'cross-industry',
+    valueProp: 'Director of Digital ExperienceFocused on orchestrating scalable, AI-powered content systems that accelerate production, ensure brand consistency, and optimize delivery across channels.',
+    benefits: [
+      'Director of Digital ExperienceFocused on orchestrating scalable, AI-powered content systems that accelerate production, ensure brand consistency, and optimize delivery across channels.',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Copilot Studio', 'Fabric IQ'],
+  },
+  {
+    title: 'AI-powered demand sensing & autonomous planning',
+    industry: 'cross-industry',
+    valueProp: 'AI-powered demand sensing & autonomous planning',
+    benefits: [
+      'AI-powered demand sensing & autonomous planning',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Copilot Studio', 'Fabric IQ'],
+  },
+  {
+    title: 'Autonomous robots execute warehouse operations at machine speed',
+    industry: 'cross-industry',
+    valueProp: 'Autonomous robots and AI-driven systems handle the manufacturing, storage, picking, and packing of goods in factories & warehouses',
+    benefits: [
+      'Autonomous robots and AI-driven systems handle the manufacturing, storage, picking, and packing of goods in factories & warehouses',
+      'Automation & AI-orchestrated warehousing',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Copilot Studio', 'Fabric IQ'],
+  },
+  {
+    title: 'AI-optimized inventory & order fulfillment',
+    industry: 'cross-industry',
+    valueProp: 'AI-optimized inventory & order fulfillment',
+    benefits: [
+      'AI-optimized inventory & order fulfillment',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Copilot Studio', 'Fabric IQ'],
+  },
+  {
+    title: 'Improve consumer engagement and CLTV with always-on, interactive experiences',
+    industry: 'consumer-goods',
+    valueProp: 'Increase conversion rates and consumer satisfaction with more relevant recommendations',
+    benefits: [
+      'Increase conversion rates and consumer satisfaction with more relevant recommendations',
+      'Personalized consumer interactions and journeys help unlock loyalty and growth',
+      'AI shopping assistant',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Copilot Studio', 'Microsoft Fabric', 'Fabric IQ'],
+  },
+  {
+    title: 'Empower creative teams to produce personalized content at scale',
+    industry: 'consumer-goods',
+    valueProp: 'Accelerate time to production and reduce creative costs',
+    benefits: [
+      'Accelerate time to production and reduce creative costs',
+      'Innovate with always-on adaptation to consumer needs',
+      'Content creation underlined by consumer insights help maximize impact at scale',
+      'Dynamic content creation',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Copilot Studio', 'Microsoft Fabric', 'Fabric IQ'],
+  },
+  {
+    title: 'Autonomous factory operations',
+    industry: 'consumer-goods',
+    valueProp: 'Operations Leader Accountable for safety, quality, OEE, and stable production across shifts',
+    benefits: [
+      'Operations Leader Accountable for safety, quality, OEE, and stable production across shifts',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Copilot Studio', 'Microsoft Fabric', 'Fabric IQ'],
+  },
+  {
+    title: 'Agent powered R&D and digital engineering',
+    industry: 'manufacturing',
+    valueProp: 'Agent powered R&D and digital engineering',
+    benefits: [
+      'Agent powered R&D and digital engineering',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure IoT', 'Azure AI', 'Microsoft Fabric', 'Foundry IQ'],
+  },
+  {
+    title: 'Agentic and physical AI for factory operations',
+    industry: 'manufacturing',
+    valueProp: 'Agentic and physical AI for factory operations',
+    benefits: [
+      'Agentic and physical AI for factory operations',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure IoT', 'Azure AI', 'Microsoft Fabric', 'Foundry IQ'],
+  },
+  {
+    title: 'Accelerate Insurance Underwriting',
+    industry: 'insurance',
+    valueProp: 'Accelerate Insurance Underwriting',
+    benefits: [
+      'Accelerate Insurance Underwriting',
+      'Accelerate underwriting with AI to improve loss ratios and profitability by enabling faster, more consistent risk selection and pricing decisions at scale',
+      'Reduce expense ratios and cycle times by automating manual review, data ingestion, and decision workflows',
+      'Faster, data‑rich underwriting improves broker and customer experience, increasing bind rates and supporting growth without proportional headcount increases',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Modernize Claims',
+    industry: 'insurance',
+    valueProp: 'Reduce claim cycle times and operating costs by automating intake, triage, and routine decisioning across the claims lifecycle',
+    benefits: [
+      'Reduce claim cycle times and operating costs by automating intake, triage, and routine decisioning across the claims lifecycle',
+      'Improve claims accuracy and fraud detection by applying AI to data enrichment, damage assessment, and anomaly identification at scale',
+      'Increase customer satisfaction and retention by delivering faster, more transparent, and more consistent claims experiences',
+      'The head of claims wants to modernize claims with AI to settle claims faster and more accurately, reduce loss and operating costs, and improve customer trust and satisfaction while maintaining compliance and fairness.',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Transform Customer Experience',
+    industry: 'insurance',
+    valueProp: 'Improve customer satisfaction and loyalty by delivering faster, more personalized, and more consistent interactions across digital and human touchpoints',
+    benefits: [
+      'Improve customer satisfaction and loyalty by delivering faster, more personalized, and more consistent interactions across digital and human touchpoints',
+      'Reduce service costs and operational friction by automating routine inquiries, support workflows, and customer communications at scale.',
+      'Increase growth and retention by using AI‑driven insights to proactively engage customers, personalize offers, and prevent churn across the customer lifecycle.',
+      'The head of customer experience wants to use AI to make claims faster, more transparent, and more empathetic—resolving customer issues accurately in moments of need',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Dynamic content production, management, and distribution',
+    industry: 'media-entertainment',
+    valueProp: 'Dynamic content production, management, and distribution',
+    benefits: [
+      'Dynamic content production, management, and distribution',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure Media Services', 'Microsoft 365 Copilot', 'Fabric IQ'],
+  },
+  {
+    title: 'Automated media operations',
+    industry: 'media-entertainment',
+    valueProp: 'Media Operations Manger Accountable for reliability, uptime, and operational excellence across media services.',
+    benefits: [
+      'Media Operations Manger Accountable for reliability, uptime, and operational excellence across media services.',
+      'Detect and resolve issues faster by correlating ingest, playout, delivery, security, and ad signals.',
+      'Maintain broadcast‑grade control with real‑time visibility and policy‑driven response.',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure Media Services', 'Microsoft 365 Copilot', 'Fabric IQ'],
+  },
+  {
+    title: 'Proactive audience engagement',
+    industry: 'media-entertainment',
+    valueProp: 'Director of Marketing',
+    benefits: [
+      'Director of Marketing',
+      'Focused on driving engagement, retention, and lifetime value.',
+      'Adapt offers, messaging, and experiences in real time while enforcing privacy and brand rules.',
+      'Improve reach, retention, and monetization as every interaction informs the next decision.',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure Media Services', 'Microsoft 365 Copilot', 'Fabric IQ'],
+  },
+  {
+    title: 'Augmented device innovationwith optimized data & AI',
+    industry: 'healthcare-medtech',
+    valueProp: 'Augmented device innovationwith optimized data & AI',
+    benefits: [
+      'Augmented device innovationwith optimized data & AI',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft Fabric', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'Support customer needs and inquiries faster with the use of AI tools',
+    industry: 'healthcare-medtech',
+    valueProp: 'Improve post-sales monitoring by applying AI and ML to monitor adverse event reporting',
+    benefits: [
+      'Improve post-sales monitoring by applying AI and ML to monitor adverse event reporting',
+      'AI-powered tools help sales and service teams meet changing demand',
+      'AI-enabled guided selling and customer service',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft Fabric', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'AI and analytics-driven insights help create more personalized medical devices',
+    industry: 'healthcare-medtech',
+    valueProp: 'Care experience personalization through connected devices',
+    benefits: [
+      'Care experience personalization through connected devices',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft Fabric', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'Reduce lead time by leveraging predictive and prescriptive planning',
+    industry: 'healthcare-medtech',
+    valueProp: 'Enhance autonomous warehousing and logistics with forecasting and regulatory stock transparency',
+    benefits: [
+      'Enhance autonomous warehousing and logistics with forecasting and regulatory stock transparency',
+      'Streamline daily operations, and enable employees to focus on higher-value tasks',
+      'Optimize supply chain orchestration to improve business efficiency and profitability',
+      'Augmented end to end supply chain management',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft Fabric', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'Help protect sensitive operations and member health information',
+    industry: 'insurance',
+    valueProp: 'Consolidate disparate data sources to create reports and dashboards, form insights',
+    benefits: [
+      'Consolidate disparate data sources to create reports and dashboards, form insights',
+      'Create organization-wide process efficiencies to deliver better results at lower costs',
+      'Comply with interoperability regulatory requirements',
+      'Maintain employee satisfaction and retention',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Significantly reduce time spent on administrative tasks and member queries',
+    industry: 'insurance',
+    valueProp: 'Predict member needs to provide innovative solutions',
+    benefits: [
+      'Predict member needs to provide innovative solutions',
+      'Building trusted relationships with members and increasing member satisfaction',
+      'Increase accessibility and quality of member care',
+      'Enhanced member satisfaction with faster and more accurate responses',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Assess existing contracts and review for renegotiations​',
+    industry: 'insurance',
+    valueProp: 'Create and update regulatory documents​',
+    benefits: [
+      'Create and update regulatory documents​',
+      'Understand resource pipeline demand',
+      'Draft most up to date tenders, contracts and business cases',
+      'Simplify financial reporting and planning',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Optimize claims analysis and information sharing',
+    industry: 'insurance',
+    valueProp: 'Automate relevant administrative duties and help ensure accuracy with member claims',
+    benefits: [
+      'Automate relevant administrative duties and help ensure accuracy with member claims',
+      'Reduce reliance on telephone communication to expedite claims processing',
+      'Enable secure, compliant collaboration with up-to-date member data and insights',
+      'Enhance team communication and collaboration across all functional areas (clinical/non-clinical)​',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft 365 Copilot', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Augmented research and drug discovery with optimized data and AI',
+    industry: 'healthcare-medtech',
+    valueProp: 'Unlock institutional scientific knowledge, turning fragmented research into a searchable foundation for innovation',
+    benefits: [
+      'Unlock institutional scientific knowledge, turning fragmented research into a searchable foundation for innovation',
+      'Reduce time spent on data discovery and retrieval, accelerating hypothesis generation and scientific exploration',
+      'Eliminate duplicated research efforts, allowing scientists to build on existing insights',
+      'Shift researchers from low‑value manual tasks, increasing productivity and innovation capacity',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft Fabric', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'Streamlined clinical trial development ​and submission',
+    industry: 'healthcare-medtech',
+    valueProp: 'Streamlined clinical trial development ​and submission',
+    benefits: [
+      'Streamlined clinical trial development ​and submission',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft Fabric', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'Agentic powered Research and Development',
+    industry: 'manufacturing',
+    valueProp: 'VP/Head/Director of R&D and  Engineering',
+    benefits: [
+      'VP/Head/Director of R&D and  Engineering',
+      'Translates lab innovation into scalable and safe production processes',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure IoT', 'Azure AI', 'Microsoft Fabric', 'Foundry IQ'],
+  },
+  {
+    title: 'Agentic driven and physical AI for plant operations',
+    industry: 'manufacturing',
+    valueProp: 'Plant Operations Leader (Process Manufacturing)',
+    benefits: [
+      'Plant Operations Leader (Process Manufacturing)',
+      'Accountable for efficient production, safe operations, quality, asset optimization.',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure IoT', 'Azure AI', 'Microsoft Fabric', 'Foundry IQ'],
+  },
+  {
+    title: 'Speed up clinical research with AI-enabled ​data analysis',
+    industry: 'healthcare-provider',
+    valueProp: 'Drive innovation by identifying subtle patterns and pulling key findings from unstructured data',
+    benefits: [
+      'Drive innovation by identifying subtle patterns and pulling key findings from unstructured data',
+      'Enable near real-time decision making with patient insights delivered directly into workflows',
+      'Optimize operational efficiency with AI-powered automation for routine tasks',
+      'Enhance patient care with cohort analysis based on patient needs',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Microsoft Fabric', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'Unlock real-time inventory visibility and operational efficiency',
+    industry: 'retail',
+    valueProp: 'Leverage agents to streamline routine workflows, giving associates more time to support customers',
+    benefits: [
+      'Leverage agents to streamline routine workflows, giving associates more time to support customers',
+      'Equip associates with intelligent tools to meet evolving customer needs with confidence and grow satisfaction',
+      'AI assisted associates',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Dynamics 365', 'Microsoft Fabric', 'Fabric IQ'],
+  },
+  {
+    title: 'Improve customer engagement and CLTV with always-on, interactive experiences',
+    industry: 'retail',
+    valueProp: 'Increase conversion rates and customer satisfaction with more relevant recommendations',
+    benefits: [
+      'Increase conversion rates and customer satisfaction with more relevant recommendations',
+      'Personalized customer interactions and journeys help unlock loyalty and growth',
+      'AI shopping assistant',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Dynamics 365', 'Microsoft Fabric', 'Fabric IQ'],
+  },
+  {
+    title: 'Accelerate service resolution with AI agents in customer service workflows',
+    industry: 'telecommunications',
+    valueProp: 'Increase subscriber satisfaction by automating routine interactions',
+    benefits: [
+      'Increase subscriber satisfaction by automating routine interactions',
+      'Strengthen loyalty with personalized, always-on customer support across all channels',
+      'Next-gen subscriber service with AI agents',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure IoT', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'Scale network upgrades and maintenance through intelligent automation',
+    industry: 'telecommunications',
+    valueProp: 'Turn network insights into action in minutes',
+    benefits: [
+      'Turn network insights into action in minutes',
+      'Boost visibility and uptime with real‑time diagnostics',
+      'Automate the network and operational workflows',
+      'Network Operations Center (NOC) Manager',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure IoT', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'Expand revenue through AI-powered product offerings',
+    industry: 'telecommunications',
+    valueProp: 'Speed revenue growth by launching new services in weeks, not months',
+    benefits: [
+      'Speed revenue growth by launching new services in weeks, not months',
+      'Deliver differentiated managed services that run autonomously',
+      'Create new revenue streams with managed services',
+      'Director of Product Management',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure IoT', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'Ensure network service continuity and protect sensitive customer data',
+    industry: 'telecommunications',
+    valueProp: 'Harden network security architecture to withstand AI‑driven attacks',
+    benefits: [
+      'Harden network security architecture to withstand AI‑driven attacks',
+      'Detect and respond to threats in real time as attacks automate',
+      'Safeguard the network against cyber threats',
+      'Director of Network Security (SOC Director)',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure IoT', 'Microsoft 365 Copilot', 'Foundry IQ'],
+  },
+  {
+    title: 'AI enabled workforce',
+    industry: 'mobility-travel',
+    valueProp: 'Chief Human Resources Officer',
+    benefits: [
+      'Chief Human Resources Officer',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure IoT', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Reduce labor-intensive manual processing of quotes and claims',
+    industry: 'mobility-travel',
+    valueProp: 'Create agile operations that improve planning and proactive response to critical operational impacts',
+    benefits: [
+      'Create agile operations that improve planning and proactive response to critical operational impacts',
+      'Agent driven autonomous operations',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure IoT', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Timely and accurate quoting based on current network conditions',
+    industry: 'mobility-travel',
+    valueProp: 'Automated and proactive quality and performance monitoring to reduce exceptions and improve agility',
+    benefits: [
+      'Automated and proactive quality and performance monitoring to reduce exceptions and improve agility',
+      'Intelligent case routing and resolution to mitigate escalations and improve service response',
+      'Unlock proactive customer service, retention, and growth opportunities with proactive customer services',
+      'AI powered customer services',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure IoT', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Reduce labor-intensive manual processing of',
+    industry: 'mobility-travel',
+    valueProp: 'Create agile operations that improve planning and proactive response to critical operational impacts',
+    benefits: [
+      'Create agile operations that improve planning and proactive response to critical operational impacts',
+      'Agent driven autonomous operations',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure IoT', 'Dynamics 365', 'Fabric IQ'],
+  },
+  {
+    title: 'Improve collaboration and productivity with agentic AI tools that',
+    industry: 'mobility-travel',
+    valueProp: 'Deliver greater customer value with AI solutions that engage the customer at every point of the journey',
+    benefits: [
+      'Deliver greater customer value with AI solutions that engage the customer at every point of the journey',
+      'Unlock new AI powered business models and revenue streams to drive growth and innovation',
+      'AI powered new platforms and services',
+      'Chief Customer Officer',
+    ],
+    customers: [
+
+    ],
+    products: ['Azure AI', 'Azure IoT', 'Dynamics 365', 'Fabric IQ'],
+  },
 ];
