@@ -3,7 +3,7 @@ import type { useWizardState } from '../../hooks/useWizardState'
 import { generateValueStory, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory, type StakeholderEntry } from '../../lib/valueStoryGenerator'
 import { CHALLENGES } from '../../data/challenges'
 import { FUNCTION_BENCHMARKS, filterCustomerZero } from '../../data/global-ai-evidence'
-import type { CustomerZeroDepartment, CustomerZeroProofPoint } from '../../data/customer-zero'
+import type { CustomerZeroDepartment, CustomerZeroProofPoint, CustomerZeroUseCase } from '../../data/customer-zero'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
@@ -347,19 +347,37 @@ export default function StepValueStory({ wizard }: WizardProps) {
   const roiCount = story.pillarSections.reduce((n, s) => n + s.useCases.filter(uc => uc.roiCard).length, 0)
     + (story.securitySection?.useCases.filter(uc => uc.roiCard).length ?? 0)
 
-  // Top use cases across all pillars, sorted by evidence strength
+  // Top use cases across all pillars, sorted by evidence strength + CZ customer interest
+  const [czUseCases, setCzUseCases] = useState<CustomerZeroUseCase[]>([])
+  useEffect(() => {
+    if (data.czLikedUseCaseIds?.length) {
+      import('../../data/customer-zero').then(mod => setCzUseCases(mod.CUSTOMER_ZERO_USE_CASES))
+    }
+  }, [data.czLikedUseCaseIds])
+
   const topUseCases = useMemo(() => {
+    // Build set of pillar IDs that the customer showed interest in via CZ
+    const likedPillarIds = new Set<string>()
+    if (data.czLikedUseCaseIds?.length && czUseCases.length) {
+      for (const id of data.czLikedUseCaseIds) {
+        const cz = czUseCases.find(u => u.id === id)
+        if (cz) likedPillarIds.add(cz.pillar)
+      }
+    }
+
     const all = [
-      ...story.pillarSections.flatMap(s => s.useCases),
-      ...(story.intelligenceSection?.useCases ?? []),
-      ...(story.securitySection?.useCases ?? []),
+      ...story.pillarSections.flatMap(s => s.useCases.map(uc => ({ ...uc, _pillarId: s.pillar.id }))),
+      ...(story.intelligenceSection?.useCases ?? []).map(uc => ({ ...uc, _pillarId: 'intelligence' })),
+      ...(story.securitySection?.useCases ?? []).map(uc => ({ ...uc, _pillarId: 'security' })),
     ]
     return all.sort((a, b) => {
-      const scoreA = a.matchedStories.length + (a.roiCard ? 1 : 0) + (a.evidence ? 1 : 0)
-      const scoreB = b.matchedStories.length + (b.roiCard ? 1 : 0) + (b.evidence ? 1 : 0)
+      const czBoostA = likedPillarIds.has(a._pillarId) ? 5 : 0
+      const czBoostB = likedPillarIds.has(b._pillarId) ? 5 : 0
+      const scoreA = a.matchedStories.length + (a.roiCard ? 1 : 0) + (a.evidence ? 1 : 0) + czBoostA
+      const scoreB = b.matchedStories.length + (b.roiCard ? 1 : 0) + (b.evidence ? 1 : 0) + czBoostB
       return scoreB - scoreA
     })
-  }, [story])
+  }, [story, data.czLikedUseCaseIds, czUseCases])
   const totalUseCases = topUseCases.length
 
   // Lazy-load CZ data only when NDA confirmed
@@ -527,57 +545,145 @@ export default function StepValueStory({ wizard }: WizardProps) {
 
         <p className="text-sm text-text leading-relaxed">{story.executive_summary}</p>
 
-        {/* Challenge → Pillar Mapping */}
+        {/* ── Priority → Challenge → Pillar → Top Use Case Flow ── */}
         <div className="mt-5 pt-4 border-t border-gray-100">
-          <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-3">Challenge → Pillar Alignment</p>
-          <div className="flex flex-wrap gap-2">
-            {story.pillarSections.map(s => (
-              <div key={s.pillar.id} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-100">
-                <span>{s.pillar.icon}</span>
-                <span className="text-xs font-semibold text-text">{s.pillar.name}</span>
-                <span className="text-[10px] text-text-secondary">· {s.useCases.length} use cases</span>
-              </div>
-            ))}
-            {story.intelligenceSection && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-100">
-                <span>{INTELLIGENCE_FOUNDATION.icon}</span>
-                <span className="text-xs font-semibold text-indigo-700">Intelligence & Trust</span>
-                <span className="text-[10px] text-indigo-500">· {story.intelligenceSection.useCases.length} use cases</span>
-              </div>
-            )}
-            {story.securitySection && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 border border-rose-100">
-                <span>{SECURITY_FOUNDATION.icon}</span>
-                <span className="text-xs font-semibold text-rose-700">Security</span>
-                <span className="text-[10px] text-rose-500">· {story.securitySection.useCases.length} use cases</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Top Use Cases */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-3">Top Use Cases</p>
-          <div className="grid grid-cols-2 gap-2">
-            {topUseCases.slice(0, 6).map((uc, i) => (
-              <div key={i} className="flex items-start gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-100">
-                <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
-                  {i + 1}
-                </span>
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold text-text leading-snug break-words">{uc.name}</p>
-                  {uc.matchedStories.length > 0 && (
-                    <p className="text-[10px] text-emerald-600 mt-0.5">
-                      {uc.matchedStories.length} customer {uc.matchedStories.length === 1 ? 'story' : 'stories'}
+          <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-3">Your Priorities → Our Approach</p>
+          <div className="space-y-3">
+            {story.pillarSections.map(section => {
+              const topUc = section.useCases[0]
+              const fb = topUc ? matchFunctionBenchmark(topUc.name, topUc.description) : null
+              const topMetric = topUc?.matchedStories[0]?.metric
+              return (
+                <div key={section.pillar.id} className="rounded-xl bg-gray-50 border border-gray-100 p-3">
+                  <div className="flex items-start gap-2">
+                    <span className="text-base mt-0.5">{section.pillar.icon}</span>
+                    <div className="min-w-0 flex-1">
+                      {/* Priorities that map to this pillar */}
+                      {section.customerPriorities.length > 0 && (
+                        <p className="text-[10px] text-text-secondary italic mb-1">
+                          "{section.customerPriorities[0]}"
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-bold text-text">{section.pillar.fullName}</span>
+                        <span className="text-[10px] text-text-secondary">· {section.useCases.length} use case{section.useCases.length !== 1 ? 's' : ''}</span>
+                      </div>
+                      {topUc && (
+                        <p className="text-[11px] text-text mt-1">
+                          Top: <strong>{topUc.name}</strong>
+                          {topMetric && <span className="text-emerald-600 ml-1">— {topMetric}</span>}
+                        </p>
+                      )}
+                      {fb && (
+                        <p className="text-[10px] text-primary mt-0.5">
+                          📊 Benchmark: {fb.gain}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+            {story.intelligenceSection && story.intelligenceSection.useCases.length > 0 && (
+              <div className="rounded-xl bg-indigo-50/50 border border-indigo-100 p-3">
+                <div className="flex items-start gap-2">
+                  <span className="text-base mt-0.5">{INTELLIGENCE_FOUNDATION.icon}</span>
+                  <div>
+                    <span className="text-xs font-bold text-indigo-700">Intelligence & Trust Foundation</span>
+                    <span className="text-[10px] text-indigo-500 ml-2">· {story.intelligenceSection.useCases.length} use cases</span>
+                    <p className="text-[11px] text-text mt-1">
+                      Top: <strong>{story.intelligenceSection.useCases[0].name}</strong>
                     </p>
-                  )}
+                  </div>
                 </div>
               </div>
-            ))}
+            )}
+            {story.securitySection && story.securitySection.useCases.length > 0 && (
+              <div className="rounded-xl bg-rose-50/50 border border-rose-100 p-3">
+                <div className="flex items-start gap-2">
+                  <span className="text-base mt-0.5">{SECURITY_FOUNDATION.icon}</span>
+                  <div>
+                    <span className="text-xs font-bold text-rose-700">Security Foundation</span>
+                    <span className="text-[10px] text-rose-500 ml-2">· {story.securitySection.useCases.length} use cases</span>
+                    <p className="text-[11px] text-text mt-1">
+                      Top: <strong>{story.securitySection.useCases[0].name}</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Evidence Summary Strip */}
+        {/* ── Projected Value Indicators ── */}
+        {(() => {
+          // Collect all function benchmark matches across use cases
+          const fbMatches: { area: string; gain: string }[] = []
+          const seenAreas = new Set<string>()
+          for (const uc of topUseCases.slice(0, 10)) {
+            const fb = matchFunctionBenchmark(uc.name, uc.description)
+            if (fb && !seenAreas.has(fb.area)) {
+              seenAreas.add(fb.area)
+              fbMatches.push(fb)
+            }
+          }
+          // Collect ROI highlights from use cases
+          const roiHighlights: string[] = []
+          for (const uc of topUseCases) {
+            if (uc.roiCard) {
+              if (uc.roiCard.costReduction && roiHighlights.length < 3) roiHighlights.push(`${uc.name}: ${uc.roiCard.costReduction}`)
+              if (uc.roiCard.speedImprovement && roiHighlights.length < 3) roiHighlights.push(`${uc.name}: ${uc.roiCard.speedImprovement}`)
+            }
+          }
+          const hasFinancials = fbMatches.length > 0 || story.industryBenchmark || roiHighlights.length > 0
+          if (!hasFinancials) return null
+          return (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-3">📊 Projected Value Indicators</p>
+              <div className="space-y-2">
+                {story.industryBenchmark && (
+                  <div className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-50 border border-amber-100">
+                    <span className="text-sm mt-0.5">🏆</span>
+                    <div>
+                      <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">Industry Peers</p>
+                      <p className="text-xs text-amber-900 mt-0.5">{story.industryBenchmark.avgROI}</p>
+                      {story.industryBenchmark.topPerformerMultiple && (
+                        <p className="text-[10px] text-amber-700 mt-0.5">{story.industryBenchmark.topPerformerMultiple}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+                {fbMatches.length > 0 && (
+                  <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-100">
+                    <p className="text-[10px] font-bold text-blue-800 uppercase tracking-wider mb-1.5">⚡ Function Benchmarks</p>
+                    <div className="space-y-1">
+                      {fbMatches.slice(0, 4).map((fb, i) => (
+                        <p key={i} className="text-xs text-blue-900">
+                          <strong className="capitalize">{fb.area}:</strong> {fb.gain}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {roiHighlights.length > 0 && (
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-100">
+                    <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider mb-1.5">💰 Use Case ROI Signals</p>
+                    <div className="space-y-1">
+                      {roiHighlights.map((h, i) => (
+                        <p key={i} className="text-xs text-emerald-900">{h}</p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <p className="text-[9px] text-gray-400 mt-2 italic">
+                Based on published research from McKinsey, BCG, IDC, Forrester, and Microsoft internal telemetry. Results vary by organization.
+              </p>
+            </div>
+          )
+        })()}
+
+        {/* ── Key Stats Strip ── */}
         <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-center gap-8">
           <div className="text-center">
             <p className="text-2xl font-bold text-primary">{totalUseCases}</p>
