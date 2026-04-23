@@ -4,6 +4,7 @@ import { INDUSTRIES } from '../../data/industries'
 import { CHALLENGES } from '../../data/challenges'
 import { USE_CASES } from '../../data/use-cases'
 import { classifyToPillar, FRONTIER_PILLARS, SECURITY_FOUNDATION } from '../../lib/valueStoryGenerator'
+import { CUSTOMER_ZERO_DEPARTMENTS } from '../../data/customer-zero'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
@@ -28,6 +29,13 @@ export default function StepReview({ wizard }: WizardProps) {
     () => USE_CASES.filter((uc) => selectedUseCaseIds.includes(uc.id)),
     [selectedUseCaseIds]
   )
+
+  // CZ departments filtered to active pillars
+  const czMatchedDepts = useMemo(() => {
+    if (!data.ndaConfirmed) return []
+    const activePillarIds = new Set<string>(useCases.map(uc => uc.pillarId ?? classifyToPillar(uc.name + ' ' + uc.description)))
+    return CUSTOMER_ZERO_DEPARTMENTS.filter(d => d.pillarIds.some(p => activePillarIds.has(p)))
+  }, [data.ndaConfirmed, useCases])
 
   // Group use cases under pillars for narrative preview
   const pillarPreview = useMemo(() => {
@@ -155,24 +163,19 @@ export default function StepReview({ wizard }: WizardProps) {
         </div>
       </div>
 
-      {/* Customer Zero — NDA-gated review chapter */}
+      {/* Customer Zero — only shown if NDA confirmed and matching departments exist */}
+      {czMatchedDepts.length > 0 && (
       <div className="rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/30 p-5">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-lg">🔒</span>
           <h3 className="text-sm font-bold text-text">Microsoft Customer Zero</h3>
-          {data.ndaConfirmed ? (
-            <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">NDA Confirmed</span>
-          ) : (
-            <span className="text-[9px] px-2 py-0.5 rounded-full bg-gray-200 text-gray-500 font-semibold">NDA Required</span>
-          )}
+          <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">NDA Confirmed</span>
         </div>
         <p className="text-xs text-text-secondary">
-          {data.ndaConfirmed
-            ? 'Customer Zero evidence will be included in your Value Story — Microsoft\'s internal AI transformation results from 10 departments.'
-            : 'NDA not confirmed. Customer Zero evidence will not be included. You can enable it on the Value Story page.'
-          }
+          {czMatchedDepts.length} of 10 departments match your selected pillars — their proof points will appear in your Value Story.
         </p>
       </div>
+      )}
 
       {/* Navigation */}
       <div className="flex justify-between pt-4">
