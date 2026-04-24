@@ -304,8 +304,9 @@ export default function StepValueStory({ wizard }: WizardProps) {
     const win = window.open('', '_blank', 'width=900,height=700')
     if (!win) { window.print(); return }
 
+    const escHtml = (s: string) => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m] || m))
     win.document.write(`<!DOCTYPE html><html><head>
-      <title>${data.companyName || 'Value Story'} — Executive Summary</title>
+      <title>${escHtml(data.companyName || 'Value Story')} — Executive Summary</title>
       ${styles}
       <style>
         @page { margin: 0.5in; size: letter; }
@@ -637,10 +638,10 @@ export default function StepValueStory({ wizard }: WizardProps) {
                                   <span className="text-[10px] text-emerald-600">· {item.useCases.reduce((n: number, uc: any) => n + (uc.matchedStories?.length || 0), 0)} stories</span>
                                 )}
                               </div>
-                              <p className="text-[11px] text-text mt-1">
+                              {topUc && <p className="text-[11px] text-text mt-1">
                                 Top: <strong>{topUc.name}</strong>
                                 {topMetric && <span className="text-emerald-600 ml-1">— {topMetric}</span>}
-                              </p>
+                              </p>}
                               {fb && (
                                 <p className="text-[10px] text-primary mt-0.5">📊 Benchmark: {fb.gain}</p>
                               )}
