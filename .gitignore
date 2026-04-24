@@ -26,3 +26,11 @@ dist-ssr
 # Source PDFs (large, not needed for deploy)
 sources/
 scripts/
+
+# Meeting invites (contain employee PII)
+meeting-invites/
+*.ics
+
+# Generated artifacts
+Frontier-Canvas-Tester-Guide.pdf
+generate-tester-guide.py
