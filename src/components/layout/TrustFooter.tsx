@@ -41,7 +41,7 @@ export default function TrustFooter() {
     <footer className="mt-auto">
       {/* About This Tool Panel */}
       {aboutOpen && (
-        <div className="mx-2 mb-3 p-4 rounded-[14px] bg-white/5 border border-white/10 space-y-3 animate-fadeIn">
+        <div id="about-panel" className="mx-2 mb-3 p-4 rounded-[14px] bg-white/5 border border-white/10 space-y-3 animate-fadeIn">
           <p className="text-xs text-white/70 font-semibold">About Frontier Canvas</p>
           <p className="text-[11px] text-white/50 leading-relaxed">
             Frontier Canvas helps Microsoft Account Executives create evidence-based AI Value Stories
@@ -85,8 +85,8 @@ export default function TrustFooter() {
               href={badge.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-[10px] text-white/40 hover:text-white/70 transition-colors whitespace-nowrap"
-              title={`${badge.label}: ${badge.description}`}
+              className="flex items-center gap-1 text-[10px] text-white/40 hover:text-white/70 transition-colors"
+              aria-label={`${badge.label}: ${badge.description}`}
             >
               <span>{badge.icon}</span>
               <span className="hidden 2xl:inline">{badge.label}</span>
@@ -95,6 +95,8 @@ export default function TrustFooter() {
         </div>
         <button
           onClick={() => setAboutOpen(!aboutOpen)}
+          aria-expanded={aboutOpen}
+          aria-controls="about-panel"
           className="text-[10px] text-white/30 hover:text-white/60 transition-colors"
         >
           {aboutOpen ? 'Close' : 'About'}

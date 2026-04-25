@@ -64,7 +64,7 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
       {/* ━━ 1. WHY NOW — Market Urgency ━━ */}
       <section>
         <SectionLabel number={1} title="Why Now" icon="⚡" />
-        <div className="grid grid-cols-3 gap-3 mt-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-3">
           <UrgencyCard value="82%" label="of leaders say AI is a make-or-break moment" source="2025 Work Trends Index" />
           <UrgencyCard value="1.3B" label="AI agents projected by 2028" source="IDC, May 2025" />
           <UrgencyCard value="1 in 2" label="leaders already automating workflows with AI agents" source="2025 Work Trends Index" />
@@ -77,7 +77,7 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
         <p className="text-xs text-text-secondary mt-2 mb-3">
           Frontier Firms structure themselves around on-demand intelligence — powered by humans and the AI they manage.
         </p>
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {FRONTIER_PILLARS.map((p) => {
             const style = PILLAR_COLORS[p.id]
             return (
@@ -121,6 +121,7 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
                   const liked = (data.czLikedUseCaseIds ?? []).includes(uc.id)
                   return (
                     <button key={uc.id} onClick={() => toggleLiked(uc.id)}
+                      aria-pressed={liked}
                       className={`p-2 rounded-lg text-left transition-all ${liked
                         ? 'bg-white ring-2 ring-primary shadow-sm'
                         : 'bg-white/70 hover:bg-white/90'}`}>
@@ -154,7 +155,7 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
         <p className="text-xs text-text-secondary mt-2 mb-3">
           Microsoft found these three patterns across all departments — look for them in your customer's use cases.
         </p>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {CUSTOMER_ZERO_PATTERNS.map((p) => (
             <div key={p.id} className="p-4 rounded-xl bg-violet-50 border border-violet-100 text-center">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 text-white text-sm font-bold flex items-center justify-center mx-auto">
@@ -194,7 +195,7 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
         <p className="text-xs text-text-secondary mt-2 mb-3">
           Pick the departments most relevant to your customer. Each has detailed use cases, metrics, and tools.
         </p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {CUSTOMER_ZERO_DEPARTMENTS.map((dept) => {
             const isExpanded = expandedDept === dept.id
             const isRelevant = activePillarIds.size > 0 && dept.pillarIds.some(p => activePillarIds.has(p))
@@ -202,8 +203,10 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
               <button
                 key={dept.id}
                 onClick={() => setExpandedDept(isExpanded ? null : dept.id)}
+                aria-expanded={isExpanded}
+                aria-controls={`dept-panel-${dept.id}`}
                 className={`p-3 rounded-xl border text-left transition-all ${
-                  isExpanded ? 'border-primary bg-primary/5 shadow-md col-span-2'
+                  isExpanded ? 'border-primary bg-primary/5 shadow-md sm:col-span-2'
                   : isRelevant ? 'border-primary/40 bg-primary/5 shadow-sm hover:border-primary/60 ring-1 ring-primary/20'
                   : 'border-gray-100 bg-white shadow-sm hover:border-primary/30'
                 }`}
@@ -226,7 +229,7 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
                   </div>
                 ))}
                 {isExpanded && (
-                  <div className="mt-3 space-y-2 ml-7" onClick={(e) => e.stopPropagation()}>
+                  <div id={`dept-panel-${dept.id}`} className="mt-3 space-y-2 ml-7" onClick={(e) => e.stopPropagation()}>
                     <p className="text-[11px] text-text-secondary">{dept.description}</p>
                     {dept.headlineMetrics.map((m, i) => (
                       <div key={i} className="flex items-baseline gap-1.5">
@@ -343,13 +346,13 @@ export default function StepCustomerZero({ wizard }: WizardProps) {
       )}
 
       {/* ━━ Navigation ━━ */}
-      <div className="flex justify-between pt-4">
+      <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
         <button onClick={prevStep}
-          className="px-6 py-3 rounded-[14px] border border-gray-200 text-text font-medium text-sm hover:bg-gray-50 transition-all">
+          className="w-full sm:w-auto px-6 py-3 rounded-[14px] border border-gray-200 text-text font-medium text-sm hover:bg-gray-50 transition-all">
           ← Back
         </button>
         <button onClick={nextStep}
-          className="px-6 py-3 rounded-[14px] bg-primary text-white font-medium text-sm
+          className="w-full sm:w-auto px-6 py-3 rounded-[14px] bg-primary text-white font-medium text-sm
                      hover:bg-primary-hover transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30">
           Continue to Use Cases →
         </button>

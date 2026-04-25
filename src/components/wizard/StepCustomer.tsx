@@ -167,6 +167,8 @@ export default function StepCustomer({ wizard }: WizardProps) {
         <div className="flex items-center justify-between px-5 py-3">
           <button
             onClick={() => setSmartFillOpen(!smartFillOpen)}
+            aria-expanded={smartFillOpen}
+            aria-controls="smart-fill-panel"
             className="flex items-center gap-2 text-left hover:opacity-80 transition-all"
           >
             <span className="text-lg">🚀</span>
@@ -188,7 +190,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
         </div>
 
         {smartFillOpen && (
-          <div className="px-5 pb-5 space-y-3">
+          <div id="smart-fill-panel" className="px-5 pb-5 space-y-3">
             {/* Copilot Prompt to gather data */}
             <div className="p-3 rounded-[10px] bg-primary/5 border border-primary/10 space-y-2">
               <p className="text-xs font-medium text-primary">
@@ -422,6 +424,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
           {INDUSTRIES.map((ind) => (
             <button
               key={ind.id}
+              aria-pressed={data.industryId === ind.id}
               onClick={() => {
                 if (data.industryId !== ind.id) {
                   updateData({ industryId: ind.id, selectedChallengeIds: [], selectedUseCaseIds: [] })
@@ -452,6 +455,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
           {SIZE_OPTIONS.map((size) => (
             <button
               key={size.value}
+              aria-pressed={data.companySize === size.value}
               onClick={() => updateData({ companySize: size.value })}
               className={`px-4 py-3 rounded-[14px] border-2 text-center transition-all
                 ${data.companySize === size.value
@@ -503,6 +507,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
               ${data.ndaConfirmed ? 'bg-primary' : 'bg-gray-300'}`}
             role="switch"
             aria-checked={data.ndaConfirmed}
+            aria-label="Enable NDA-protected content"
           >
             <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200
               ${data.ndaConfirmed ? 'translate-x-5' : 'translate-x-0'}`} />

@@ -25,6 +25,9 @@ export default function ProgressDots({ currentStep, ndaConfirmed, onStepClick }:
             key={step.label}
             onClick={() => onStepClick?.(step.step)}
             disabled={step.step > currentStep}
+            aria-current={isActive ? 'step' : undefined}
+            aria-label={`Step ${displayIdx + 1}: ${step.label}`}
+            aria-disabled={step.step > currentStep ? true : undefined}
             className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all duration-200
               ${isActive ? 'bg-white/10 text-white' : ''}
               ${isCompleted ? 'text-white/80 hover:bg-white/5' : ''}
