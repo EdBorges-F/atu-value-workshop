@@ -187,16 +187,16 @@ export default function StepReview({ wizard }: WizardProps) {
       )}
 
       {/* Navigation */}
-      <div className="flex justify-between pt-4">
+      <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
         <button
           onClick={prevStep}
-          className="px-6 py-3 rounded-2xl border border-gray-200 text-text font-medium text-sm hover:bg-gray-50 transition-all"
+          className="w-full sm:w-auto px-6 py-3 rounded-2xl border border-gray-200 text-text font-medium text-sm hover:bg-gray-50 transition-all"
         >
           ← Back
         </button>
         <button
           onClick={nextStep}
-          className="px-6 py-3 rounded-2xl bg-primary text-white font-medium text-sm
+          className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-primary text-white font-medium text-sm
                      hover:bg-primary-hover transition-all shadow-lg shadow-primary/20"
         >
           Generate Value Story →

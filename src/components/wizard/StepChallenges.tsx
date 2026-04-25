@@ -238,7 +238,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
 
   // Auto-select recommended use cases when challenges change
   const prevChallengesRef = useMemo(() => ({ current: '' }), [])
-  const challengeKey = selectedChallengeIds.sort().join(',')
+  const challengeKey = [...selectedChallengeIds].sort().join(',')
   if (challengeKey !== prevChallengesRef.current && rankedUseCases.length > 0) {
     prevChallengesRef.current = challengeKey
     const ids = rankedUseCases.slice(0, 6).map((r) => r.uc.id)
@@ -277,6 +277,8 @@ export default function StepChallenges({ wizard }: WizardProps) {
       <div className="rounded-[20px] border border-primary/15 bg-primary/[0.02] overflow-hidden">
         <button
           onClick={() => setDiscoveryOpen(!discoveryOpen)}
+          aria-expanded={discoveryOpen}
+          aria-controls="discovery-panel"
           className="w-full flex items-center justify-between px-5 py-3 hover:bg-primary/[0.03] transition-all"
         >
           <div className="flex items-center gap-2">
@@ -293,7 +295,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
         </button>
 
         {discoveryOpen && (
-          <div className="px-5 pb-5 space-y-3">
+          <div id="discovery-panel" className="px-5 pb-5 space-y-3">
             <p className="text-xs text-text-secondary leading-relaxed">
               The Frontier approach: <strong>stay longer, listen more</strong>. Use these prompts during the conversation.
               Notes you capture here will automatically suggest matching challenges below.
@@ -316,6 +318,8 @@ export default function StepChallenges({ wizard }: WizardProps) {
                   >
                     <button
                       onClick={() => setExpandedTheme(isExpanded ? null : theme.pillarId)}
+                      aria-expanded={isExpanded}
+                      aria-controls={`discovery-theme-${theme.pillarId}`}
                       className="w-full flex items-center justify-between p-3 text-left"
                     >
                       <div className="flex items-center gap-2">
@@ -331,7 +335,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
                     </button>
 
                     {isExpanded && (
-                      <div className="px-3 pb-3 space-y-2">
+                      <div id={`discovery-theme-${theme.pillarId}`} className="px-3 pb-3 space-y-2">
                         <div className="space-y-1">
                           {theme.questions.map((q, i) => (
                             <p key={i} className="text-[11px] text-text-secondary flex items-start gap-1.5">
@@ -414,6 +418,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
               <button
                 key={challenge.id}
                 onClick={() => toggleChallenge(challenge.id)}
+                aria-pressed={isSelected}
                 title={challenge.description}
                 className={`
                   px-4 py-2 rounded-full text-sm font-medium transition-all
@@ -563,17 +568,17 @@ export default function StepChallenges({ wizard }: WizardProps) {
       )}
 
       {/* Navigation */}
-      <div className="flex justify-between pt-4">
+      <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
         <button
           onClick={prevStep}
-          className="px-6 py-3 rounded-2xl border border-gray-200 text-text font-medium text-sm hover:bg-gray-50 transition-all"
+          className="w-full sm:w-auto px-6 py-3 rounded-2xl border border-gray-200 text-text font-medium text-sm hover:bg-gray-50 transition-all"
         >
           ← Back
         </button>
         <button
           onClick={nextStep}
           disabled={!canAdvance()}
-          className="px-6 py-3 rounded-2xl bg-primary text-white font-medium text-sm
+          className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-primary text-white font-medium text-sm
                      hover:bg-primary-hover transition-all shadow-lg shadow-primary/20
                      disabled:opacity-40 disabled:cursor-not-allowed"
         >

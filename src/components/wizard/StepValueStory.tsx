@@ -50,16 +50,19 @@ function Collapsible({ title, icon, summary, defaultOpen = false, children }: {
   title: string; icon?: string; summary?: string; defaultOpen?: boolean; children: React.ReactNode
 }) {
   const [open, setOpen] = useState(defaultOpen)
+  const contentId = `collapsible-${title.toLowerCase().replace(/\s+/g, '-')}`
   return (
     <div className="collapsible-section rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
       <button onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-controls={contentId}
         className="w-full flex items-center gap-2 px-5 py-3.5 text-left bg-gray-50/80 hover:bg-gray-100/80 transition-all print:hidden border-b border-gray-100">
         {icon && <span className="text-base">{icon}</span>}
         <span className="text-sm font-bold text-text uppercase tracking-wider flex-1">{title}</span>
         {summary && !open && <span className="text-[11px] text-text-secondary">{summary}</span>}
         <span className="text-text-secondary text-[10px]">{open ? '▾ collapse' : '▸ expand'}</span>
       </button>
-      <div className={`${open ? 'px-5 py-4' : 'hidden'} print:!block print:px-5 print:py-4`}>
+      <div id={contentId} className={`${open ? 'px-5 py-4' : 'hidden'} print:!block print:px-5 print:py-4`}>
         {children}
       </div>
     </div>
@@ -78,6 +81,7 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
       className="px-4 py-2 rounded-xl text-xs font-semibold transition-all
                  bg-gray-900 text-white hover:bg-gray-800 shadow-md">
       {copied ? '✓ Copied' : label ?? 'Copy'}
+      <span role="status" aria-live="polite" className="sr-only">{copied ? 'Copied to clipboard' : ''}</span>
     </button>
   )
 }
@@ -138,7 +142,7 @@ function EvidenceCard({ story }: { story: MatchedStory }) {
               "{story.quote.slice(0, 150)}{story.quote.length > 150 ? '…' : ''}"
             </p>
           )}
-          <p className="text-[9px] text-text-secondary/60 mt-1">
+          <p className="text-[10px] text-text-secondary/60 mt-1">
             {story.product || 'Microsoft AI'}
             {story.storyUrl && <> · <a href={story.storyUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Read full story</a></>}
           </p>
@@ -160,7 +164,7 @@ function StakeholderMapCard({ entries }: { entries: StakeholderEntry[] }) {
           {entries.map((entry, i) => (
             <div key={i} className="px-6 py-4">
               <p className="text-xs font-bold text-text mb-2">{entry.pillar}</p>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <div>
                   <p className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider mb-1">Stakeholders</p>
                   <div className="space-y-0.5">
@@ -258,19 +262,19 @@ function PillarCard({ section, defaultOpen }: { section: PillarSection; defaultO
                       <div className="mt-2 p-2.5 rounded-lg bg-white/80 border border-gray-100">
                         <div className="grid grid-cols-3 gap-2">
                           <div>
-                            <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider">💰 Cost</p>
+                            <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">💰 Cost</p>
                             <p className="text-[11px] text-text leading-snug mt-0.5">{uc.roiCard.costReduction}</p>
                           </div>
                           <div>
-                            <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider">⚡ Speed</p>
+                            <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">⚡ Speed</p>
                             <p className="text-[11px] text-text leading-snug mt-0.5">{uc.roiCard.speedImprovement}</p>
                           </div>
                           <div>
-                            <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider">✨ Quality</p>
+                            <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">✨ Quality</p>
                             <p className="text-[11px] text-text leading-snug mt-0.5">{uc.roiCard.qualityImprovement}</p>
                           </div>
                         </div>
-                        <p className="text-[9px] text-gray-400 mt-1.5 flex items-center gap-1">
+                        <p className="text-[10px] text-gray-400 mt-1.5 flex items-center gap-1">
                           <span>⏱️</span> Expected ROI: {uc.roiCard.roiTimeframe}
                         </p>
                       </div>
@@ -554,7 +558,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
 
         {/* Stats strip — hidden in print */}
-        <div className="mt-6 grid grid-cols-5 gap-3 print:hidden">
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 print:hidden">
           {[
             { value: story.pillarSections.reduce((sum, p) => sum + (p.useCases?.length || 0), 0) + (story.securitySection?.useCases?.length || 0), label: 'AI Use Cases' },
             { value: story.pillarSections.length + (story.securitySection ? 1 : 0), label: 'Pillars' },
@@ -747,7 +751,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
                   </div>
                 )}
               </div>
-              <p className="text-[9px] text-gray-400 mt-2 italic">
+              <p className="text-[10px] text-gray-400 mt-2 italic">
                 Based on published research from McKinsey, BCG, IDC, Forrester, and Microsoft internal telemetry. Results vary by organization.
               </p>
             </div>
@@ -884,7 +888,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
                 {data.companyName}'s current priorities don't cover {story.missingPillars.length === 1 ? 'this pillar' : 'these pillars'}. 
                 Use the <strong>Use Case Discovery</strong> Cowork prompt below to explore additional value areas.
               </p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {story.missingPillars.map((p) => (
                   <div key={p.id} className="flex items-center gap-2 p-2.5 rounded-xl bg-white/60 border border-violet-100">
                     <span className="text-lg">{p.icon}</span>
@@ -981,7 +985,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
                     </ul>
                   </div>
                 )}
-                <p className="text-[9px] text-amber-500 mt-2">Based on published industry research from McKinsey, BCG, IDC, and Forrester</p>
+                <p className="text-[10px] text-amber-500 mt-2">Based on published industry research from McKinsey, BCG, IDC, and Forrester</p>
               </div>
             )}
           </div>
@@ -1005,7 +1009,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
         summary={`${story.marketContext.length} market signals`}
         defaultOpen={false}>
         <div className="space-y-4 pt-2">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {story.marketContext.map((stat, i) => {
               const mainText = stat.split('(')[0].trim()
               const source = stat.includes('(') ? stat.split('(')[1]?.replace(')', '') : null
@@ -1082,7 +1086,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
                     <p className="text-xs font-semibold text-text break-words">{entry.useCase}</p>
                     <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                       <span className="text-[10px] text-text-secondary leading-snug break-words">{entry.solutions.join(' · ')}</span>
-                      <span className="px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-gray-100 text-text-secondary whitespace-nowrap">
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-text-secondary whitespace-nowrap">
                         {entry.pillar}
                       </span>
                     </div>
@@ -1108,14 +1112,14 @@ export default function StepValueStory({ wizard }: WizardProps) {
             <div className="space-y-5 pt-2">
               <p className="text-xs text-text-secondary">
                 Microsoft's own AI transformation — showing {czMatchedDepts.length} of 10 departments that align with your selected pillars.
-                <span className="text-[9px] text-gray-400 ml-1">Source: Customer Zero deck (March 2026) · NDA required</span>
+                <span className="text-[10px] text-gray-400 ml-1">Source: Customer Zero deck (March 2026) · NDA required</span>
               </p>
 
               {/* Headline Proof Points — filtered */}
               {matchedProofPoints.length > 0 && (
               <div className="rounded-xl border border-amber-100 bg-amber-50/50 p-4">
                 <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wider mb-3">⭐ Headline Proof Points</p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {matchedProofPoints.map((pp, i) => (
                     <div key={i} className="p-2 rounded-lg bg-white/70">
                       <p className="text-[10px] text-amber-600 font-semibold">{pp.department}</p>
@@ -1130,7 +1134,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
               {/* AI Adoption Patterns — always relevant */}
               <div className="rounded-xl border border-violet-100 bg-violet-50/50 p-4">
                 <p className="text-[10px] font-bold text-violet-800 uppercase tracking-wider mb-3">🔄 AI Adoption Patterns</p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                   {czData.patterns.map((p) => (
                     <div key={p.id} className="p-2.5 rounded-lg bg-white/70 text-center">
                       <p className="text-lg font-bold text-violet-600">{p.level}</p>
@@ -1163,7 +1167,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
                     <p className="text-xs text-text-secondary">{dept.description}</p>
 
                     {/* Headline Metrics */}
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {dept.headlineMetrics.map((m, i) => (
                         <div key={i} className="p-2 rounded-lg bg-gray-50">
                           <p className="text-xs font-bold text-primary">{m.value}</p>
@@ -1180,7 +1184,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
                         {uc.metrics.length > 0 && (
                           <div className="flex flex-wrap gap-1.5 mt-1.5">
                             {uc.metrics.map((m, j) => (
-                              <span key={j} className="text-[9px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                              <span key={j} className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
                                 {m.value} — {m.metric}
                               </span>
                             ))}
@@ -1192,7 +1196,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
                     {/* Tools */}
                     <div className="flex flex-wrap gap-1">
                       {dept.tools.map((t, i) => (
-                        <span key={i} className="text-[9px] px-2 py-0.5 rounded-full bg-gray-100 text-text-secondary">{t}</span>
+                        <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-text-secondary">{t}</span>
                       ))}
                     </div>
 
@@ -1205,7 +1209,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
                 </Collapsible>
               ))}
 
-              <p className="text-[9px] text-gray-400 text-center">
+              <p className="text-[10px] text-gray-400 text-center">
                 All figures based on internal Microsoft telemetry data. Microsoft makes no warranties, express, implied or statutory.
                 Deck refreshed quarterly. Contact: mcapsaiideas@microsoft.com
               </p>

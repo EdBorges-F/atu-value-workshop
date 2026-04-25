@@ -23,7 +23,7 @@ export default function WizardPage() {
 
   return (
     <SplitLayout currentStep={wizard.step} ndaConfirmed={wizard.data.ndaConfirmed} onStepClick={wizard.goToStep} onClearSession={wizard.reset}>
-      <div key={wizard.step} className="animate-slideUp">
+      <div id="main-content" key={wizard.step} className="animate-slideUp">
         {renderStep()}
       </div>
     </SplitLayout>
