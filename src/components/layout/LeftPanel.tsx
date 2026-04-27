@@ -10,7 +10,7 @@ interface LeftPanelProps {
 
 export default function LeftPanel({ currentStep, ndaConfirmed, onStepClick, onClearSession }: LeftPanelProps) {
   return (
-    <aside className="flex flex-col w-full lg:w-[24%] lg:max-w-[280px] lg:min-h-screen lg:sticky lg:top-0 bg-gradient-to-b from-dark-start to-dark-end p-4 lg:p-6 no-print">
+    <aside className="flex flex-col w-full lg:w-72 lg:min-w-[240px] lg:min-h-screen lg:sticky lg:top-0 shrink-0 bg-gradient-to-b from-dark-start to-dark-end p-4 lg:p-6 no-print">
       {/* Brand */}
       <div className="mb-8">
         <div className="flex items-center gap-2">

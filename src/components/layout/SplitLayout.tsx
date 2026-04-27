@@ -35,7 +35,7 @@ export default function SplitLayout({ currentStep, ndaConfirmed, onStepClick, on
       </div>
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:flex">
+      <div className="hidden lg:flex shrink-0">
         <LeftPanel currentStep={currentStep} ndaConfirmed={ndaConfirmed} onStepClick={onStepClick} onClearSession={onClearSession} />
       </div>
 
