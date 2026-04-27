@@ -1252,17 +1252,17 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
       </div>
 
-      {/* ── Feedback via GitHub Issue ── */}
+      {/* ── Feedback via MS Forms ── */}
       <div className="text-center print:hidden">
         <a
-          href={`https://github.com/EdBorges-F/atu-value-workshop/issues/new?labels=feedback&title=${encodeURIComponent(`Feedback: ${data.industryId} — ${story.pillarSections.length} pillars`)}&body=${encodeURIComponent(`## Feedback on Frontier Canvas\n\n**Industry:** ${data.industryId}\n**Company Size:** ${data.companySize}\n**Pillars:** ${story.pillarSections.map(s => s.pillar.fullName).join(', ')}\n**Use Cases:** ${story.pillarSections.reduce((sum, p) => sum + (p.useCases?.length || 0), 0)}\n\n### Rating (1-5): \n\n### What worked well:\n\n### What needs improvement:\n\n### Missing content or use cases:\n\n### Other comments:\n`)}`}
+          href="https://forms.office.com/r/7rXCvqNs6C"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-700 text-sm font-medium hover:shadow-md transition-all"
         >
           📋 Share Feedback on This Value Story
         </a>
-        <p className="text-[10px] text-text-secondary mt-1.5">Opens a pre-filled GitHub Issue — takes 30 seconds</p>
+        <p className="text-[10px] text-text-secondary mt-1.5">Opens a quick feedback form — takes 30 seconds</p>
       </div>
 
       {/* ── Navigation ── */}
