@@ -525,7 +525,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
     story.nextSteps.forEach((s, i) => lines.push(`  ${i + 1}. ${s}`))
     lines.push('')
     lines.push('---')
-    lines.push('This Value Story was prepared using the ATU Value Workshop, aligned with Microsoft\'s Responsible AI principles.')
+    lines.push('This Value Story was prepared using Frontier Canvas, aligned with Microsoft\'s Responsible AI principles.')
     lines.push('Evidence sourced from published customer stories, IDC/Forrester research, and industry benchmarks.')
     return lines.join('\n')
   }, [story])
@@ -1240,7 +1240,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
       {/* ── Disclaimer ── */}
       <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5 text-center print:hidden">
         <p className="text-[11px] text-text-secondary leading-relaxed">
-          ⚡ AI-Assisted · Human-Reviewed — This Value Story was prepared using the ATU Value Workshop, aligned with Microsoft's
+          ⚡ AI-Assisted · Human-Reviewed — This Value Story was prepared using Frontier Canvas, aligned with Microsoft's
           Responsible AI principles and Secure Future Initiative standards. Evidence sourced from published customer stories,
           IDC/Forrester research, and industry benchmarks. Results vary by organization. Validate with customer-specific context before sharing.
         </p>
