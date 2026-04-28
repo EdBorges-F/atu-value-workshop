@@ -65,6 +65,11 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     .replace(/https?:\/\/\S+/g, '')
     .replace(/^\s*[-•]\s*\[?\d*\]?.*https?.*$/gim, '')
     .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
+    // Sales Agent CRM format: section headers are concatenated directly onto the
+    // previous line's value with no separator (e.g. "GRENDENE CALÇADOS SAIndustry",
+    // "RetailCompany Size", "Strategic PrioritiesCost optimization…").
+    // Insert a newline before each known header when it appears mid-line.
+    .replace(/(\S)(Industry|Company\s+Size|Strategic\s+Priorities|Key\s+Priorities|Key\s+Challenges|Business\s+Challenges|Key\s+Stakeholders|Key\s+Contacts)\b/g, '$1\n$2')
     .trim()
 
   if (!cleaned) return { companyName: null, industryId: null, companySize: null, priorities: null, suggestedChallengeIds: null, suggestedUseCaseIds: null, contacts: null }
