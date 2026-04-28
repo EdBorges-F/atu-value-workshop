@@ -19,6 +19,22 @@ export interface SmartFillResult {
   contacts: { value: { name: string; title: string; email?: string }[]; confidence: 'high' | 'medium' | 'low' } | null
 }
 
+// Precompiled keyword matchers — normalise hyphens/slashes to spaces before matching
+// so 'capital markets' matches 'capital-markets', and 'car' does NOT match 'healthcare'
+const _normalise = (s: string) => s.replace(/[-/]/g, ' ').toLowerCase()
+const KEYWORD_REGEXES: Map<string, RegExp[]> = new Map()
+const _buildKwRegex = (kw: string): RegExp => {
+  const norm = _normalise(kw).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return new RegExp('(?<![a-z0-9])' + norm + '(?![a-z0-9])', 'i')
+}
+const _kwMatch = (normalisedText: string, kw: string): boolean => {
+  const cached = KEYWORD_REGEXES.get(kw)
+  if (cached) return cached.some((r) => r.test(normalisedText))
+  const re = _buildKwRegex(kw)
+  KEYWORD_REGEXES.set(kw, [re])
+  return re.test(normalisedText)
+}
+
 // Industry keyword matching
 const INDUSTRY_KEYWORDS: Record<string, string[]> = {
   'automotive': ['automotive', 'vehicle', 'car', 'oem', 'mobility', 'motor', 'auto parts'],
@@ -61,9 +77,16 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     .replace(/\(\d+\)\s*https?:\/\/[^\n]*/g, '')
     .replace(/^Sources?:.*$/gim, '')
     .replace(/^References?:.*$/gim, '')
+    // Escaped bracket links \[text\](url) — always artifacts in CRM paste
+    .replace(/\\\[[^\]\n]*\]\([^\)\n]*\)?/g, '')
+    // Links where the display text IS a URL or bare domain (e.g. [riministreet.com](url))
+    .replace(/\[(?:https?:\/\/|www\.|\w[\w.-]+\.\w{2,6})[^\]\n]*\]\([^\)\n]*\)?/g, '')
+    // Standard [text](https://url) → keep display text
     .replace(/\[([^\]]*)\]\(https?:\/\/[^)]*\)/g, '$1')
     .replace(/https?:\/\/\S+/g, '')
     .replace(/^\s*[-•]\s*\[?\d*\]?.*https?.*$/gim, '')
+    // Clean up orphaned backslash-escaped brackets left after link stripping
+    .replace(/\\([\[\]])/g, '')
     .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
     // Sales Agent CRM format: section headers are concatenated directly onto the
     // previous line's value with no separator (e.g. "GRENDENE CALÇADOS SAIndustry",
@@ -74,7 +97,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
 
   if (!cleaned) return { companyName: null, industryId: null, companySize: null, priorities: null, suggestedChallengeIds: null, suggestedUseCaseIds: null, contacts: null }
 
-  const lower = cleaned.toLowerCase()
+  const normLower = _normalise(cleaned)
 
   // Parse structured sections: "Label\nContent..." or "Label: Content..." or "Label — Content..."
   // Copilot typically outputs: header line, then content on following lines until next header
@@ -126,8 +149,12 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   // 1. Company Name
   let companyName: SmartFillResult['companyName'] = null
   if (sections.companyName && sections.companyName.length > 0) {
-    // Take first line, strip parenthetical notes
-    const raw = sections.companyName[0].replace(/\s*\(.*?\)\s*/g, '').trim()
+    // Strip Outlook/CRM encoding artifacts: [ENC: ...](url), then any residual [text](...)
+    const raw = sections.companyName[0]
+      .replace(/\s*\[ENC:[^\]\n]*\](\([^\)\n]*\))?/gi, '')
+      .replace(/\s*\[[^\]\n]*\](\([^\)\n]*\))?/g, '')
+      .replace(/\s*\(.*?\)\s*/g, '')
+      .trim()
     if (raw.length >= 2) {
       companyName = { value: raw, confidence: 'high' }
     }
@@ -155,11 +182,11 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   let explicitSectionMatch = false
 
   if (sections.industry && sections.industry.length > 0) {
-    const sectionText = sections.industry.join(' ').toLowerCase()
+    const sectionText = _normalise(sections.industry.join(' '))
     for (const [id, keywords] of Object.entries(INDUSTRY_KEYWORDS)) {
       let score = 0
       for (const kw of keywords) {
-        if (sectionText.includes(kw)) score++
+        if (_kwMatch(sectionText, kw)) score++
       }
       if (score > 0 && score > bestIndustryScore) {
         bestIndustryScore = score
@@ -178,7 +205,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     for (const [id, keywords] of Object.entries(INDUSTRY_KEYWORDS)) {
       let score = 0
       for (const kw of keywords) {
-        if (lower.includes(kw)) score++
+        if (_kwMatch(normLower, kw)) score++
       }
       if (score > bestIndustryScore) {
         bestIndustryScore = score
@@ -242,7 +269,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   for (const pk of PRIORITY_KEYWORDS) {
     let score = 0
     for (const kw of pk.keywords) {
-      if (lower.includes(kw.toLowerCase())) score++
+      if (_kwMatch(normLower, kw)) score++
     }
     if (score > 0) challengeScores.set(pk.challengeId, score)
   }
@@ -280,7 +307,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
       // Bonus if use case description keywords match the priorities text
       const ucWords = uc.name.toLowerCase().split(/\s+/)
       for (const word of ucWords) {
-        if (word.length > 4 && lower.includes(word)) score += 1
+        if (word.length > 4 && _kwMatch(normLower, word)) score += 1
       }
       // Bonus for size relevance
       if (companySize && uc.sizeRelevance.includes(companySize.value)) score += 1
