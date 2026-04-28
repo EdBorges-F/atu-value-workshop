@@ -23,15 +23,15 @@ export interface SmartFillResult {
 const INDUSTRY_KEYWORDS: Record<string, string[]> = {
   'automotive': ['automotive', 'vehicle', 'car', 'oem', 'mobility', 'motor', 'auto parts'],
   'banking': ['banking', 'bank', 'financial services', 'fintech', 'deposit', 'lending', 'mortgage'],
-  'capital-markets': ['capital markets', 'asset management', 'trading', 'hedge fund', 'investment', 'brokerage', 'wealth management'],
-  'consumer-goods': ['consumer goods', 'cpg', 'fmcg', 'food and beverage', 'consumer products', 'packaged goods', 'beverage', 'food service', 'foodservice'],
+  'capital-markets': ['capital markets', 'asset management', 'hedge fund', 'brokerage', 'wealth management', 'securities', 'derivatives', 'equity fund'],
+  'consumer-goods': ['consumer goods', 'cpg', 'fmcg', 'food and beverage', 'consumer products', 'packaged goods', 'beverage', 'food service', 'foodservice', 'footwear brand', 'fashion brand', 'apparel brand'],
   'energy-resources': ['energy', 'oil', 'gas', 'mining', 'utilities', 'renewable', 'power generation', 'petroleum', 'lime', 'limestone', 'minerals', 'chemicals'],
   'government': ['government', 'public sector', 'federal', 'state agency', 'municipal', 'defense', 'civic'],
   'healthcare-provider': ['healthcare', 'hospital', 'health system', 'clinical', 'patient care', 'physician', 'medical center'],
   'healthcare-medtech': ['medtech', 'medical device', 'pharma', 'pharmaceutical', 'biotech', 'life sciences', 'drug'],
   'higher-education': ['university', 'college', 'higher education', 'academic', 'campus', 'research institution'],
   'insurance': ['insurance', 'insurer', 'underwriting', 'claims', 'actuarial', 'policy', 'reinsurance'],
-  'manufacturing': ['manufacturing', 'factory', 'production', 'industrial', 'plant', 'assembly', 'fabrication', 'materials'],
+  'manufacturing': ['manufacturing', 'factory', 'production', 'industrial', 'plant', 'assembly', 'fabrication', 'materials', 'footwear', 'shoes', 'apparel', 'fashion', 'clothing', 'textiles', 'garments', 'calcados', 'calçados'],
   'media-entertainment': ['media', 'entertainment', 'broadcast', 'streaming', 'gaming', 'content', 'publishing', 'studio'],
   'mobility-travel': ['travel', 'hospitality', 'airline', 'hotel', 'transportation', 'logistics', 'fleet', 'tourism'],
   'retail': ['retail', 'e-commerce', 'ecommerce', 'store', 'shop', 'omnichannel', 'merchandise', 'restaurant', 'restaurants', 'dining', 'casual dining', 'quick service', 'hospitality', 'grocery'],
@@ -143,20 +143,46 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   }
 
   // 2. Industry — keyword matching against our canonical 16
+  // Priority: if Copilot output has an explicit "Industry:" section, match against that first.
+  // A match in the explicit section always wins with 'high' confidence.
   let industryId: SmartFillResult['industryId'] = null
   let bestIndustryScore = 0
-  for (const [id, keywords] of Object.entries(INDUSTRY_KEYWORDS)) {
-    let score = 0
-    for (const kw of keywords) {
-      if (lower.includes(kw)) score++
+  let explicitSectionMatch = false
+
+  if (sections.industry && sections.industry.length > 0) {
+    const sectionText = sections.industry.join(' ').toLowerCase()
+    for (const [id, keywords] of Object.entries(INDUSTRY_KEYWORDS)) {
+      let score = 0
+      for (const kw of keywords) {
+        if (sectionText.includes(kw)) score++
+      }
+      if (score > 0 && score > bestIndustryScore) {
+        bestIndustryScore = score
+        const ind = INDUSTRIES.find((i) => i.id === id)
+        if (ind) {
+          industryId = { value: id, confidence: 'high' }
+          explicitSectionMatch = true
+        }
+      }
     }
-    if (score > bestIndustryScore) {
-      bestIndustryScore = score
-      const ind = INDUSTRIES.find((i) => i.id === id)
-      if (ind) {
-        industryId = {
-          value: id,
-          confidence: score >= 3 ? 'high' : score >= 2 ? 'medium' : 'low',
+  }
+
+  // Fallback: full-text keyword scan (only if no explicit section match)
+  if (!explicitSectionMatch) {
+    bestIndustryScore = 0
+    for (const [id, keywords] of Object.entries(INDUSTRY_KEYWORDS)) {
+      let score = 0
+      for (const kw of keywords) {
+        if (lower.includes(kw)) score++
+      }
+      if (score > bestIndustryScore) {
+        bestIndustryScore = score
+        const ind = INDUSTRIES.find((i) => i.id === id)
+        if (ind) {
+          industryId = {
+            value: id,
+            confidence: score >= 3 ? 'high' : score >= 2 ? 'medium' : 'low',
+          }
         }
       }
     }
