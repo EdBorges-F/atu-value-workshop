@@ -19,6 +19,29 @@ export interface SmartFillResult {
   contacts: { value: { name: string; title: string; email?: string }[]; confidence: 'high' | 'medium' | 'low' } | null
 }
 
+// Rejects org/role category labels that look superficially like names
+const _NON_PERSON_ORG_RE = /\b(leadership|management|team|group|board|committee|department|division)\b/i
+// Rejects Copilot's own suggestion/commentary lines that bleed into stakeholder sections
+const _COPILOT_COMMENTARY_RE = /^(if\s+you|i\s+can|next\s+steps?|converting|creating|generating|building|developing|drafting|let\s+me|here\s+are|you\s+can)/i
+
+/**
+ * Returns true only if `name` plausibly looks like a person's name.
+ * Rejects org category labels ("Technology and Operations Leadership"),
+ * C-suite title prefixes ("CIO / CISO-level roles"), and names containing "and".
+ */
+const _looksLikePerson = (name: string): boolean => {
+  const words = name.trim().split(/\s+/)
+  if (words.length < 2) return false
+  if (_NON_PERSON_ORG_RE.test(name)) return false
+  if (/^(CIO|CTO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director|Managing|Chief|Head)\b/i.test(name)) return false
+  if (/\band\b/i.test(name)) return false
+  // Reject common sentence starters — catches Copilot commentary if it bypasses the section pre-filter
+  if (/^(if|the|a|an|for|with|to|in|on|at|by|from|i\s)\b/i.test(name)) return false
+  const firstName = words[0]
+  if (firstName.length < 2 || firstName.length > 15 || /\d/.test(firstName)) return false
+  return true
+}
+
 // Precompiled keyword matchers — normalise hyphens/slashes to spaces before matching
 // so 'capital markets' matches 'capital-markets', and 'car' does NOT match 'healthcare'
 const _normalise = (s: string) => s.replace(/[-/]/g, ' ').toLowerCase()
@@ -337,6 +360,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
       .replace(/\s*\(.*?\)/, '')
       .trim()
     if (clean.length >= 3 && cleanTitle.length >= 2 &&
+        _looksLikePerson(clean) &&
         !extractedContacts.some(c => c.name.toLowerCase() === clean.toLowerCase())) {
       extractedContacts.push({ name: clean, title: cleanTitle, email })
     }
@@ -345,20 +369,24 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   // Flexible name regex: allows periods (Dr., Jr.), lowercase particles (de, van, la), 2-5 words
   const NAME_RE = /[A-Z][a-zA-Z.''-]+(?:\s+(?:de|van|von|la|del|di|el|al|bin|da)\s+)?(?:\s+[A-Za-z.''-]+){1,4}/
 
+  // Pre-filter: strip Copilot's own commentary lines from stakeholder section before extraction
+  // (e.g. "If you want next steps I can support include: Converting this into...")
+  const stakeholderLines = (sections.stakeholders ?? []).filter(
+    l => !_COPILOT_COMMENTARY_RE.test(l.trim())
+  )
+
   // Pattern 1: Structured section "Name — Title" or "Name: Title" or "Name, Title"
-  if (sections.stakeholders) {
-    for (const line of sections.stakeholders) {
-      const sepMatch = line.match(new RegExp(`^(${NAME_RE.source})\\s*[-–—:,]\\s*(.+)`, 'i'))
-      if (sepMatch) {
-        addContact(sepMatch[1], sepMatch[2])
-        continue
-      }
-      // Pattern 1b: "Title: Name" or "Title — Name" (title-first format)
-      const titleFirstMatch = line.match(/^((?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director|Managing Director|Chief\s+\w+\s*Officer)[^:–—,]*)\s*[-–—:,]\s*(.+)/i)
-      if (titleFirstMatch) {
-        addContact(titleFirstMatch[2], titleFirstMatch[1])
-        continue
-      }
+  for (const line of stakeholderLines) {
+    const sepMatch = line.match(new RegExp(`^(${NAME_RE.source})\\s*[-–—:,]\\s*(.+)`, 'i'))
+    if (sepMatch) {
+      addContact(sepMatch[1], sepMatch[2])
+      continue
+    }
+    // Pattern 1b: "Title: Name" or "Title — Name" (title-first format)
+    const titleFirstMatch = line.match(/^((?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director|Managing Director|Chief\s+\w+\s*Officer)[^:–—,]*)\s*[-–—:,]\s*(.+)/i)
+    if (titleFirstMatch) {
+      addContact(titleFirstMatch[2], titleFirstMatch[1])
+      continue
     }
   }
 
@@ -387,14 +415,12 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   }
 
   // Pattern 4: Semicolon-separated contacts on one line ("Name, Title; Name, Title")
-  if (sections.stakeholders) {
-    for (const line of sections.stakeholders) {
-      if (line.includes(';')) {
-        const parts = line.split(';')
-        for (const part of parts) {
-          const pMatch = part.trim().match(new RegExp(`^(${NAME_RE.source})\\s*[-–—:,]\\s*(.+)`, 'i'))
-          if (pMatch) addContact(pMatch[1], pMatch[2])
-        }
+  for (const line of stakeholderLines) {
+    if (line.includes(';')) {
+      const parts = line.split(';')
+      for (const part of parts) {
+        const pMatch = part.trim().match(new RegExp(`^(${NAME_RE.source})\\s*[-–—:,]\\s*(.+)`, 'i'))
+        if (pMatch) addContact(pMatch[1], pMatch[2])
       }
     }
   }
