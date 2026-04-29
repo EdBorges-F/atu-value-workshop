@@ -1,6 +1,6 @@
 import type { CustomerStory } from './types';
 
-// 40 Microsoft customer stories — verified against microsoft.com/customers pages
+// 50 Microsoft customer stories — verified against microsoft.com/customers pages
 
 export const CUSTOMER_STORIES: CustomerStory[] = [
   {
@@ -8,15 +8,17 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     company: 'Air India',
     industry: 'transportation',
     product: 'Azure OpenAI in Foundry Models',
-    storyUrl: 'https://www.microsoft.com/en/customers/story/19768-air-india-azure-open-ai-service',
-    challengeIds: ['customer-experience', 'cost-optimization', 'autonomous-systems'],
+    storyUrl: 'https://www.microsoft.com/en/customers/story/26047-air-india-azure-openai-in-foundry-models',
+    challengeIds: ['customer-experience', 'cost-optimization', 'autonomous-systems', 'operational-efficiency'],
     keyMetrics: [
-      '97% Customer Sessions Fully Automated',
-      'Nearly 4 Million Customer Queries Managed'
+      '40,000 customer queries handled daily by AI.g',
+      '13 million+ conversations resolved since launch',
+      '97% success rate across 1,300+ question types',
+      'First airline worldwide to deploy generative AI for customer service at scale',
     ],
-    summary: 'Facing a rapidly growing passenger base and rising traveler expectations, Air India needed to modernize its customer experience without increasing operational costs. Migrating workloads to Microsoft Azure and deploying Azure OpenAI Service enabled the creation of AI.g, a generative AI-powered virtual assistant that handles customer queries with speed, accuracy, and empathy. Since its launch, AI.g has managed millions of interactions, automating 97% of them and freeing human agents to focus on complex cases.',
+    summary: 'Air India faced millions of customer queries overwhelming its support channels, leading to rising costs, slower response times, and growing frustration. The internal development team built AI.g, an agentic generative AI customer service solution on Azure OpenAI, becoming the first airline worldwide to deploy gen AI for customer service at scale. AI.g handles 40,000 queries daily across 1,300+ question types — from booking changes to refund requests — resolving over 13 million conversations with a 97% success rate.',
     quotes: [
-      'AI.g now handles 97% of 4 million-plus customer queries. We\u2019ve saved millions, but the real win is customers aren\u2019t waiting\u2014they\u2019re served. Fast answers for them, unlocking real problem-solving time for our people.'
+      'AI.g now handles 97% of 4 million-plus customer queries. We\'ve saved millions, but the real win is customers aren\'t waiting—they\'re served. Fast answers for them, unlocking real problem-solving time for our people.',
     ],
   },
   {
@@ -1038,6 +1040,103 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
 
     ],
     summary: 'Toyota partnered with Microsoft on 3 flagship AI projects: edge-cloud collaboration for proactive driver support, next-generation UX through the Growing Car concept, and applications for enhancing future mobility value.',
+    quotes: [],
+  },
+  {
+    id: 'cemex-luca-bot',
+    company: 'Cemex',
+    industry: 'manufacturing',
+    product: 'Azure OpenAI / Microsoft Foundry',
+    storyUrl: 'https://news.microsoft.com/source/latam/features/ai/cemex-luca-bot-ai-agent/',
+    challengeIds: ['data-analytics', 'operational-efficiency', 'knowledge-management', 'digital-transformation'],
+    keyMetrics: [
+      '100 senior leaders using LUCA Bot AI financial agent',
+      '120+ KPIs processed in real-time across regions, countries and plants',
+      'A decade of financial data accessible in seconds via natural language',
+      'Executives replaced hours/days of report-searching with instant answers',
+    ],
+    summary: 'Cemex, a global building materials company with $16B in sales, built LUCA Bot — an AI financial agent on Azure OpenAI and Microsoft Foundry — giving 100 senior executives instant access to 120+ KPIs across regions, countries, and plants via natural language chat. Before LUCA Bot, finding critical financial data required phone calls, lengthy emails, or hours of report-searching. Now it\'s a click away. Plans are underway to extend LUCA Bot to plant operators and all employees.',
+    quotes: [
+      'It\'s all about agility, opportunity and simplicity. It\'s far more efficient than having lots of people answering questions, and one major advantage is having a unified source of information. — Jaime Martínez, Head of Global Controllership, Cemex',
+    ],
+  },
+  {
+    id: 'contraforce-defender',
+    company: 'ContraForce',
+    industry: 'professional-services',
+    product: 'Microsoft Defender',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/25855-contraforce-microsoft-defender',
+    challengeIds: ['security-compliance', 'operational-efficiency', 'innovation-speed', 'cost-optimization'],
+    keyMetrics: [
+      'Analysts manage 10× more clients with AI-automated triage',
+      '40 new customers added per MSP provider',
+      'Incidents resolve in minutes instead of hours',
+      'Turned enterprise-grade security into a turnkey MSP growth engine',
+    ],
+    summary: 'ContraForce built a multi-tenant Security Delivery Platform that operationalizes Microsoft Sentinel, Defender XDR, Entra ID, and Azure AI — transforming enterprise-grade security tools into a turnkey solution for MSPs who previously couldn\'t afford 24/7 SOC operations. The result: MSP analysts now manage 10× more clients, providers add 40 customers without adding headcount, and incidents resolve in minutes. AI triage and automated response improve SLAs and reduce breach risk while unlocking higher-margin service tiers.',
+    quotes: [],
+  },
+  {
+    id: 'tata-realty-fabric',
+    company: 'Tata Realty and Infrastructure',
+    industry: 'manufacturing',
+    product: 'Microsoft Fabric',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/26182-tata-realty-and-infrastructure-ltd-microsoft-fabric',
+    challengeIds: ['data-analytics', 'operational-efficiency', 'cost-optimization', 'digital-transformation'],
+    keyMetrics: [
+      '20% reduction in data processing time',
+      '20–30% reduction in annual analytics costs',
+      'Unified data foundation enabling advanced analytics and AI',
+      'Accelerated business reporting and faster decision-making at scale',
+    ],
+    summary: 'Tata Realty faced siloed data, unstructured sources, and disparate analytics tools that blocked critical business decisions. By choosing Microsoft Fabric for its built-in governance and elastic scale, Tata Realty reduced data processing time by 20%, cut annual analytics costs by 20–30%, and created a unified data foundation for faster, more informed decisions — and a platform ready for future AI innovation.',
+    quotes: [],
+  },
+  {
+    id: 'bradesco-bridge',
+    company: 'Bradesco',
+    industry: 'banking',
+    product: 'Azure OpenAI / Microsoft Foundry',
+    storyUrl: 'https://www.microsoft.com/pt-br/customers/story/25888-bradesco-microsoft-foundry',
+    challengeIds: ['customer-experience', 'operational-efficiency', 'cost-optimization', 'digital-transformation'],
+    keyMetrics: [
+      '83% digital customer service resolution rate',
+      '80% internal query resolution rate',
+      '30% reduction in technology costs',
+      'Up to 10× faster product launches',
+    ],
+    summary: 'Bradesco built Bridge, a multi-agent generative AI platform on Azure OpenAI and Foundry Models, to democratize AI across the bank with governance, security, and flexibility. Bridge automates internal and external processes and deploys rapidly via Azure API Management. The results: 83% resolution in digital customer service, 80% on internal queries, 30% reduction in technology costs, and up to 10× faster product launches.',
+    quotes: [],
+  },
+  {
+    id: 'kpmg-fabric',
+    company: 'KPMG',
+    industry: 'professional-services',
+    product: 'Microsoft Fabric',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/26268-kpmg-microsoft-fabric',
+    challengeIds: ['data-analytics', 'operational-efficiency', 'digital-transformation', 'cost-optimization'],
+    keyMetrics: [
+      '87% faster client data onboarding (16 hours → ~2 hours)',
+      '25% reduction in IT operational effort',
+      'Unified data engineering, storage, analytics, and global security policies',
+      'More time for higher-value client work',
+    ],
+    summary: 'KPMG replatformed its Digital Gateway data ecosystem on Microsoft Fabric to unify data engineering, storage, analytics, reporting, and global security policies. The result: client data onboarding is now 87% faster — about 2 hours instead of 16 — and IT operational effort dropped 25%, freeing teams to spend more time on higher-value client work.',
+    quotes: [],
+  },
+  {
+    id: 'pepsico-teams-copilot',
+    company: 'PepsiCo',
+    industry: 'consumer-goods',
+    product: 'Microsoft Teams + Microsoft 365 Copilot',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/26141-pepsico-microsoft-teams',
+    challengeIds: ['workforce-modernization', 'operational-efficiency', 'digital-transformation', 'innovation-speed'],
+    keyMetrics: [
+      '90–95% daily active use of Copilot across 320,000 employees',
+      'Standardized collaboration platform across 200 countries',
+      'AI seamlessly layered into Microsoft 365 everyday workflows',
+    ],
+    summary: 'PepsiCo faced a fragmented technology landscape with disparate collaboration tools that slowed business and limited AI adoption across its 320,000-employee global workforce. By standardizing on Microsoft Teams and deploying Microsoft 365 Copilot, PepsiCo created a seamless AI-powered work environment. Daily active use of Copilot reached 90–95%, with workstreams smoother and more efficient across 200 countries.',
     quotes: [],
   },
 ];
