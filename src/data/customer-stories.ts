@@ -1,6 +1,6 @@
 import type { CustomerStory } from './types';
 
-// 52 Microsoft customer stories — verified against microsoft.com/customers pages
+// 63 Microsoft customer stories — verified against microsoft.com/customers pages
 
 export const CUSTOMER_STORIES: CustomerStory[] = [
   {
@@ -710,6 +710,176 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
       'Complex crop protection questions resolved in under 30 seconds (previously took days)',
     ],
     summary: "Bayer's agronomic advisors spent hours navigating lengthy crop protection labels to make critical decisions. Bayer built E.L.Y. Mini — a small language model using Microsoft Phi and Azure AI Foundry, fine-tuned on proprietary label data — to provide precise, compliant answers to field teams and partners. Early users report 5–10% productivity gains with complex questions resolved in under 30 seconds instead of days.",
+    quotes: [],
+  },
+
+  // ─── Retail ───────────────────────────────────────────────
+  {
+    id: 'aifi-spatial-intelligence',
+    company: 'AiFi',
+    industry: 'retail',
+    product: 'Azure',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/26380-aifi-azure',
+    challengeIds: ['customer-experience', 'operational-efficiency', 'data-analytics'],
+    keyMetrics: [
+      '25–40% reductions in shrink for retail clients',
+      'Up to 300% throughput gains in venues',
+      'Retail insights delivered in seconds instead of weeks',
+      '60+ million human interactions analyzed monthly',
+    ],
+    summary: 'Physical spaces generated enormous behavioral data that was invisible to operators. AiFi built its spatial intelligence platform on Microsoft Azure — using Azure high-performance compute, Azure Databricks, and Copilot — to turn camera data into queryable, real-time intelligence. Clients see 25–40% shrink reductions, up to 300% throughput gains, and retail insights in seconds instead of weeks.',
+    quotes: [],
+  },
+  {
+    id: 'best-buy-sentinel',
+    company: 'Best Buy',
+    industry: 'retail',
+    product: 'Microsoft Sentinel',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/25053-best-buy-microsoft-sentinel',
+    challengeIds: ['security-compliance', 'operational-efficiency'],
+    keyMetrics: [
+      '20% reduction in log ingestion time across the environment',
+      'Hundreds of hours of security team time saved',
+    ],
+    summary: 'Best Buy needed real-time, comprehensive security visibility not possible with its previous disparate tool set. It added Microsoft Defender for Endpoint and adopted Microsoft Sentinel as its SIEM, ingesting data from its existing Tanium endpoint management solution. The result: a single point of truth that reduced log ingestion time by 20% and saved hundreds of hours of security team time.',
+    quotes: [],
+  },
+
+  // ─── Government ───────────────────────────────────────────
+  {
+    id: 'snohomish-county-azure-speech',
+    company: 'Snohomish County',
+    industry: 'government',
+    product: 'Azure Speech',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/26024-snohomish-county-azure-speech-in-foundry-tools',
+    challengeIds: ['workforce-modernization', 'operational-efficiency', 'digital-transformation'],
+    keyMetrics: [
+      '87.5% reduction in training production time',
+      'Expanded accessible and multilingual learning across the county',
+    ],
+    summary: 'Snohomish County sought a scalable AI solution to modernize training and internal communications while reducing manual effort and improving accessibility. Working with Microsoft, the county deployed an easy-to-use learning platform built on Azure Speech. Training production time dropped by 87.5% and the county established a repeatable model for responsible AI adoption in the public sector.',
+    quotes: [],
+  },
+  {
+    id: 'washington-dc-cfsa-copilot',
+    company: 'Washington, DC Child and Family Services Agency (CFSA)',
+    industry: 'government',
+    product: 'Microsoft Copilot Studio',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/25302-washington-dc-cfsa-microsoft-copilot-studio',
+    challengeIds: ['operational-efficiency', 'digital-transformation', 'cost-optimization'],
+    keyMetrics: [
+      '1–4 hours saved per case on intake and investigations',
+      'New features cost 20× less to add',
+      'Feature delivery reduced from 4 months to 3 weeks',
+    ],
+    summary: "Washington DC's Child and Family Services Agency needed to streamline intake, investigations, and case work to support faster, better-informed decisions for children. Working with Microsoft, CFSA built a unified AI-enabled platform using Dynamics 365, Power Apps, and Azure AI. Caseworkers now save 1–4 hours per case, new features cost 20× less, and delivery time dropped from 4 months to 3 weeks.",
+    quotes: [],
+  },
+  {
+    id: 'alabama-law-enforcement-azure',
+    company: 'Alabama Law Enforcement Agency',
+    industry: 'government',
+    product: 'Azure',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/24472-alabama-law-enforcement-us-azure',
+    challengeIds: ['operational-efficiency', 'digital-transformation', 'field-operations'],
+    keyMetrics: [
+      'ArcGIS deployment timeline cut from 5 weeks to 2 hours',
+      '7–9 weeks of work time saved per deployment cycle',
+    ],
+    summary: 'The Alabama Law Enforcement Agency needed to accelerate its ArcGIS deployment timeline to advance public safety initiatives faster. Working with Microsoft and Esri, ALEA built an Azure-based deployment acceleration solution that cut the timeline from 5 weeks to 2 hours and saves 7–9 weeks of work time per cycle.',
+    quotes: [],
+  },
+  {
+    id: 'city-of-jacksonville-azure',
+    company: 'City of Jacksonville',
+    industry: 'government',
+    product: 'Azure',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/23520-city-of-jacksonville-azure',
+    challengeIds: ['digital-transformation', 'data-analytics', 'operational-efficiency'],
+    keyMetrics: [
+      '600+ hours saved in core city processes',
+      'Real-time transparency dashboards for citizens and officials across 6 service areas',
+    ],
+    summary: 'City of Jacksonville aimed to increase transparency and operational efficiency by making real-time city data accessible to officials and residents. Using Azure and Power BI, Jacksonville built transparency dashboards tracking service requests, animal care, public works, emergency response, budgeting, and community programs. The result: 600+ hours saved in core processes and a model for smart governance.',
+    quotes: [],
+  },
+  {
+    id: 'geographic-solutions-azure-openai',
+    company: 'Geographic Solutions',
+    industry: 'government',
+    product: 'Azure OpenAI',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/24352-geographic-solutions-azure-openai',
+    challengeIds: ['workforce-modernization', 'operational-efficiency', 'digital-transformation'],
+    keyMetrics: [
+      '70% increase in resume creation by job seekers',
+      '65% increase in records created by state agency staff using generative AI',
+    ],
+    summary: 'Geographic Solutions wanted to use generative AI to enhance job seekers\' resumes and reduce employers\' administrative hiring burdens. The company built VOS Sapphire AI on Azure OpenAI to streamline content creation for job seekers, employers, and state employment agencies. The result: 70% more resumes created and a 65% boost in records produced by agency staff.',
+    quotes: [],
+  },
+  {
+    id: 'kern-county-purview',
+    company: 'County of Kern',
+    industry: 'government',
+    product: 'Microsoft Purview',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/23920-ca-county-of-kern-microsoft-purview',
+    challengeIds: ['security-compliance', 'risk-management', 'digital-transformation'],
+    keyMetrics: [
+      'Over 13 million files classified with sensitivity labels',
+      'Near-total label adoption across the organization',
+      'Laid the governance foundation for responsible Copilot adoption',
+    ],
+    summary: 'Kern County faced fragmented IT systems and lack of data classification, making security and compliance difficult. The county adopted Microsoft Purview to unify data security, governance, and compliance — gaining visibility into data risks, consistent classification, access monitoring, and legal compliance. Over 13 million files were classified, near-total label adoption achieved, and a governance foundation established for future AI adoption.',
+    quotes: [],
+  },
+
+  // ─── Energy/Resources ─────────────────────────────────────
+  {
+    id: 'sapphire-gas-dynamics365',
+    company: 'Sapphire Gas Solutions',
+    industry: 'energy-resources',
+    product: 'Dynamics 365',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/24559-sapphire-gas-solutions-dynamics-365-business-central',
+    challengeIds: ['operational-efficiency', 'cost-optimization', 'digital-transformation'],
+    keyMetrics: [
+      'Manual processes reduced by more than 50%',
+      '45-day month-end close eliminated through unified systems',
+      'On track for 10× projected business growth',
+    ],
+    summary: 'Sapphire Gas Solutions faced operational strain from disconnected systems as it scaled rapidly, including a 45-day month-end close cycle. Partnering with Rand, Sapphire implemented Dynamics 365 Business Central, Dynamics 365 Sales, and Power Platform to unify accounting and sales. Manual processes dropped by 50%+, duplicate work was eliminated, and the company is now positioned for 10× growth.',
+    quotes: [],
+  },
+
+  // ─── Telecommunications ───────────────────────────────────
+  {
+    id: 'hughes-echostar-azure-ai',
+    company: 'Hughes (EchoStar)',
+    industry: 'telecommunications',
+    product: 'Azure AI Foundry',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/24300-hughes-azure-ai-foundry',
+    challengeIds: ['operational-efficiency', 'workforce-modernization', 'digital-transformation'],
+    keyMetrics: [
+      '35,000+ work hours saved annually',
+      '25%+ boost in workforce productivity',
+      '12 new production AI apps deployed',
+    ],
+    summary: 'EchoStar\'s Hughes division needed to increase employee efficiency and streamline daily business processes across its global satellite operations. Using Azure AI Foundry, Hughes developed 12 production apps spanning automated sales call auditing, customer retention analysis, and field services automation. The solutions save 35,000+ work hours annually and boost productivity by at least 25%.',
+    quotes: [],
+  },
+
+  // ─── Media/Entertainment ──────────────────────────────────
+  {
+    id: 'pacers-live-captioning',
+    company: 'Pacers Sports & Entertainment',
+    industry: 'media-entertainment',
+    product: 'Azure AI Foundry',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/23957-pacers-sports-and-entertainment-azure-ai-foundry',
+    challengeIds: ['customer-experience', 'innovation-speed', 'digital-transformation'],
+    keyMetrics: [
+      '1.14% error rate on real-time live game captions',
+      'Instant captions delivered to deaf, hard-of-hearing, and non-English-speaking fans on arena screens and mobile app',
+    ],
+    summary: 'Pacers Sports & Entertainment needed a custom live-game captioning system delivering instantaneous captions to deaf, hard-of-hearing, and non-English-speaking fans on arena screens and in its mobile app. Using Azure AI Foundry and Azure Functions, PS&E built a real-time captioning solution tailored to the pace of live basketball, achieving a 1.14% error rate and setting the stage for future AI-powered fan experiences.',
     quotes: [],
   },
 
