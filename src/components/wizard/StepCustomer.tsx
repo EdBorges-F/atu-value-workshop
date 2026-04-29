@@ -198,6 +198,9 @@ export default function StepCustomer({ wizard }: WizardProps) {
               <p className="text-xs font-medium text-primary">
                 Step 1: Copy this prompt → Paste into Copilot → Get your account summary
               </p>
+              <p className="text-[11px] text-text/60">
+                Only replace <span className="font-semibold text-primary">[CUSTOMER NAME]</span> before pasting — everything else is ready
+              </p>
               <div className="relative">
                 <pre className="text-[11px] text-text bg-white p-3 rounded-lg border border-gray-100 whitespace-pre-wrap leading-relaxed max-h-32 overflow-y-auto">
 {COPILOT_GATHER_PROMPT}
