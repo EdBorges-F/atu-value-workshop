@@ -446,90 +446,6 @@ export default function StepValueStory({ wizard }: WizardProps) {
     return czData.departments.filter(d => d.pillarIds.some(p => activePillarIds.has(p)))
   }, [czData, story])
 
-  const fullStoryText = useMemo(() => {
-    const lines = [
-      story.title,
-      '',
-      '━━ MARKET CONTEXT ━━',
-      ...story.marketContext.map(s => `  • ${s}`),
-      '',
-      story.executive_summary,
-      '',
-    ]
-    if (story.industryBenchmark) {
-      lines.push('━━ INDUSTRY BENCHMARK ━━')
-      lines.push(`  AI adoption growth: ${story.industryBenchmark.adoptionGrowthRate}`)
-      lines.push(`  Average ROI: ${story.industryBenchmark.avgROI}`)
-      lines.push(`  Top performers: ${story.industryBenchmark.topPerformerMultiple}`)
-      if (story.industryBenchmark.frontierStats?.length) {
-        lines.push('  Frontier Transformation Insights:')
-        story.industryBenchmark.frontierStats.forEach((s) => lines.push(`    ▸ ${s}`))
-      }
-      lines.push('')
-    }
-    for (const ps of story.pillarSections) {
-      lines.push(`━━ ${ps.pillar.fullName.toUpperCase()} ━━`)
-      lines.push('')
-      lines.push('Strategic Priorities:')
-      ps.customerPriorities.forEach((p) => lines.push(`  • ${p}`))
-      lines.push('')
-      if (ps.useCases.length > 0) {
-        lines.push('Use Cases:')
-        for (const uc of ps.useCases) {
-          lines.push(`  ${uc.name}`)
-          lines.push(`  ${uc.description}`)
-          if (uc.evidence) lines.push(`  📊 ${uc.evidence}`)
-          const fb = matchFunctionBenchmark(uc.name, uc.description)
-          if (fb) lines.push(`  📊 ${fb.area}: ${fb.gain}`)
-          for (const s of uc.matchedStories) {
-            lines.push(`  📖 ${s.company}: ${s.metric}${s.storyUrl ? ` (${s.storyUrl})` : ''}`)
-          }
-          lines.push('')
-        }
-      }
-    }
-    if (story.securitySection) {
-      lines.push('━━ SECURITY FOUNDATION ━━')
-      lines.push('')
-      story.securitySection.customerPriorities.forEach((p) => lines.push(`  • ${p}`))
-      for (const uc of story.securitySection.useCases) {
-        lines.push(`  ${uc.name} — ${uc.description}`)
-      }
-      lines.push('')
-    }
-    if (story.stakeholderMap.length > 0) {
-      lines.push('━━ STAKEHOLDER MAP ━━')
-      lines.push('')
-      for (const s of story.stakeholderMap) {
-        lines.push(`  ${s.pillar}: ${s.roles.join(', ')} → ${s.areas.join(', ')}`)
-      }
-      lines.push('')
-    }
-    if (story.missingPillars.length > 0) {
-      lines.push('━━ EXPANSION OPPORTUNITIES ━━')
-      lines.push('')
-      for (const p of story.missingPillars) {
-        lines.push(`  ${p.icon} ${p.fullName} — not yet addressed; consider exploring use cases here`)
-      }
-      lines.push('')
-    }
-    lines.push('━━ SOLUTION MAP ━━')
-    lines.push('')
-    for (const entry of story.solutionMap) {
-      lines.push(`  ${entry.useCase}`)
-      lines.push(`    ${entry.solutions.join(' · ')}  [${entry.pillar}]`)
-    }
-    lines.push('')
-    lines.push('━━ NEXT STEPS ━━')
-    lines.push('')
-    story.nextSteps.forEach((s, i) => lines.push(`  ${i + 1}. ${s}`))
-    lines.push('')
-    lines.push('---')
-    lines.push('This Value Story was prepared using Frontier Canvas, aligned with Microsoft\'s Responsible AI principles.')
-    lines.push('Evidence sourced from published customer stories, IDC/Forrester research, and industry benchmarks.')
-    return lines.join('\n')
-  }, [story])
-
   return (
     <div className="max-w-3xl mx-auto space-y-6 print:max-w-none print:mx-0 print:space-y-1 print-1page" ref={printRef}>
       {/* ━━ HERO — Stats Card ━━ */}
@@ -547,7 +463,12 @@ export default function StepValueStory({ wizard }: WizardProps) {
             <h2 className="text-2xl font-bold tracking-tight">{story.title}</h2>
           </div>
           <div className="flex gap-2 print:hidden">
-            <CopyButton text={fullStoryText} label="📋 Copy" />
+            <button
+              onClick={() => document.getElementById('cowork')?.scrollIntoView({ behavior: 'smooth' })}
+              className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors"
+            >
+              🤖 Cowork Prompts
+            </button>
             <button
               onClick={handlePrintPDF}
               className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors"
