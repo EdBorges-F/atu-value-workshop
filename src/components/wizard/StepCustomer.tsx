@@ -42,6 +42,8 @@ const COPILOT_GATHER_PROMPT = `@Sales Agent — I'm preparing a Frontier Transfo
 5. **Key Challenges** — Business pain points, blockers, or pressures they face
 6. **Key Stakeholders** — Senior decision-makers involved in AI or digital transformation (Name, Title if available). Check CRM contacts, recent emails, and meeting attendees for CTO, CIO, CDO, CISO, CFO, or VP-level sponsors
 
+To supplement CRM and email data, also search the web for: the company's official website (About, Strategy, or Investor Relations pages), recent press releases or news from the last 12 months, and their LinkedIn company page. Use this to fill gaps in Strategic Priorities and Key Challenges with current, accurate context.
+
 Format as plain text only — no links, no URLs, no source citations, no markdown formatting. At the end, do a sanity check for yourself: flag if anything looks contradictory or if you found information that wasn't captured above — but do NOT include this check in the output you give me.`
 
 export default function StepCustomer({ wizard }: WizardProps) {
