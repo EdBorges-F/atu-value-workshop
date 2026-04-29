@@ -1,6 +1,6 @@
 import type { CustomerStory } from './types';
 
-// 50 Microsoft customer stories — verified against microsoft.com/customers pages
+// 52 Microsoft customer stories — verified against microsoft.com/customers pages
 
 export const CUSTOMER_STORIES: CustomerStory[] = [
   {
@@ -626,12 +626,13 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     company: 'St. Luke\'s University Health Network',
     industry: 'healthcare-provider',
     product: 'Microsoft Defender',
-    storyUrl: '',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/25330-st-lukes-university-health-network-microsoft-security-copilot',
     challengeIds: ['security-compliance', 'operational-efficiency'],
     keyMetrics: [
-      '~200 hours saved monthly by autonomously handling phishing false positives'
+      '~200 hours saved monthly by autonomously handling phishing false positives',
+      'Incident reports created in minutes instead of hours',
     ],
-    summary: 'St. Luke\'s University Health Network deployed Microsoft\'s Phishing Triage Agent to autonomously handle and close thousands of false positive phishing alerts, freeing their security team from manual triage.',
+    summary: 'St. Luke\'s University Health Network deployed Security Copilot in Microsoft Defender as the connective tissue across their security stack, providing an AI-powered, agentic, consolidated view of alerts, access controls, and vulnerabilities. The Phishing Triage Agent autonomously handles and closes thousands of false positive alerts, saving nearly 200 hours monthly.',
     quotes: [
       '"The Phishing Triage Agent is a game changer. It\'s saving us nearly 200 hours monthly by autonomously handling and closing thousands of false positive alerts." — Krista Arndt, Assoc. CISO'
     ],
@@ -680,6 +681,36 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     quotes: [
       '"Avanade has real visibility into agent activity, the ability to govern agent sprawl, control resource usage, and manage agents as identity-aware digital entities in Microsoft Entra." — Aaron Reich, CTIO'
     ],
+  },
+
+  {
+    id: 'att-azure-customer-care',
+    company: 'AT&T',
+    industry: 'telecommunications',
+    product: 'Azure',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/25679-at-and-t-azure',
+    challengeIds: ['customer-experience', 'operational-efficiency', 'digital-transformation'],
+    keyMetrics: [
+      '33% reduction in customer care resolution time',
+      '70+ AI solutions deployed to over 100,000 employees',
+      'Millions saved annually through improved efficiency and governance',
+    ],
+    summary: 'AT&T needed to modernize customer care and internal workflows to handle millions of interactions daily, reduce resolution times, and ensure compliance using scalable, secure AI solutions. By deploying Azure services including AKS, Azure API Management, Cosmos DB, and Azure Storage, AT&T built a highly secure, scalable AI framework. The result: 33% faster resolution, 70+ AI solutions across 100K employees, and millions in annual savings.',
+    quotes: [],
+  },
+  {
+    id: 'bayer-ely-crop-ai',
+    company: 'Bayer',
+    industry: 'healthcare-medtech',
+    product: 'Azure AI Foundry',
+    storyUrl: 'https://www.microsoft.com/en/customers/story/25255-bayer-azure-phi',
+    challengeIds: ['innovation-speed', 'operational-efficiency', 'digital-transformation'],
+    keyMetrics: [
+      '5–10% productivity gains for early users of E.L.Y. Mini',
+      'Complex crop protection questions resolved in under 30 seconds (previously took days)',
+    ],
+    summary: "Bayer's agronomic advisors spent hours navigating lengthy crop protection labels to make critical decisions. Bayer built E.L.Y. Mini — a small language model using Microsoft Phi and Azure AI Foundry, fine-tuned on proprietary label data — to provide precise, compliant answers to field teams and partners. Early users report 5–10% productivity gains with complex questions resolved in under 30 seconds instead of days.",
+    quotes: [],
   },
 
   // ─── Frontier Deck Stories (auto-extracted) ───────────────
