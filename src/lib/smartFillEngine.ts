@@ -89,6 +89,17 @@ const SIZE_PATTERNS: { pattern: RegExp; value: CompanySize; confidence: 'high' |
   { pattern: /small\s+(?:business|company)|smb|startup/i, value: 'small', confidence: 'medium' },
 ]
 
+// LinkedIn-style range patterns (e.g. "2,500-10,000" without "employees")
+// Ordered from largest to smallest to match greedily
+const SIZE_RANGE_PATTERNS: { pattern: RegExp; value: CompanySize }[] = [
+  { pattern: /(?:10[,.]?001|50[,.]?001|100[,.]?000)\s*[-–—]\s*\d/i, value: 'enterprise' },
+  { pattern: /(?:10[,.]?001|[1-9]\d{4,})[\d,.]*\+/i, value: 'enterprise' }, // "10,001+" with min threshold
+  { pattern: /(?:2[,.]?500|5[,.]?001|10[,.]?000)\s*[-–—]\s*\d/i, value: 'large' },
+  { pattern: /(?:1[,.]?001|501|1[,.]?000)\s*[-–—]\s*(?:5[,.]?000|2[,.]?500|10[,.]?000)/i, value: 'mid' },
+  { pattern: /(?:201|51|500)\s*[-–—]\s*(?:500|1[,.]?000|200)/i, value: 'small' },
+  { pattern: /(?:1|2|11|50)\s*[-–—]\s*(?:50|200|10|500)/i, value: 'small' },
+]
+
 /**
  * Extract structured data from pasted text.
  * Only populates fields that exist in the wizard.
@@ -116,6 +127,12 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     // "RetailCompany Size", "Strategic PrioritiesCost optimization…").
     // Insert a newline before each known header when it appears mid-line.
     .replace(/(\S)(Industry|Company\s+Size|Strategic\s+Priorities|Key\s+Priorities|Key\s+Challenges|Business\s+Challenges|Key\s+Stakeholders|Key\s+Contacts)\b/g, '$1\n$2')
+    // Clean orphaned punctuation left after URL/link stripping (e.g. ", ," or trailing ", ")
+    .replace(/,\s*,/g, ',')
+    .replace(/\.\s*,/g, '.')
+    .replace(/,\s*\./g, '.')
+    .replace(/(?:^|\n)\s*,\s*/g, '\n')
+    .replace(/,\s*$/gm, '')
     .trim()
 
   if (!cleaned) return { companyName: null, industryId: null, companySize: null, priorities: null, suggestedChallengeIds: null, suggestedUseCaseIds: null, contacts: null }
@@ -245,10 +262,32 @@ export function extractSmartFill(rawText: string): SmartFillResult {
 
   // 3. Company Size
   let companySize: SmartFillResult['companySize'] = null
-  for (const sp of SIZE_PATTERNS) {
-    if (sp.pattern.test(cleaned)) {
-      companySize = { value: sp.value, confidence: sp.confidence }
-      break
+  // First: check explicit section for LinkedIn-style range (e.g. "2,500-10,000")
+  if (sections.companySize && sections.companySize.length > 0) {
+    const sizeText = sections.companySize.join(' ')
+    for (const rp of SIZE_RANGE_PATTERNS) {
+      if (rp.pattern.test(sizeText)) {
+        companySize = { value: rp.value, confidence: 'high' }
+        break
+      }
+    }
+    // Fallback: standard patterns against section text
+    if (!companySize) {
+      for (const sp of SIZE_PATTERNS) {
+        if (sp.pattern.test(sizeText)) {
+          companySize = { value: sp.value, confidence: sp.confidence }
+          break
+        }
+      }
+    }
+  }
+  // Fallback: full-text scan with standard patterns
+  if (!companySize) {
+    for (const sp of SIZE_PATTERNS) {
+      if (sp.pattern.test(cleaned)) {
+        companySize = { value: sp.value, confidence: sp.confidence }
+        break
+      }
     }
   }
 
@@ -375,17 +414,45 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     l => !_COPILOT_COMMENTARY_RE.test(l.trim())
   )
 
+  // Sentinel values indicating "not found" — skip these lines
+  const _NOT_FOUND_RE = /\bnot\s+found\b|\bnot\s+identified\b|\bunknown\b|\bN\/A\b|\bTBD\b/i
+  const processedLines = new Set<number>()
+
+  // Pattern 0: "TITLE_ABBREV: Name — Full Title (source: xxx)" format
+  // e.g. "CIO: Amith Nair — Chief Information Officer (source: CRM)"
+  for (let i = 0; i < stakeholderLines.length; i++) {
+    const line = stakeholderLines[i]
+    const smartFillMatch = line.match(/^(?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director)\s*:\s*(.+?)\s*[-–—]\s*(.+)/i)
+    if (smartFillMatch) {
+      const nameCandidate = smartFillMatch[1].trim()
+      const titleCandidate = smartFillMatch[2].replace(/\s*\(source:.*?\)\s*/gi, '').trim()
+      if (_NOT_FOUND_RE.test(nameCandidate)) { processedLines.add(i); continue }
+      addContact(nameCandidate, titleCandidate)
+      processedLines.add(i)
+      continue
+    }
+    // Pattern 0b: "Role Label: Not found — Full Title (source: web)" — skip sentinel lines
+    if (_NOT_FOUND_RE.test(line)) { processedLines.add(i); continue }
+  }
+
   // Pattern 1: Structured section "Name — Title" or "Name: Title" or "Name, Title"
-  for (const line of stakeholderLines) {
+  for (let i = 0; i < stakeholderLines.length; i++) {
+    if (processedLines.has(i)) continue
+    const line = stakeholderLines[i]
+    if (_NOT_FOUND_RE.test(line)) continue
     const sepMatch = line.match(new RegExp(`^(${NAME_RE.source})\\s*[-–—:,]\\s*(.+)`, 'i'))
     if (sepMatch) {
       addContact(sepMatch[1], sepMatch[2])
       continue
     }
     // Pattern 1b: "Title: Name" or "Title — Name" (title-first format)
+    // Only match when the value after separator looks like a person name (not "Name — Title")
     const titleFirstMatch = line.match(/^((?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director|Managing Director|Chief\s+\w+\s*Officer)[^:–—,]*)\s*[-–—:,]\s*(.+)/i)
     if (titleFirstMatch) {
-      addContact(titleFirstMatch[2], titleFirstMatch[1])
+      const afterSep = titleFirstMatch[2].trim()
+      // If afterSep contains a secondary separator (—), it's "ABBREV: Name — Full Title" — handled by Pattern 0
+      if (/\s*[-–—]\s*/.test(afterSep)) continue
+      addContact(afterSep, titleFirstMatch[1])
       continue
     }
   }
