@@ -203,6 +203,8 @@ export function extractSmartFill(rawText: string): SmartFillResult {
       .replace(/\s*\[ENC:[^\]\n]*\](\([^\)\n]*\))?/gi, '')
       .replace(/\s*\[[^\]\n]*\](\([^\)\n]*\))?/g, '')
       .replace(/\s*\(.*?\)\s*/g, '')
+      // Final guard: strip trailing orphaned punctuation that shouldn't be in a name
+      .replace(/[\s()\[\]\\,;]+$/, '')
       .trim()
     if (raw.length >= 2) {
       companyName = { value: raw, confidence: 'high' }
@@ -431,7 +433,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   // e.g. "CIO: Amith Nair — Chief Information Officer (source: CRM)"
   for (let i = 0; i < stakeholderLines.length; i++) {
     const line = stakeholderLines[i]
-    const smartFillMatch = line.match(/^(?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director)\s*:\s*(.+?)\s*[-–—]\s*(.+)/i)
+    const smartFillMatch = line.match(/^(?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director)(?:\s+(?:of|for)\s+[\w\s]+?)?\s*:\s*(.+?)\s*[-–—]\s*(.+)/i)
     if (smartFillMatch) {
       const nameCandidate = smartFillMatch[1].trim()
       const titleCandidate = smartFillMatch[2].replace(/\s*\(source:.*?\)\s*/gi, '').trim()
