@@ -344,7 +344,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </div>
       {/* ── Section Jump Nav ── */}
       <nav className="flex gap-2 flex-wrap print:hidden mb-2">
-        {[{id:"plan",label:"Use Cases by Pillar"},{id:"proof",label:"Customer Stories"},{id:"next-steps",label:"Next Steps"},...(czMatchedDepts.length>0?[{id:"customer-zero",label:"Customer Zero"}]:[]),{id:"cowork",label:"Cowork Prompts"}].map(s=>(
+        {[{id:"plan",label:"Use Cases by Pillar"},{id:"cowork",label:"Cowork Prompts"},{id:"proof",label:"Customer Stories"},{id:"next-steps",label:"Next Steps"},...(czMatchedDepts.length>0?[{id:"customer-zero",label:"Customer Zero"}]:[])].map(s=>(
           <a key={s.id} href={`#${s.id}`}
             className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-text-secondary hover:bg-primary/10 hover:text-primary transition-colors">
             {s.label}
@@ -429,7 +429,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
               </div>
               <p className="text-xs text-violet-700 mb-3">
                 {data.companyName}'s current priorities don't cover {story.missingPillars.length === 1 ? 'this pillar' : 'these pillars'}. 
-                Use the <strong>Use Case Discovery</strong> Cowork prompt below to explore additional value areas.
+                Use the <strong>Use Case Discovery</strong> Cowork prompt to explore additional value areas.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {story.missingPillars.map((p) => (
@@ -457,6 +457,28 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
       )}
       </div>
+
+      {/* ╋╋ COWORK PROMPTS — Primary action section ╋╋ */}
+      <section id="cowork" className="print:hidden">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-lg">🚀</span>
+            <h3 className="text-sm font-bold text-text-primary">Cowork Prompts</h3>
+            <span className="text-[10px] text-text-secondary bg-gray-100 px-2 py-0.5 rounded-full">{story.coworkPrompts.length} deliverables</span>
+          </div>
+          <p className="text-sm text-text-secondary">
+            Each prompt generates a <strong>real deliverable</strong> — an Outlook email draft, PowerPoint deck, or Word document.
+            Copy → Paste into <a href="https://aka.ms/cowork" target="_blank" rel="noopener" className="text-primary font-semibold hover:underline">Microsoft 365 Copilot Cowork ↗</a> and it will create the file for you, pre-loaded with {data.companyName}'s full context.
+          </p>
+          <div className="grid gap-3">
+            {story.coworkPrompts.map((prompt) => (
+              <div key={prompt.id} id={`cowork-${prompt.id}`}>
+                <CoworkCard prompt={prompt} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ━━ 3. THE PROOF — Consolidated evidence ━━ */}
       <div id="proof" className="print:hidden">
@@ -708,22 +730,6 @@ export default function StepValueStory({ wizard }: WizardProps) {
         )
       })()}
 
-      {/* ╋╋ 6. COWORK PROMPTS ╋╋ */}
-      <section id="cowork" className="print:hidden">
-        <div className="space-y-3">
-          <p className="text-sm text-text-secondary">
-            Each prompt generates a <strong>real deliverable</strong> — an Outlook email draft, PowerPoint deck, or Word document.
-            Copy → Paste into <a href="https://aka.ms/cowork" target="_blank" rel="noopener" className="text-primary font-semibold hover:underline">Microsoft 365 Copilot Cowork ↗</a> and it will create the file for you, pre-loaded with {data.companyName}'s full context.
-          </p>
-          <div className="grid gap-3">
-            {story.coworkPrompts.map((prompt) => (
-              <div key={prompt.id} id={`cowork-${prompt.id}`}>
-                <CoworkCard prompt={prompt} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── Disclaimer ── */}
       <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5 text-center print:hidden">
