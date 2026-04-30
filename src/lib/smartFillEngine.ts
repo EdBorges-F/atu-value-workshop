@@ -405,6 +405,8 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   const extractedContacts: { name: string; title: string; email?: string }[] = []
   const addContact = (name: string, title: string, email?: string) => {
     const clean = name.trim()
+    // Skip sentinel values ("Not found", "N/A", "TBD", etc.)
+    if (/\bnot\s+found\b|\bnot\s+identified\b|\bunknown\b|\bN\/A\b|\bTBD\b/i.test(clean)) return
     const cleanTitle = title
       .replace(/\s*[-–—]\s+(?:responsible|leads?|oversee|manage|drive|focus).*/i, '') // strip descriptions
       .replace(/\s*\(.*?\)/, '')
@@ -433,7 +435,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   // e.g. "CIO: Amith Nair — Chief Information Officer (source: CRM)"
   for (let i = 0; i < stakeholderLines.length; i++) {
     const line = stakeholderLines[i]
-    const smartFillMatch = line.match(/^(?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director)(?:\s+(?:of|for)\s+[\w\s]+?)?\s*:\s*(.+?)\s*[-–—]\s*(.+)/i)
+    const smartFillMatch = line.match(/^(?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director)(?:\s+(?:of|for)\s+[\w\s]+?)?\s*:\s*(.+?)\s+[-–—]\s+(.+)/i)
     if (smartFillMatch) {
       const nameCandidate = smartFillMatch[1].trim()
       const titleCandidate = smartFillMatch[2].replace(/\s*\(source:.*?\)\s*/gi, '').trim()
@@ -451,7 +453,8 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     if (processedLines.has(i)) continue
     const line = stakeholderLines[i]
     if (_NOT_FOUND_RE.test(line)) continue
-    const sepMatch = line.match(new RegExp(`^(${NAME_RE.source})\\s*[-–—:,]\\s*(.+)`, 'i'))
+    const sepMatch = line.match(new RegExp(`^(${NAME_RE.source})\\s+[-–—]\\s+(.+)`, 'i')) ||
+                    line.match(new RegExp(`^(${NAME_RE.source})\\s*[:，,]\\s*(.+)`, 'i'))
     if (sepMatch) {
       addContact(sepMatch[1], sepMatch[2])
       continue
