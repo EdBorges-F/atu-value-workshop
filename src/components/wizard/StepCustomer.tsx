@@ -35,7 +35,7 @@ Key challenges: They struggle with fragmented data across plants, aging equipmen
 
 const COPILOT_GATHER_PROMPT = `@Sales Agent — I'm preparing a Frontier Transformation value story for [CUSTOMER NAME]. Before you answer, do the following web research first:
 
-Search for [CUSTOMER NAME]'s official website and find their Leadership, Management Team, Executive Team, or About pages — these list the actual names of C-level executives and VPs. Also check their LinkedIn company page. If [CUSTOMER NAME] is publicly listed, check their Investor Relations page or annual report for named executives. Do this research BEFORE answering — do not rely on CRM alone for names.
+Search for their official website and find the Leadership, Management Team, Executive Team, or About pages — these list the actual names of C-level executives and VPs. Also check their LinkedIn company page. If they are publicly listed, check their Investor Relations page or annual report for named executives. Do this research BEFORE answering — do not rely on CRM alone for names.
 
 Now give me the following, combining what you found on the web with CRM data, emails, and Teams messages:
 
