@@ -12,6 +12,8 @@ export interface WizardData {
   confidence: Record<string, 'high' | 'medium' | 'low'>
   // CRM Contacts (from Smart Fill)
   crmContacts: CRMContact[]
+  // Stakeholder assignments: pillarId → CRM contact assigned by AE in Step 4 (Exec Summary)
+  pillarOwners: Record<string, CRMContact | null>
   // Step 2: Challenges & Use Cases
   selectedChallengeIds: string[]
   selectedUseCaseIds: string[]
@@ -40,6 +42,7 @@ const INITIAL_DATA: WizardData = {
   smartFillRaw: '',
   confidence: {},
   crmContacts: [],
+  pillarOwners: {},
   selectedChallengeIds: [],
   selectedUseCaseIds: [],
   discoveryNotes: {},
@@ -68,9 +71,9 @@ function loadFromStorage(): { step: number; data: WizardData } | null {
 }
 
 function saveToStorage(step: number, data: WizardData) {
-  // Strip PII before persisting — crmContacts contain names/titles/emails
-  const { crmContacts: _strip, ...safeData } = data
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ step, data: { ...safeData, crmContacts: [] }, timestamp: Date.now() }))
+  // Strip PII before persisting — crmContacts and pillarOwners contain names/titles/emails
+  const { crmContacts: _strip, pillarOwners: _stripOwners, ...safeData } = data
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ step, data: { ...safeData, crmContacts: [], pillarOwners: {} }, timestamp: Date.now() }))
 }
 
 export function useWizardState() {

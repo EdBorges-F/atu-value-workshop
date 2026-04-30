@@ -153,7 +153,7 @@ function getEvidenceNames(uc: { id: string; name: string; description?: string; 
 export default function StepChallenges({ wizard }: WizardProps) {
   const { data, updateData, prevStep, nextStep, canAdvance } = wizard
   const { industryId, priorities, selectedChallengeIds, selectedUseCaseIds, discoveryNotes } = data
-  const [discoveryOpen, setDiscoveryOpen] = useState(false)
+  const [discoveryOpen, setDiscoveryOpen] = useState(true)
   const [expandedTheme, setExpandedTheme] = useState<string | null>(null)
 
   // Combine priorities text + all discovery notes for scoring

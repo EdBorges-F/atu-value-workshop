@@ -1,9 +1,8 @@
-import { useMemo, useState, useRef, useEffect } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
-import { generateValueStory, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory, type StakeholderEntry } from '../../lib/valueStoryGenerator'
-import { CHALLENGES } from '../../data/challenges'
+import { generateValueStory, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory } from '../../lib/valueStoryGenerator'
 import { FUNCTION_BENCHMARKS, filterCustomerZero } from '../../data/global-ai-evidence'
-import type { CustomerZeroDepartment, CustomerZeroProofPoint, CustomerZeroUseCase } from '../../data/customer-zero'
+import type { CustomerZeroDepartment, CustomerZeroProofPoint } from '../../data/customer-zero'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
@@ -152,52 +151,6 @@ function EvidenceCard({ story }: { story: MatchedStory }) {
   )
 }
 
-function StakeholderMapCard({ entries }: { entries: StakeholderEntry[] }) {
-  if (entries.length === 0) return null
-  return (
-    <Collapsible title="Suggested Stakeholders & Areas" icon="🤝" summary={`${entries.length} pillars mapped`}>
-      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-        <div className="px-6 py-3 bg-gray-50 border-b border-gray-100 print:hidden">
-          <p className="text-[11px] text-text-secondary">Review and adjust with the customer during the meeting</p>
-        </div>
-        <div className="divide-y divide-gray-50">
-          {entries.map((entry, i) => (
-            <div key={i} className="px-6 py-4">
-              <p className="text-xs font-bold text-text mb-2">{entry.pillar}</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <div>
-                  <p className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider mb-1">Stakeholders</p>
-                  <div className="space-y-0.5">
-                    {entry.roles.map((r, j) => (
-                      <p key={j} className="text-xs text-text">{r}</p>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider mb-1">Business Areas</p>
-                  <div className="space-y-0.5">
-                    {entry.areas.map((a, j) => (
-                      <p key={j} className="text-xs text-text">{a}</p>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider mb-1">Use Cases</p>
-                  <div className="space-y-0.5">
-                    {entry.useCases.slice(0, 3).map((uc, j) => (
-                      <p key={j} className="text-xs text-text">{uc}</p>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Collapsible>
-  )
-}
-
 function PillarCard({ section, defaultOpen }: { section: PillarSection; defaultOpen: boolean }) {
   const style = PILLAR_STYLES[section.pillar.id] ?? PILLAR_STYLES.reshape
   const [open, setOpen] = useState(defaultOpen)
@@ -293,47 +246,7 @@ function PillarCard({ section, defaultOpen }: { section: PillarSection; defaultO
 export default function StepValueStory({ wizard }: WizardProps) {
   const { data, prevStep, reset } = wizard
   const story = useMemo(() => generateValueStory(data), [data])
-  const printRef = useRef<HTMLDivElement>(null)
-
-  // Print PDF in clean window (no browser headers/footers)
-  const handlePrintPDF = () => {
-    const heroEl = printRef.current?.querySelector('.hero-card')
-    const execEl = printRef.current?.querySelector('#exec-summary')
-    if (!heroEl || !execEl) { window.print(); return }
-
-    // Gather all stylesheets
-    const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
-      .map(el => el.outerHTML).join('\n')
-
-    const win = window.open('', '_blank', 'width=900,height=700')
-    if (!win) { window.print(); return }
-
-    const escHtml = (s: string) => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m] || m))
-    win.document.write(`<!DOCTYPE html><html><head>
-      <title>${escHtml(data.companyName || 'Value Story')} — Executive Summary</title>
-      ${styles}
-      <style>
-        @page { margin: 0.5in; size: letter; }
-        @media print { @page { margin: 0.5in; size: letter; } }
-        body { margin: 0; padding: 0.5in; background: white; font-size: 8px; }
-        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        .print\\:hidden, .no-print { display: none !important; }
-        .print-disclaimer { display: block !important; }
-      </style>
-    </head><body>
-      <div class="print-1page" style="max-width:100%;">
-        ${heroEl.outerHTML}
-        <div style="margin-top:0.2rem;">${execEl.outerHTML}</div>
-      </div>
-    </body></html>`)
-    win.document.close()
-
-    // Wait for styles to load then print
-    setTimeout(() => {
-      win.print()
-      setTimeout(() => win.close(), 1000)
-    }, 500)
-  }
+  const [confirmReset, setConfirmReset] = useState(false)
 
   // Consolidated evidence across all pillars for "The Proof" section (deduped by company)
   const allEvidence = useMemo(() => {
@@ -381,48 +294,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
     return items
   }, [story])
 
-  // Consolidated ROI across all pillars for "The Return" section (deduped by UC name)
-  const challenges = useMemo(
-    () => CHALLENGES.filter(c => data.selectedChallengeIds.includes(c.id)),
-    [data.selectedChallengeIds]
-  )
-
   const totalEvidenceCount = allEvidence.reduce((n, e) => n + e.stories.length, 0)
-  const roiCount = story.pillarSections.reduce((n, s) => n + s.useCases.filter(uc => uc.roiCard).length, 0)
-    + (story.securitySection?.useCases.filter(uc => uc.roiCard).length ?? 0)
-
-  // Top use cases across all pillars, sorted by evidence strength + CZ customer interest
-  const [czUseCases, setCzUseCases] = useState<CustomerZeroUseCase[]>([])
-  useEffect(() => {
-    if (data.czLikedUseCaseIds?.length) {
-      import('../../data/customer-zero').then(mod => setCzUseCases(mod.CUSTOMER_ZERO_USE_CASES))
-    }
-  }, [data.czLikedUseCaseIds])
-
-  const topUseCases = useMemo(() => {
-    // Build set of pillar IDs that the customer showed interest in via CZ
-    const likedPillarIds = new Set<string>()
-    if (data.czLikedUseCaseIds?.length && czUseCases.length) {
-      for (const id of data.czLikedUseCaseIds) {
-        const cz = czUseCases.find(u => u.id === id)
-        if (cz) likedPillarIds.add(cz.pillar)
-      }
-    }
-
-    const all = [
-      ...story.pillarSections.flatMap(s => s.useCases.map(uc => ({ ...uc, _pillarId: s.pillar.id }))),
-      ...(story.intelligenceSection?.useCases ?? []).map(uc => ({ ...uc, _pillarId: 'intelligence' })),
-      ...(story.securitySection?.useCases ?? []).map(uc => ({ ...uc, _pillarId: 'security' })),
-    ]
-    return all.sort((a, b) => {
-      const czBoostA = likedPillarIds.has(a._pillarId) ? 5 : 0
-      const czBoostB = likedPillarIds.has(b._pillarId) ? 5 : 0
-      const scoreA = a.matchedStories.length + (a.roiCard ? 1 : 0) + (a.evidence ? 1 : 0) + czBoostA
-      const scoreB = b.matchedStories.length + (b.roiCard ? 1 : 0) + (b.evidence ? 1 : 0) + czBoostB
-      return scoreB - scoreA
-    })
-  }, [story, data.czLikedUseCaseIds, czUseCases])
-  const totalUseCases = topUseCases.length
 
   // Lazy-load CZ data only when NDA confirmed
   const [czData, setCzData] = useState<CZData | null>(null)
@@ -447,292 +319,42 @@ export default function StepValueStory({ wizard }: WizardProps) {
   }, [czData, story])
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 print:max-w-none print:mx-0 print:space-y-1 print-1page" ref={printRef}>
-      {/* ━━ HERO — Stats Card ━━ */}
-      <div className="hero-card rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8 text-white shadow-xl print:shadow-none print:rounded-none print:bg-gray-900">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="px-3 py-1 rounded-full bg-white/10 text-[11px] font-semibold tracking-wider uppercase backdrop-blur-sm">
-                Intelligence & Trust
-              </span>
-              <span className="px-3 py-1 rounded-full bg-white/10 text-[11px] font-semibold tracking-wider uppercase backdrop-blur-sm">
-                Frontier Transformation
-              </span>
-            </div>
-            <h2 className="text-2xl font-bold tracking-tight">{story.title}</h2>
-          </div>
-          <div className="flex gap-2 print:hidden">
-            <button
-              onClick={() => document.getElementById('cowork')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors"
-            >
-              🤖 Cowork Prompts
-            </button>
-            <button
-              onClick={handlePrintPDF}
-              className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors"
-            >
-              📄 PDF
-            </button>
-          </div>
+    <div className="max-w-3xl mx-auto space-y-6 print:hidden">
+      {/* ── Compact Header ── */}
+      <div className="rounded-2xl bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4 text-white flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-0.5">{data.industryId} · {data.companySize}</p>
+          <h1 className="text-2xl font-bold">{data.companyName}</h1>
+          <p className="text-xs text-gray-400 mt-1">{story.pillarSections.length} pillars · {story.pillarSections.reduce((s,p)=>s+p.useCases.length,0)} use cases · {totalEvidenceCount} customer stories</p>
         </div>
-
-        {/* Stats strip — hidden in print */}
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 print:hidden">
-          {[
-            { value: story.pillarSections.reduce((sum, p) => sum + (p.useCases?.length || 0), 0) + (story.securitySection?.useCases?.length || 0), label: 'AI Use Cases' },
-            { value: story.pillarSections.length + (story.securitySection ? 1 : 0), label: 'Pillars' },
-            { value: totalEvidenceCount, label: 'Customer Stories' },
-            { value: roiCount, label: 'ROI Insights' },
-            { value: data.industryId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), label: 'Industry Focus', isText: true },
-          ].map((stat, i) => (
-            <div key={i} className="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
-              <div className={`font-bold ${stat.isText ? 'text-lg' : 'text-3xl'} text-white`}>{stat.value}</div>
-              <div className="text-[11px] text-white/50 uppercase tracking-wider mt-1">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Challenge pills — grounding context */}
-        {challenges.length > 0 && (
-          <div className="mt-4">
-            <span className="text-[10px] text-white/40 uppercase tracking-wider font-semibold block text-center mb-1.5">Based on</span>
-            <div className="flex flex-wrap justify-center gap-1.5">
-              {challenges.map(c => (
-                <span key={c.id} className="px-2.5 py-1 rounded-full bg-white/10 text-[11px] text-white/70 font-medium">
-                  {c.name}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ━━ EXECUTIVE SUMMARY — Print-to-PDF Hero ━━ */}
-      <div id="exec-summary" className="rounded-2xl border border-gray-200 bg-white shadow-lg p-6 print:shadow-none print:border-none print:p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-lg">📋</span>
-          <h3 className="text-sm font-bold text-text uppercase tracking-wider">Executive Summary</h3>
-        </div>
-
-        <p className="text-sm text-text leading-relaxed">{story.executive_summary}</p>
-
-        {/* ── Dynamic two-tier engagement model ── */}
-        {(() => {
-          // Build unified list of all sections with their tier placement
-          const hasUc = (ucs: { length: number }) => ucs.length > 0
-          type TierItem = { id: string; icon: string; name: string; priorities: string[]; useCases: any[]; colorScheme: 'default' | 'indigo' | 'rose' }
-          const allItems: TierItem[] = [
-            ...story.pillarSections.map(s => ({ id: s.pillar.id, icon: s.pillar.icon, name: s.pillar.fullName, priorities: s.customerPriorities, useCases: s.useCases, colorScheme: 'default' as const })),
-            ...(story.intelligenceSection ? [{ id: 'intelligence', icon: INTELLIGENCE_FOUNDATION.icon, name: 'Intelligence & Trust Foundation', priorities: [] as string[], useCases: story.intelligenceSection.useCases, colorScheme: 'indigo' as const }] : []),
-            ...(story.securitySection ? [{ id: 'security', icon: SECURITY_FOUNDATION.icon, name: 'Security Foundation', priorities: [] as string[], useCases: story.securitySection.useCases, colorScheme: 'rose' as const }] : []),
-          ]
-          const tier1 = allItems.filter(i => hasUc(i.useCases))
-          const tier2 = allItems.filter(i => !hasUc(i.useCases))
-          const colorMap = { default: { bg: 'bg-gray-50', border: 'border-gray-100', label: 'text-text', sub: 'text-text-secondary' }, indigo: { bg: 'bg-indigo-50/50', border: 'border-indigo-100', label: 'text-indigo-700', sub: 'text-indigo-500' }, rose: { bg: 'bg-rose-50/50', border: 'border-rose-100', label: 'text-rose-700', sub: 'text-rose-500' } }
-          return (
-            <>
-              {tier1.length > 0 && (
-                <div className="mt-5 pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm">🚀</span>
-                    <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Your Starting Point</p>
-                  </div>
-                  <p className="text-[10px] text-text-secondary mb-3">These scenarios are ready to explore with your team — backed by use cases, customer stories, and benchmarks.</p>
-                  <div className="space-y-3">
-                    {tier1.map(item => {
-                      const topUc = item.useCases[0]
-                      const fb = topUc ? matchFunctionBenchmark(topUc.name, topUc.description) : null
-                      const topMetric = topUc?.matchedStories?.[0]?.metric
-                      const c = colorMap[item.colorScheme]
-                      return (
-                        <div key={item.id} className={`rounded-xl ${c.bg} ${c.border} border p-3`}>
-                          <div className="flex items-start gap-2">
-                            <span className="text-base mt-0.5">{item.icon}</span>
-                            <div className="min-w-0 flex-1">
-                              {item.priorities.length > 0 && (
-                                <p className="text-[10px] text-text-secondary italic mb-1">
-                                  "{item.priorities[0]}"
-                                </p>
-                              )}
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className={`text-xs font-bold ${c.label}`}>{item.name}</span>
-                                <span className={`text-[10px] ${c.sub}`}>· {item.useCases.length} use case{item.useCases.length !== 1 ? 's' : ''}</span>
-                                {item.useCases.reduce((n: number, uc: any) => n + (uc.matchedStories?.length || 0), 0) > 0 && (
-                                  <span className="text-[10px] text-emerald-600">· {item.useCases.reduce((n: number, uc: any) => n + (uc.matchedStories?.length || 0), 0)} stories</span>
-                                )}
-                              </div>
-                              {topUc && <p className="text-[11px] text-text mt-1">
-                                Top: <strong>{topUc.name}</strong>
-                                {topMetric && <span className="text-emerald-600 ml-1">— {topMetric}</span>}
-                              </p>}
-                              {fb && (
-                                <p className="text-[10px] text-primary mt-0.5">📊 Benchmark: {fb.gain}</p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-              {tier2.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm">🤝</span>
-                    <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Your Next Conversation</p>
-                  </div>
-                  <p className="text-[10px] text-text-secondary mb-3">These priorities came up during discovery — they're the perfect agenda for a deeper co-work session with your extended team and partner.</p>
-                  <div className="space-y-2">
-                    {tier2.map(item => (
-                      <div key={item.id} className="rounded-xl bg-amber-50/60 border border-amber-200/60 p-3">
-                        <div className="flex items-start gap-2">
-                          <span className="text-base mt-0.5">{item.icon}</span>
-                          <div className="min-w-0 flex-1">
-                            {item.priorities.length > 0 && (
-                              <p className="text-[10px] text-amber-700 italic mb-1">
-                                "{item.priorities[0]}"
-                              </p>
-                            )}
-                            <span className="text-xs font-bold text-amber-900">{item.name}</span>
-                            <p className="text-[10px] text-amber-700 mt-0.5">
-                              Workshop topic — explore use cases with the broader team
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          )
-        })()}
-
-        {/* ── Projected Value Indicators ── */}
-        {(() => {
-          // Collect all function benchmark matches across use cases
-          const fbMatches: { area: string; gain: string }[] = []
-          const seenAreas = new Set<string>()
-          for (const uc of topUseCases.slice(0, 10)) {
-            const fb = matchFunctionBenchmark(uc.name, uc.description)
-            if (fb && !seenAreas.has(fb.area)) {
-              seenAreas.add(fb.area)
-              fbMatches.push(fb)
-            }
-          }
-          // Collect ROI highlights from use cases
-          const roiHighlights: string[] = []
-          for (const uc of topUseCases) {
-            if (uc.roiCard) {
-              if (uc.roiCard.costReduction && roiHighlights.length < 3) roiHighlights.push(`${uc.name}: ${uc.roiCard.costReduction}`)
-              if (uc.roiCard.speedImprovement && roiHighlights.length < 3) roiHighlights.push(`${uc.name}: ${uc.roiCard.speedImprovement}`)
-            }
-          }
-          const hasFinancials = fbMatches.length > 0 || story.industryBenchmark || roiHighlights.length > 0
-          if (!hasFinancials) return null
-          return (
-            <div className="value-indicators mt-4 pt-4 border-t border-gray-100">
-              <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-3">📊 Projected Value Indicators</p>
-              <div className="space-y-2">
-                {story.industryBenchmark && (
-                  <div className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-50 border border-amber-100">
-                    <span className="text-sm mt-0.5">🏆</span>
-                    <div>
-                      <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">Industry Peers</p>
-                      <p className="text-xs text-amber-900 mt-0.5">{story.industryBenchmark.avgROI}</p>
-                      {story.industryBenchmark.topPerformerMultiple && (
-                        <p className="text-[10px] text-amber-700 mt-0.5">{story.industryBenchmark.topPerformerMultiple}</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-                {fbMatches.length > 0 && (
-                  <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-100">
-                    <p className="text-[10px] font-bold text-blue-800 uppercase tracking-wider mb-1.5">⚡ Function Benchmarks</p>
-                    <div className="space-y-1">
-                      {fbMatches.slice(0, 4).map((fb, i) => (
-                        <p key={i} className="text-xs text-blue-900">
-                          <strong className="capitalize">{fb.area}:</strong> {fb.gain}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {roiHighlights.length > 0 && (
-                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-100">
-                    <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider mb-1.5">💰 Use Case ROI Signals</p>
-                    <div className="space-y-1">
-                      {roiHighlights.map((h, i) => (
-                        <p key={i} className="text-xs text-emerald-900">{h}</p>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-              <p className="text-[10px] text-gray-400 mt-2 italic">
-                Based on published research from McKinsey, BCG, IDC, Forrester, and Microsoft internal telemetry. Results vary by organization.
-              </p>
-            </div>
-          )
-        })()}
-
-        {/* ── Key Stats Strip ── */}
-        <div className="stats-strip mt-4 pt-4 border-t border-gray-100 flex items-center justify-center gap-8">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary">{totalUseCases}</p>
-            <p className="text-[10px] text-text-secondary uppercase tracking-wider">AI Use Cases</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary">{totalEvidenceCount}</p>
-            <p className="text-[10px] text-text-secondary uppercase tracking-wider">Customer Stories</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary">{roiCount}</p>
-            <p className="text-[10px] text-text-secondary uppercase tracking-wider">ROI Insights</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary">{story.pillarSections.length + (story.intelligenceSection ? 1 : 0) + (story.securitySection ? 1 : 0)}</p>
-            <p className="text-[10px] text-text-secondary uppercase tracking-wider">Pillars</p>
-          </div>
-        </div>
-
-        {/* Print-only disclaimer footer */}
-        <div className="print-disclaimer hidden print:!block mt-3 pt-2 border-t border-gray-200">
-          <p className="text-[6.5px] text-gray-400 leading-tight text-center">
-            This document is intended solely for the use of {data.companyName || 'the customer'} and Microsoft and contains proprietary information.
-            ROI projections, cost estimates, and business impact figures are based on industry benchmarks and publicly available customer stories —
-            actual results will vary based on implementation scope, organizational readiness, and other factors. These figures do not constitute a guarantee of performance.
-            Microsoft's AI solutions are developed in accordance with our Responsible AI principles.
-            © {new Date().getFullYear()} Microsoft Corporation. All rights reserved. This material is provided for informational purposes only. Microsoft makes no warranties, express or implied.
-          </p>
+        <div className="flex gap-2 flex-wrap">
+          <a href="#cowork-follow-up-email"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors">
+            📧 Follow-up Email
+          </a>
+          <a href="#cowork-frontier-deck"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors">
+            📊 Executive Deck
+          </a>
+          <a href="#cowork-customer-alignment"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors">
+            🤝 Alignment Brief
+          </a>
         </div>
       </div>
-
-      {/* ━━ Section Jump Nav ━━ */}
-      <nav className="sticky top-0 z-40 -mx-2 px-2 py-2 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center gap-2 overflow-x-auto print:hidden">
-        <span className="flex-shrink-0 text-xs font-semibold text-text-secondary">Jump to:</span>
-        {[
-          { id: 'exec-summary', icon: '📋', label: 'Executive Summary' },
-          { id: 'plan', icon: '🎯', label: 'The Plan' },
-          { id: 'proof', icon: '📊', label: 'The Proof' },
-          { id: 'why-now', icon: '📈', label: 'Why Now' },
-          { id: 'next-steps', icon: '🎯', label: 'Next Steps' },
-          ...(czMatchedDepts.length > 0 ? [{ id: 'customer-zero', icon: '🔒', label: 'Customer Zero' }] : []),
-          { id: 'cowork', icon: '🤖', label: 'Cowork Prompts' },
-        ].map((s) => (
-          <button key={s.id} onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' })}
-            className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 hover:bg-primary/10 hover:text-primary text-text-secondary transition-all">
-            {s.icon} {s.label}
-          </button>
+      {/* ── Section Jump Nav ── */}
+      <nav className="flex gap-2 flex-wrap print:hidden mb-2">
+        {[{id:"plan",label:"Use Cases by Pillar"},{id:"proof",label:"Customer Stories"},{id:"next-steps",label:"Next Steps"},...(czMatchedDepts.length>0?[{id:"customer-zero",label:"Customer Zero"}]:[]),{id:"cowork",label:"Cowork Prompts"}].map(s=>(
+          <a key={s.id} href={`#${s.id}`}
+            className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-text-secondary hover:bg-primary/10 hover:text-primary transition-colors">
+            {s.label}
+          </a>
         ))}
       </nav>
 
       {/* ━━ 2. THE PLAN — Pillars (open by default) ━━ */}
       <div id="plan" className="print:hidden">
-      <Collapsible title="The Plan" icon="🎯"
+      <Collapsible title="Use Cases by Pillar" icon="🎯"
         summary={`${story.pillarSections.length} pillars · ${story.pillarSections.reduce((n, s) => n + s.useCases.length, 0)} use cases`}
         defaultOpen={false}>
         <div className="space-y-4 pt-2">
@@ -839,7 +461,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
       {/* ━━ 3. THE PROOF — Consolidated evidence ━━ */}
       <div id="proof" className="print:hidden">
       {totalEvidenceCount > 0 && (
-        <Collapsible title="The Proof" icon="📊"
+        <Collapsible title="Customer Stories" icon="📊"
           summary={`${totalEvidenceCount} customer ${totalEvidenceCount === 1 ? 'story' : 'stories'}${story.industryBenchmark ? ' · Industry benchmark' : ''}`}
           defaultOpen={false}>
           <div className="space-y-4 pt-2">
@@ -924,30 +546,6 @@ export default function StepValueStory({ wizard }: WizardProps) {
       )}
       </div>
 
-      {/* ━━ 4. MARKET CONTEXT — Why Now ━━ */}
-      <div id="why-now" className="print:hidden">
-      <Collapsible title="Why Now" icon="📈"
-        summary={`${story.marketContext.length} market signals`}
-        defaultOpen={false}>
-        <div className="space-y-4 pt-2">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {story.marketContext.map((stat, i) => {
-              const mainText = stat.split('(')[0].trim()
-              const source = stat.includes('(') ? stat.split('(')[1]?.replace(')', '') : null
-              return (
-                <div key={i} className="p-2.5 rounded-xl bg-blue-50/60 border border-blue-100/50">
-                  <p className="text-[11px] text-blue-900 font-semibold leading-snug">{mainText}</p>
-                  {source && (
-                    <p className="text-[10px] text-blue-500 mt-0.5">— {source}</p>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </Collapsible>
-      </div>
-
       {/* ━━ 5. NEXT STEPS — collapsible, default open ━━ */}
       <div id="next-steps" className="print:hidden">
       <Collapsible title="Next Steps" icon="🎯" defaultOpen={false}>
@@ -964,36 +562,6 @@ export default function StepValueStory({ wizard }: WizardProps) {
               ))}
             </div>
           </div>
-
-          {/* Stakeholder Map */}
-          <StakeholderMapCard entries={story.stakeholderMap} />
-
-          {/* CRM Key Stakeholders — from Smart Fill */}
-          {data.crmContacts && data.crmContacts.length > 0 && (
-            <div className="rounded-2xl border border-emerald-100 bg-white shadow-sm overflow-hidden">
-              <div className="px-6 py-3 bg-emerald-50 border-b border-emerald-100">
-                <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">👥 Key Stakeholders (from CRM)</p>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {data.crmContacts.map((contact, i) => (
-                  <div key={i} className="px-6 py-3 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-bold text-emerald-700">{contact.name.charAt(0)}</span>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-text">{contact.name}</p>
-                      <p className="text-[11px] text-text-secondary">{contact.title}</p>
-                    </div>
-                    {contact.email && (
-                      <a href={`mailto:${contact.email}`} className="text-[10px] text-primary hover:underline ml-auto">
-                        {contact.email}
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Solution Enablement Map */}
           {story.solutionMap.length > 0 && (
@@ -1140,22 +708,21 @@ export default function StepValueStory({ wizard }: WizardProps) {
         )
       })()}
 
-      {/* ━━ 6. COWORK PROMPTS ━━ */}
+      {/* ╋╋ 6. COWORK PROMPTS ╋╋ */}
       <section id="cowork" className="print:hidden">
-        <Collapsible title="Copilot Cowork Prompts" icon="🤖"
-          summary={`${story.coworkPrompts.length} context-rich prompts ready`} defaultOpen={false}>
-          <div className="space-y-3 pt-2">
-            <p className="text-sm text-text-secondary">
-              Each prompt generates a <strong>real deliverable</strong> — an Outlook email draft, PowerPoint deck, or Word document.
-              Copy → Paste into <a href="https://aka.ms/cowork" target="_blank" rel="noopener" className="text-primary font-semibold hover:underline">Microsoft 365 Copilot Cowork ↗</a> and it will create the file for you, pre-loaded with {data.companyName}'s full context.
-            </p>
-            <div className="grid gap-3">
-              {story.coworkPrompts.map((prompt) => (
-                <CoworkCard key={prompt.id} prompt={prompt} />
-              ))}
-            </div>
+        <div className="space-y-3">
+          <p className="text-sm text-text-secondary">
+            Each prompt generates a <strong>real deliverable</strong> — an Outlook email draft, PowerPoint deck, or Word document.
+            Copy → Paste into <a href="https://aka.ms/cowork" target="_blank" rel="noopener" className="text-primary font-semibold hover:underline">Microsoft 365 Copilot Cowork ↗</a> and it will create the file for you, pre-loaded with {data.companyName}'s full context.
+          </p>
+          <div className="grid gap-3">
+            {story.coworkPrompts.map((prompt) => (
+              <div key={prompt.id} id={`cowork-${prompt.id}`}>
+                <CoworkCard prompt={prompt} />
+              </div>
+            ))}
           </div>
-        </Collapsible>
+        </div>
       </section>
 
       {/* ── Disclaimer ── */}
@@ -1187,15 +754,29 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </div>
 
       {/* ── Navigation ── */}
-      <div className="flex justify-between pt-4 print:hidden">
+      <div className="flex justify-between items-center gap-3 pt-4 print:hidden flex-wrap">
         <button onClick={prevStep}
           className="px-6 py-3 rounded-2xl border border-gray-200 text-text font-medium text-sm hover:bg-gray-50 transition-all">
-          ← Back to Review
+          ← Back to Exec Summary
         </button>
-        <button onClick={reset}
-          className="px-6 py-3 rounded-2xl border border-primary text-primary font-medium text-sm hover:bg-primary/5 transition-all">
-          Start New Canvas
-        </button>
+        {confirmReset ? (
+          <div className="flex items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-2">
+            <span className="text-xs text-rose-700 font-medium">Clear all data and start over?</span>
+            <button onClick={() => { reset(); setConfirmReset(false) }}
+              className="px-3 py-1.5 rounded-lg bg-rose-500 text-white text-xs font-semibold hover:bg-rose-600 transition-colors">
+              Yes, reset
+            </button>
+            <button onClick={() => setConfirmReset(false)}
+              className="px-3 py-1.5 rounded-lg border border-rose-200 text-rose-700 text-xs font-medium hover:bg-rose-100 transition-colors">
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button onClick={() => setConfirmReset(true)}
+            className="px-6 py-3 rounded-2xl border border-primary text-primary font-medium text-sm hover:bg-primary/5 transition-all">
+            Start New Canvas
+          </button>
+        )}
       </div>
     </div>
   )

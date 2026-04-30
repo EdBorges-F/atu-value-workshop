@@ -755,12 +755,26 @@ export function generateValueStory(data: WizardData): ValueStory {
     ? `\n\nROI EVIDENCE (indicative ranges from industry benchmarks and similar deployments):\n${roiContext.map(r => `- ${r}`).join('\n')}`
     : '\n\nROI EVIDENCE:\nFrame value qualitatively using industry benchmarks and customer reference stories. Use percentage improvement ranges (e.g., "15-30% reduction") rather than absolute figures.'
 
-  // Stakeholder context for prompts — include CRM contacts if available
+  // Stakeholder context for prompts — include CRM contacts and AE-assigned pillar owners if available
   const crmContactBlock = data.crmContacts && data.crmContacts.length > 0
     ? `\n\nCRM CONTACTS (extracted from account data):\n${data.crmContacts.map(c => `- ${c.name} — ${c.title}${c.email ? ` (${c.email})` : ''}`).join('\n')}`
     : ''
-  const stakeholderBlock = stakeholderMap.length > 0 || crmContactBlock
-    ? `${crmContactBlock}${stakeholderMap.length > 0 ? `\n\nSUGGESTED STAKEHOLDERS BY PILLAR:\n${stakeholderMap.map(s => `- ${s.pillar}: ${s.roles.join(', ')} (${s.areas.join(', ')})`).join('\n')}` : ''}`
+  const pillarOwnersBlock = data.pillarOwners && Object.keys(data.pillarOwners).length > 0
+    ? '\n\nCONFIRMED STAKEHOLDER OWNERS (assigned by AE):\n' +
+      Object.entries(data.pillarOwners)
+        .filter(([, contact]) => contact != null)
+        .map(([pillarId, contact]) => {
+          const pillarNames: Record<string, string> = {
+            enrich: 'Employee Experience (Enrich)', reshape: 'Business Processes (Reshape)',
+            reinvent: 'Customer Engagement (Reinvent)', bend: 'Innovation (Bend)',
+            intelligence: 'Data & Intelligence', security: 'Security & Trust',
+          }
+          return `- ${pillarNames[pillarId] || pillarId}: ${contact!.name} — ${contact!.title}`
+        })
+        .join('\n')
+    : ''
+  const stakeholderBlock = stakeholderMap.length > 0 || crmContactBlock || pillarOwnersBlock
+    ? `${crmContactBlock}${pillarOwnersBlock}${stakeholderMap.length > 0 ? `\n\nSUGGESTED STAKEHOLDERS BY PILLAR:\n${stakeholderMap.map(s => `- ${s.pillar}: ${s.roles.join(', ')} (${s.areas.join(', ')})`).join('\n')}` : ''}`
     : ''
 
   // Industry benchmark context for prompts

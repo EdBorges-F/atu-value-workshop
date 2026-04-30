@@ -2,8 +2,8 @@ const ALL_STEPS = [
   { label: 'Customer Profile', short: 'Profile', step: 0 },
   { label: '🔒 Customer Zero', short: 'CZ', step: 1, ndaOnly: true },
   { label: 'Challenges & Use Cases', short: 'Challenges', step: 2 },
-  { label: 'Review', short: 'Review', step: 3 },
-  { label: 'Value Story', short: 'Story', step: 4 },
+  { label: 'Exec Summary', short: 'Summary', step: 3 },
+  { label: 'Action Center', short: 'Actions', step: 4 },
 ]
 
 interface ProgressDotsProps {
