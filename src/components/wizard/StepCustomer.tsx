@@ -193,6 +193,23 @@ export default function StepCustomer({ wizard }: WizardProps) {
 
         {smartFillOpen && (
           <div id="smart-fill-panel" className="px-5 pb-5 space-y-3">
+            {/* 3-step visual guide */}
+            <div className="flex items-center gap-1 text-[10px] font-medium text-text-secondary -mt-1 mb-1">
+              <span className="flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/10 text-primary">
+                <span className="w-4 h-4 rounded-full bg-primary text-white flex items-center justify-center text-[9px] font-bold">1</span>
+                Copy prompt
+              </span>
+              <span className="text-gray-300">→</span>
+              <span className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100">
+                <span className="w-4 h-4 rounded-full bg-gray-400 text-white flex items-center justify-center text-[9px] font-bold">2</span>
+                Paste response
+              </span>
+              <span className="text-gray-300">→</span>
+              <span className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100">
+                <span className="w-4 h-4 rounded-full bg-gray-400 text-white flex items-center justify-center text-[9px] font-bold">3</span>
+                Extract &amp; apply
+              </span>
+            </div>
             {/* Copilot Prompt to gather data */}
             <div className="p-3 rounded-[10px] bg-primary/5 border border-primary/10 space-y-2">
               <p className="text-xs font-medium text-primary">
