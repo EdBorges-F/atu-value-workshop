@@ -197,4 +197,16 @@ export const INDUSTRIES: Industry[] = [
       'Talent development and retention',
     ],
   },
+  {
+    id: 'real-estate',
+    name: 'Real Estate',
+    icon: '🏢',
+    description: 'Commercial real estate, REITs, property management, and real estate services',
+    themes: [
+      'Portfolio performance and asset management',
+      'Tenant experience and retention',
+      'Operational cost reduction across properties',
+      'Data-driven investment and leasing decisions',
+    ],
+  },
 ];
