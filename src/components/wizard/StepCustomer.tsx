@@ -51,6 +51,7 @@ Format as plain text only — no links, no URLs, no source citations, no markdow
 export default function StepCustomer({ wizard }: WizardProps) {
   const { data, updateData, nextStep, canAdvance } = wizard
   const [smartFillOpen, setSmartFillOpen] = useState(true)
+  const [smartFillCollected, setSmartFillCollected] = useState(false)
   const [smartFillText, setSmartFillText] = useState(data.smartFillRaw)
   const [extraction, setExtraction] = useState<SmartFillResult | null>(null)
   const [copiedPrompt, setCopiedPrompt] = useState(false)
@@ -150,6 +151,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
     updateData(update)
     setAppliedFields(fields)
     setSmartFillOpen(false)
+    setSmartFillCollected(true)
   }
 
   const extractedCount = extraction
@@ -168,6 +170,32 @@ export default function StepCustomer({ wizard }: WizardProps) {
 
       {/* Smart Fill Panel */}
       <div className="rounded-[20px] border border-primary/20 bg-primary/[0.02] overflow-hidden">
+
+        {/* Collected state — shown after Apply All */}
+        {smartFillCollected ? (
+          <div className="flex items-center justify-between px-5 py-3">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">✅</span>
+              <div>
+                <p className="text-sm font-semibold text-primary">Profile loaded via Copilot</p>
+                <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
+                  {data.companyName && <span className="text-[11px] text-text-secondary">{data.companyName}</span>}
+                  {data.industryId && <span className="text-[11px] text-text-secondary">{INDUSTRIES.find(i => i.id === data.industryId)?.name ?? data.industryId}</span>}
+                  {data.priorities && <span className="text-[11px] text-text-secondary">{data.priorities.split('\n').filter(Boolean).length} priorities</span>}
+                  {data.crmContacts.length > 0 && <span className="text-[11px] text-text-secondary">{data.crmContacts.length} contacts</span>}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => { setSmartFillCollected(false); setSmartFillOpen(true); setSmartFillText(''); setExtraction(null) }}
+              className="text-[11px] text-text-secondary hover:text-primary px-2 py-1 rounded-md
+                         hover:bg-white/60 transition-all"
+            >
+              Re-run ↺
+            </button>
+          </div>
+        ) : (
+          <>
         <div className="flex items-center justify-between px-5 py-3">
           <button
             onClick={() => setSmartFillOpen(!smartFillOpen)}
@@ -357,6 +385,8 @@ export default function StepCustomer({ wizard }: WizardProps) {
               </div>
             )}
           </div>
+        )}
+          </>
         )}
       </div>
 
