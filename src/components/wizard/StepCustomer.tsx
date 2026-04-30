@@ -33,16 +33,18 @@ Strategic priorities:
 
 Key challenges: They struggle with fragmented data across plants, aging equipment requiring costly maintenance, and pressure to meet ESG targets while maintaining production output.`
 
-const COPILOT_GATHER_PROMPT = `@Sales Agent — I'm preparing a Frontier Transformation value story for [CUSTOMER NAME]. Combine CRM data, my emails, Teams messages, and public web information about this company. Give me:
+const COPILOT_GATHER_PROMPT = `@Sales Agent — I'm preparing a Frontier Transformation value story for [CUSTOMER NAME]. Before you answer, do the following web research first:
+
+Search for [CUSTOMER NAME]'s official website and find their Leadership, Management Team, Executive Team, or About pages — these list the actual names of C-level executives and VPs. Also check their LinkedIn company page. If [CUSTOMER NAME] is publicly listed, check their Investor Relations page or annual report for named executives. Do this research BEFORE answering — do not rely on CRM alone for names.
+
+Now give me the following, combining what you found on the web with CRM data, emails, and Teams messages:
 
 1. **Company Name** — Full account name
 2. **Industry** — Primary industry (e.g., Manufacturing, Banking, Retail, Healthcare, Energy)
 3. **Company Size** — Employee count estimate (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
-4. **Strategic Priorities** — Their top 3-5 business priorities or transformation initiatives based on conversations and public sources
+4. **Strategic Priorities** — Their top 3-5 business priorities or transformation initiatives, using web research (Investor Relations, press releases, strategy pages) to fill gaps from internal conversations
 5. **Key Challenges** — Business pain points, blockers, or pressures they face
-6. **Key Stakeholders** — Senior decision-makers involved in AI or digital transformation (Name, Title if available). Check CRM contacts, recent emails, and meeting attendees for CTO, CIO, CDO, CISO, CFO, or VP-level sponsors
-
-To supplement CRM and email data, also search the web for: the company's official website (About, Strategy, or Investor Relations pages), recent press releases or news from the last 12 months, and their LinkedIn company page. Use this to fill gaps in Strategic Priorities and Key Challenges with current, accurate context.
+6. **Key Stakeholders** — For each of these roles: CIO, CISO, CTO, CFO, CDO, VP of IT, VP of AI or Digital Transformation — provide the full name and title. First check CRM contacts and my emails. For any role where the name is missing or unconfirmed, look it up on their website Leadership/Team/About page or LinkedIn. Public and listed companies always have executive names published. Format each as: Name — Title (source: CRM or web). If genuinely not findable anywhere, write: Not found — [Title].
 
 Format as plain text only — no links, no URLs, no source citations, no markdown formatting. At the end, do a sanity check for yourself: flag if anything looks contradictory or if you found information that wasn't captured above — but do NOT include this check in the output you give me.`
 
