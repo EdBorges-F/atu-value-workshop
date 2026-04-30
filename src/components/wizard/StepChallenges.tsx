@@ -176,9 +176,8 @@ export default function StepChallenges({ wizard }: WizardProps) {
       const pillar = allPillars.find(p => p.id === theme.pillarId)
       if (!pillar) continue
 
-      // Find challenges whose pillarId matches this theme
+      // Find challenges matching keywords regardless of pillar
       for (const challenge of CHALLENGES) {
-        if (challenge.pillarId !== theme.pillarId) continue
         if (!challenge.industryIds.includes(industryId)) continue
         // Check if the note text has any keywords for this challenge
         const pk = PRIORITY_KEYWORDS.find(pk => pk.challengeId === challenge.id)
@@ -192,7 +191,13 @@ export default function StepChallenges({ wizard }: WizardProps) {
         }
       }
     }
-    return insights
+    // Deduplicate by challengeId (keep first match)
+    const seen = new Set<string>();
+    return insights.filter(i => {
+      if (seen.has(i.challengeId)) return false;
+      seen.add(i.challengeId);
+      return true;
+    });
   }, [discoveryNotes, industryId])
 
   const discoveryCount = Object.values(discoveryNotes).filter(Boolean).length
