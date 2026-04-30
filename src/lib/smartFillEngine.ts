@@ -140,7 +140,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     .replace(/,\s*$/gm, '')
     // Clean orphaned lone parentheses left after link/URL removal
     .replace(/\(\s*\)/g, '')
-    .replace(/\(\s*$/gm, '')
+    .replace(/[\s(]+$/gm, '')
     .replace(/\s+\(\s*,/g, ',')
     .trim()
 
