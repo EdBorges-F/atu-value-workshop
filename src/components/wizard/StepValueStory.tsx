@@ -328,9 +328,9 @@ export default function StepValueStory({ wizard }: WizardProps) {
           <p className="text-xs text-gray-400 mt-1">{story.pillarSections.length} pillars · {story.pillarSections.reduce((s,p)=>s+p.useCases.length,0)} use cases · {totalEvidenceCount} customer stories</p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <a href="#cowork-follow-up-email"
+          <a href="#cowork-exec-email"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors">
-            📧 Follow-up Email
+            📧 Exec Follow-up
           </a>
           <a href="#cowork-frontier-deck"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors">
