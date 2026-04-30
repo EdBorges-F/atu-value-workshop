@@ -113,12 +113,17 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     .replace(/^References?:.*$/gim, '')
     // Escaped bracket links \[text\](url) — always artifacts in CRM paste
     .replace(/\\\[[^\]\n]*\]\([^\)\n]*\)?/g, '')
+    // Markdown links with escaped chars in display text: [\[text\]](url) → remove entirely
+    // Handles Copilot citation format where inner brackets are escaped
+    .replace(/\[(?:[^\]\\]|\\.)*\]\(https?:\/\/[^)\s]*\)?/g, '')
     // Links where the display text IS a URL or bare domain (e.g. [riministreet.com](url))
     .replace(/\[(?:https?:\/\/|www\.|\w[\w.-]+\.\w{2,6})[^\]\n]*\]\([^\)\n]*\)?/g, '')
     // Standard [text](https://url) → keep display text
     .replace(/\[([^\]]*)\]\(https?:\/\/[^)]*\)/g, '$1')
     .replace(/https?:\/\/\S+/g, '')
     .replace(/^\s*[-•]\s*\[?\d*\]?.*https?.*$/gim, '')
+    // Clean up orphaned link skeletons: [text]( left after URL stripping
+    .replace(/\[[^\]\n]*\]\(\s*/g, '')
     // Clean up orphaned backslash-escaped brackets left after link stripping
     .replace(/\\([\[\]])/g, '')
     .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
@@ -133,6 +138,10 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     .replace(/,\s*\./g, '.')
     .replace(/(?:^|\n)\s*,\s*/g, '\n')
     .replace(/,\s*$/gm, '')
+    // Clean orphaned lone parentheses left after link/URL removal
+    .replace(/\(\s*\)/g, '')
+    .replace(/\s+\(\s*$/gm, '')
+    .replace(/\s+\(\s*,/g, ',')
     .trim()
 
   if (!cleaned) return { companyName: null, industryId: null, companySize: null, priorities: null, suggestedChallengeIds: null, suggestedUseCaseIds: null, contacts: null }
