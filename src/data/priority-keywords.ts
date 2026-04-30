@@ -11,6 +11,7 @@ export const PRIORITY_KEYWORDS: PriorityKeywordMap[] = [
       'efficiency', 'productivity', 'streamline', 'automate', 'process', 'operations', 'lean', 'waste', 'throughput', 'cycle time', 'bottleneck',
       'manual', 'slow', 'repetitive', 'friction', 'spreadsheet', 'too many steps', 'too many tools', 'error-prone', 'approval workflow',
       'copy paste', 'duplicate work', 'backlog', 'delays', 'handoff', 'rework', 'inefficient',
+      'billing', 'claims', 'reimbursement', 'denial', 'revenue cycle', 'coding accuracy', 'prior authorization', 'claim submission',
     ],
   },
   {

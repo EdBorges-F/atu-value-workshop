@@ -74,6 +74,8 @@ export default function StepCustomer({ wizard }: WizardProps) {
         companyName: item.value as string,
         confidence: { ...data.confidence, companyName: item.confidence },
       })
+    } else if (field === 'websiteUrl') {
+      updateData({ websiteUrl: item.value as string })
     } else if (field === 'industryId') {
       updateData({
         industryId: item.value as string,
@@ -117,6 +119,10 @@ export default function StepCustomer({ wizard }: WizardProps) {
       update.companyName = extraction.companyName.value as string
       conf.companyName = extraction.companyName.confidence
       fields.add('companyName')
+    }
+    if (extraction.websiteUrl) {
+      update.websiteUrl = extraction.websiteUrl.value as string
+      fields.add('websiteUrl')
     }
     if (extraction.industryId) {
       update.industryId = extraction.industryId.value as string
@@ -460,6 +466,24 @@ export default function StepCustomer({ wizard }: WizardProps) {
           value={data.companyName}
           onChange={(e) => updateData({ companyName: e.target.value })}
           placeholder="e.g., Contoso"
+          className="w-full px-4 py-3 rounded-[14px] border border-gray-200 bg-white text-text 
+                     placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/30 
+                     focus:border-primary transition-all"
+        />
+      </div>
+
+      {/* Website URL */}
+      <div>
+        <label htmlFor="website-url" className="block text-sm font-medium text-text mb-2">
+          Website URL
+          <span className="text-xs text-text-secondary ml-2 font-normal">(used for brand colors in deliverables)</span>
+        </label>
+        <input
+          id="website-url"
+          type="url"
+          value={data.websiteUrl}
+          onChange={(e) => updateData({ websiteUrl: e.target.value })}
+          placeholder="e.g., https://www.vituity.com"
           className="w-full px-4 py-3 rounded-[14px] border border-gray-200 bg-white text-text 
                      placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/30 
                      focus:border-primary transition-all"

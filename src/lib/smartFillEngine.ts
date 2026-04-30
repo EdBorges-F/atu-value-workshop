@@ -11,6 +11,7 @@ import type { CompanySize } from '../data/types'
  */
 export interface SmartFillResult {
   companyName: { value: string; confidence: 'high' | 'medium' | 'low' } | null
+  websiteUrl: { value: string; confidence: 'high' | 'medium' | 'low' } | null
   industryId: { value: string; confidence: 'high' | 'medium' | 'low' } | null
   companySize: { value: CompanySize; confidence: 'high' | 'medium' | 'low' } | null
   priorities: { value: string; confidence: 'high' | 'medium' | 'low' } | null
@@ -141,10 +142,12 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     // Clean orphaned lone parentheses left after link/URL removal
     .replace(/\(\s*\)/g, '')
     .replace(/[\s(]+$/gm, '')
+    // Strip a lone trailing dot left after link removal (but not ellipsis "...")
+    .replace(/([^.])\.\s*$/gm, '$1')
     .replace(/\s+\(\s*,/g, ',')
     .trim()
 
-  if (!cleaned) return { companyName: null, industryId: null, companySize: null, priorities: null, suggestedChallengeIds: null, suggestedUseCaseIds: null, contacts: null }
+  if (!cleaned) return { companyName: null, websiteUrl: null, industryId: null, companySize: null, priorities: null, suggestedChallengeIds: null, suggestedUseCaseIds: null, contacts: null }
 
   const normLower = _normalise(cleaned)
 
@@ -204,7 +207,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
       .replace(/\s*\[[^\]\n]*\](\([^\)\n]*\))?/g, '')
       .replace(/\s*\(.*?\)\s*/g, '')
       // Final guard: strip trailing orphaned punctuation that shouldn't be in a name
-      .replace(/[\s()\[\]\\,;]+$/, '')
+      .replace(/[\s()\[\]\\,;.]+$/, '')
       .trim()
     if (raw.length >= 2) {
       companyName = { value: raw, confidence: 'high' }
@@ -223,6 +226,14 @@ export function extractSmartFill(rawText: string): SmartFillResult {
         break
       }
     }
+  }
+
+  // 1b. Website URL — extract from company name line or dedicated field
+  let websiteUrl: SmartFillResult['websiteUrl'] = null
+  // Look for a .com/.org/.net URL in the raw text (excluding linkedin/microsoft/sharepoint/teams URLs)
+  const urlMatch = rawText.match(/https?:\/\/(?:www\.)?([a-z0-9-]+\.(?:com|org|net|io|health|care|ai))\b[^\s\])"]*/i)
+  if (urlMatch && !/linkedin|microsoft|sharepoint|teams|office|graph|crm|dynamics/i.test(urlMatch[0])) {
+    websiteUrl = { value: urlMatch[0].replace(/[)\].,;]+$/, ''), confidence: 'high' }
   }
 
   // 2. Industry — keyword matching against our canonical 16
@@ -513,7 +524,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     }
   }
 
-  return { companyName, industryId, companySize, priorities, suggestedChallengeIds, suggestedUseCaseIds, contacts }
+  return { companyName, websiteUrl, industryId, companySize, priorities, suggestedChallengeIds, suggestedUseCaseIds, contacts }
 }
 
 /**

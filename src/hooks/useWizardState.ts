@@ -4,6 +4,7 @@ import type { CompanySize, ReadinessTier } from '../data/types'
 export interface WizardData {
   // Step 1: Customer Profile
   companyName: string
+  websiteUrl: string
   industryId: string
   companySize: CompanySize | ''
   priorities: string
@@ -36,6 +37,7 @@ export interface CRMContact {
 
 const INITIAL_DATA: WizardData = {
   companyName: '',
+  websiteUrl: '',
   industryId: '',
   companySize: '',
   priorities: '',

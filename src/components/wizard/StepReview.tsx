@@ -361,7 +361,7 @@ export default function StepReview({ wizard }: WizardProps) {
             <p className="text-[10px] text-text-secondary mt-0.5">
               {data.crmContacts.length > 0
                 ? 'Assign a business champion to each pillar — carried into your Action Center prompts'
-                : 'Add CRM contacts via Smart Fill in Step 1 to assign real owners'}
+                : 'Add CRM contacts via Smart Fill in Step 1 to assign executive sponsors'}
             </p>
           </div>
           {Object.values(data.pillarOwners).filter(Boolean).length > 0 && (
@@ -391,7 +391,7 @@ export default function StepReview({ wizard }: WizardProps) {
                     }}
                     className="text-xs rounded-lg border border-gray-200 px-2 py-1.5 bg-white text-text max-w-[220px] truncate"
                   >
-                    <option value="">— Assign owner</option>
+                    <option value="">— Assign sponsor</option>
                     {data.crmContacts.map((c, i) => (
                       <option key={i} value={c.email ?? c.name}>
                         {c.name}{c.title ? ` · ${c.title}` : ''}
