@@ -34,3 +34,10 @@ meeting-invites/
 # Generated artifacts
 Frontier-Canvas-Tester-Guide.pdf
 generate-tester-guide.py
+
+# Internal / NDA-gated content (not for public repo)
+Feedbacks/
+frontier-transformation-ae-guidance.md
+LINKS.md
+PLAN.md
+STRESS-TEST.md
