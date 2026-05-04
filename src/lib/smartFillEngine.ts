@@ -236,29 +236,45 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     }
   }
 
-  // 1b. Website URL — extract from parsed section, labeled field, or any URL in raw text
+  // 1b. Website URL — extract from rawText (URLs are stripped from cleaned)
   let websiteUrl: SmartFillResult['websiteUrl'] = null
-  // First: check if section parser found a "Website" section (the URL was stripped from cleaned, so check rawText near that section)
-  if (sections.websiteUrl && sections.websiteUrl.length > 0) {
-    // The section content may have had URL stripped — use rawText with labeled match
+  const _INTERNAL_URL_RE = /linkedin|microsoft|sharepoint|teams|office|graph|crm|dynamics|aka\.ms|bing|google/i
+  // Strategy: try multiple patterns against rawText in priority order
+  // Pattern A: labeled "Website" field with full URL (handles bold markers: **Website**)
+  if (!websiteUrl) {
+    const labeledUrlMatch = rawText.match(/\*{0,2}website\*{0,2}[\s:—–-]+\s*\[?(?:https?:\/\/[^\s\])"[\]]+|www\.[^\s\])"[\]]+)/i)
+    if (labeledUrlMatch) {
+      let url = labeledUrlMatch[0].replace(/^.*?(?=https?:\/\/|www\.)/i, '').replace(/[\[\])\s.,;]+$/, '')
+      if (url.startsWith('www.')) url = `https://${url}`
+      if (!_INTERNAL_URL_RE.test(url)) websiteUrl = { value: url, confidence: 'high' }
+    }
+  }
+  // Pattern B: labeled "Website" with markdown link: [text](url)
+  if (!websiteUrl) {
+    const mdLinkMatch = rawText.match(/\*{0,2}website\*{0,2}[\s:—–-]+\s*\[[^\]]*\]\((https?:\/\/[^)]+)\)/i)
+    if (mdLinkMatch && !_INTERNAL_URL_RE.test(mdLinkMatch[1])) {
+      websiteUrl = { value: mdLinkMatch[1].replace(/[)\].,;]+$/, ''), confidence: 'high' }
+    }
+  }
+  // Pattern C: labeled "Website" with bare domain (e.g. "Website: acme.com" or "Website — acme.com.br")
+  if (!websiteUrl) {
+    const bareDomainMatch = rawText.match(/\*{0,2}website\*{0,2}[\s:—–-]+\s*([a-z0-9][\w-]*\.(?:com|org|net|io|co|ai|gov|edu|int|biz|info|app|dev|tech|cloud|digital|solutions|global|group|inc|ltd|corp|gmbh|sa|br|uk|de|fr|it|es|ca|au|jp|kr|cn|in|mx|ar|cl|pt|nl|se|no|dk|fi|ch|at|be|ie|nz|za|sg|hk|tw|my|th|ph|vn|id|pk|ng|ke|eg|ae|il|pl|cz|hu|ro|bg|hr|sk|si|lt|lv|ee|is|lu|mt|cy|gr|tr|ru|ua|kz|uz|by)(?:\.[a-z]{2,4})?)\b/i)
+    if (bareDomainMatch && !_INTERNAL_URL_RE.test(bareDomainMatch[1])) {
+      websiteUrl = { value: `https://${bareDomainMatch[1]}`, confidence: 'high' }
+    }
+  }
+  // Pattern D: section parser captured something with a domain pattern
+  if (!websiteUrl && sections.websiteUrl && sections.websiteUrl.length > 0) {
     const sectionVal = sections.websiteUrl[0]
-    // It might contain a bare domain like "acme.com" or just text
-    const domainMatch = sectionVal.match(/([a-z0-9-]+\.[a-z]{2,}(?:\.[a-z]{2,})?)/i)
-    if (domainMatch) {
+    const domainMatch = sectionVal.match(/([a-z0-9][\w-]+\.[a-z]{2,}(?:\.[a-z]{2,})?)/i)
+    if (domainMatch && !_INTERNAL_URL_RE.test(domainMatch[1])) {
       websiteUrl = { value: `https://${domainMatch[1]}`, confidence: 'high' }
     }
   }
-  // Second: try a labeled field in rawText: "Website: https://..." or "Website — https://..."
-  if (!websiteUrl) {
-    const labeledUrlMatch = rawText.match(/website[:\s—–-]+\s*(https?:\/\/[^\s\])"]+)/i)
-    if (labeledUrlMatch) {
-      websiteUrl = { value: labeledUrlMatch[1].replace(/[)\].,;]+$/, ''), confidence: 'high' }
-    }
-  }
-  // Fallback: look for any URL (broad TLD support, excluding internal Microsoft/CRM URLs)
+  // Pattern E: any non-internal URL in rawText (last resort)
   if (!websiteUrl) {
     const urlMatch = rawText.match(/https?:\/\/(?:www\.)?([a-z0-9-]+\.[a-z]{2,})\b[^\s\])"]*/i)
-    if (urlMatch && !/linkedin|microsoft|sharepoint|teams|office|graph|crm|dynamics|aka\.ms/i.test(urlMatch[0])) {
+    if (urlMatch && !_INTERNAL_URL_RE.test(urlMatch[0])) {
       websiteUrl = { value: urlMatch[0].replace(/[)\].,;]+$/, ''), confidence: 'high' }
     }
   }

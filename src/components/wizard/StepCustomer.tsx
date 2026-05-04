@@ -34,38 +34,26 @@ Strategic priorities:
 
 Key challenges: They struggle with fragmented data across plants, aging equipment requiring costly maintenance, and pressure to meet ESG targets while maintaining production output.`
 
-const COPILOT_GATHER_PROMPT = `@Sales Agent — I'm preparing a Frontier Transformation value story for [CUSTOMER NAME]. Before you answer, do the following research steps IN ORDER:
+const COPILOT_GATHER_PROMPT = `@Sales Agent — I need a company profile for [CUSTOMER NAME]. Search the web, CRM, my emails, and LinkedIn.
 
-STEP 1 — FIND EXECUTIVES (do this FIRST, spend time here):
-a) Go to their official website → look for pages named Leadership, Executive Team, Management Team, About Us, or Our Team. These pages list C-level names and titles.
-b) Search LinkedIn for "[CUSTOMER NAME]" company page → People tab → filter by "CIO", "CTO", "CISO", "CFO", "CDO", "VP". Note each name + exact title.
-c) If publicly traded, check their latest proxy statement (DEF 14A) or annual report — these always list named executive officers.
-d) Search recent press releases or news for "[CUSTOMER NAME] appoints" or "[CUSTOMER NAME] names" to catch leadership changes in the last 12 months.
-e) Check my CRM contacts and emails for any names associated with this account.
+1. Company Name — (full legal/trading name)
+2. Website — (full URL, e.g. https://www.acme.com)
+3. Industry — (e.g. Manufacturing, Banking, Retail, Healthcare, Energy)
+4. Company Size — (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
+5. Strategic Priorities — Their top 3-5 business priorities
+6. Key Challenges — Pain points or blockers
+7. Key Stakeholders — IMPORTANT: Search LinkedIn "[CUSTOMER NAME]" People page AND their company website Leadership/About page. For each role below, give me the real person's name:
+   CEO: [Name] — [Full Title]
+   CFO: [Name] — [Full Title]
+   CIO: [Name] — [Full Title]
+   CTO: [Name] — [Full Title]
+   CISO: [Name] — [Full Title]
+   CDO: [Name] — [Full Title]
+   VP IT: [Name] — [Full Title]
+   VP AI/Digital: [Name] — [Full Title]
+   (If not found after searching: "Not found — [Role]")
 
-STEP 2 — COMPANY PROFILE (use web + CRM + emails + Teams):
-Search their Investor Relations page, recent earnings calls, press releases, and strategy announcements for priorities and challenges.
-
-Now give me the following:
-
-1. **Company Name** — (the full legal or trading name)
-2. **Website** — (the company's primary website URL, e.g., https://www.acme.com)
-3. **Industry** — (e.g., Manufacturing, Banking, Retail, Healthcare, Energy)
-4. **Company Size** — (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
-5. **Strategic Priorities** — Their top 3-5 business priorities or transformation initiatives
-6. **Key Challenges** — Business pain points, blockers, or pressures they face
-7. **Key Stakeholders** — For EACH of these roles, provide the person's full name and title. Use what you found in Step 1. Format: Name — Title (source: website/LinkedIn/CRM/news)
-   - CEO
-   - CFO
-   - CIO
-   - CTO
-   - CISO
-   - CDO (Chief Digital/Data Officer)
-   - VP of IT / VP of Infrastructure
-   - VP of AI / VP of Digital Transformation
-   If a role genuinely cannot be found after checking all sources: write "Not found — [Role]"
-
-Format as plain text with no markdown formatting. The Website field should include the full URL.`
+Format as plain text. No markdown, no bullet points, no links.`
 
 export default function StepCustomer({ wizard }: WizardProps) {
   const { data, updateData, nextStep, canAdvance } = wizard
