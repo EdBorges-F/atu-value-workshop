@@ -132,7 +132,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     // previous line's value with no separator (e.g. "GRENDENE CALÇADOS SAIndustry",
     // "RetailCompany Size", "Strategic PrioritiesCost optimization…").
     // Insert a newline before each known header when it appears mid-line.
-    .replace(/(\S)(Industry|Company\s+Size|Strategic\s+Priorities|Key\s+Priorities|Key\s+Challenges|Business\s+Challenges|Key\s+Stakeholders|Key\s+Contacts)\b/g, '$1\n$2')
+    .replace(/(\S)(Website|Industry|Company\s+Size|Strategic\s+Priorities|Key\s+Priorities|Key\s+Challenges|Business\s+Challenges|Key\s+Stakeholders|Key\s+Contacts)\b/g, '$1\n$2')
     // Clean orphaned punctuation left after URL/link stripping (e.g. ", ," or trailing ", ")
     .replace(/,\s*,/g, ',')
     .replace(/\.\s*,/g, '.')
@@ -155,6 +155,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   // Copilot typically outputs: header line, then content on following lines until next header
   const sectionHeaders = [
     { key: 'companyName', patterns: [/^company\s*name/i] },
+    { key: 'websiteUrl', patterns: [/^website/i, /^url/i, /^company\s*(?:website|url)/i] },
     { key: 'industry', patterns: [/^industry/i] },
     { key: 'companySize', patterns: [/^company\s*size/i, /^size/i, /^employees?/i] },
     { key: 'priorities', patterns: [/^strategic\s*priorities/i, /^priorities/i, /^key\s*priorities/i] },
@@ -200,16 +201,22 @@ export function extractSmartFill(rawText: string): SmartFillResult {
 
   // 1. Company Name
   let companyName: SmartFillResult['companyName'] = null
+  // Template/placeholder values to reject
+  const TEMPLATE_GARBAGE = /^(full account name|company name|account name|customer name|n\/a|tbd|unknown|placeholder)$/i
   if (sections.companyName && sections.companyName.length > 0) {
     // Strip Outlook/CRM encoding artifacts: [ENC: ...](url), then any residual [text](...)
-    const raw = sections.companyName[0]
+    let raw = sections.companyName[0]
       .replace(/\s*\[ENC:[^\]\n]*\](\([^\)\n]*\))?/gi, '')
       .replace(/\s*\[[^\]\n]*\](\([^\)\n]*\))?/g, '')
       .replace(/\s*\(.*?\)\s*/g, '')
       // Final guard: strip trailing orphaned punctuation that shouldn't be in a name
       .replace(/[\s()\[\]\\,;.]+$/, '')
       .trim()
-    if (raw.length >= 2) {
+    // If the first line is a template placeholder, try the next line
+    if (TEMPLATE_GARBAGE.test(raw) && sections.companyName.length > 1) {
+      raw = sections.companyName[1].replace(/[\s()\[\]\\,;.]+$/, '').trim()
+    }
+    if (raw.length >= 2 && !TEMPLATE_GARBAGE.test(raw)) {
       companyName = { value: raw, confidence: 'high' }
     }
   }
@@ -228,12 +235,31 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     }
   }
 
-  // 1b. Website URL — extract from company name line or dedicated field
+  // 1b. Website URL — extract from parsed section, labeled field, or any URL in raw text
   let websiteUrl: SmartFillResult['websiteUrl'] = null
-  // Look for a .com/.org/.net URL in the raw text (excluding linkedin/microsoft/sharepoint/teams URLs)
-  const urlMatch = rawText.match(/https?:\/\/(?:www\.)?([a-z0-9-]+\.(?:com|org|net|io|health|care|ai))\b[^\s\])"]*/i)
-  if (urlMatch && !/linkedin|microsoft|sharepoint|teams|office|graph|crm|dynamics/i.test(urlMatch[0])) {
-    websiteUrl = { value: urlMatch[0].replace(/[)\].,;]+$/, ''), confidence: 'high' }
+  // First: check if section parser found a "Website" section (the URL was stripped from cleaned, so check rawText near that section)
+  if (sections.websiteUrl && sections.websiteUrl.length > 0) {
+    // The section content may have had URL stripped — use rawText with labeled match
+    const sectionVal = sections.websiteUrl[0]
+    // It might contain a bare domain like "acme.com" or just text
+    const domainMatch = sectionVal.match(/([a-z0-9-]+\.[a-z]{2,}(?:\.[a-z]{2,})?)/i)
+    if (domainMatch) {
+      websiteUrl = { value: `https://${domainMatch[1]}`, confidence: 'high' }
+    }
+  }
+  // Second: try a labeled field in rawText: "Website: https://..." or "Website — https://..."
+  if (!websiteUrl) {
+    const labeledUrlMatch = rawText.match(/website[:\s—–-]+\s*(https?:\/\/[^\s\])"]+)/i)
+    if (labeledUrlMatch) {
+      websiteUrl = { value: labeledUrlMatch[1].replace(/[)\].,;]+$/, ''), confidence: 'high' }
+    }
+  }
+  // Fallback: look for any URL (broad TLD support, excluding internal Microsoft/CRM URLs)
+  if (!websiteUrl) {
+    const urlMatch = rawText.match(/https?:\/\/(?:www\.)?([a-z0-9-]+\.[a-z]{2,})\b[^\s\])"]*/i)
+    if (urlMatch && !/linkedin|microsoft|sharepoint|teams|office|graph|crm|dynamics|aka\.ms/i.test(urlMatch[0])) {
+      websiteUrl = { value: urlMatch[0].replace(/[)\].,;]+$/, ''), confidence: 'high' }
+    }
   }
 
   // 2. Industry — keyword matching against our canonical 16

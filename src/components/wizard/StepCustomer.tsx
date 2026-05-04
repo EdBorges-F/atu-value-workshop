@@ -40,14 +40,15 @@ Search for their official website and find the Leadership, Management Team, Exec
 
 Now give me the following, combining what you found on the web with CRM data, emails, and Teams messages:
 
-1. **Company Name** — Full account name
-2. **Industry** — Primary industry (e.g., Manufacturing, Banking, Retail, Healthcare, Energy)
-3. **Company Size** — Employee count estimate (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
-4. **Strategic Priorities** — Their top 3-5 business priorities or transformation initiatives, using web research (Investor Relations, press releases, strategy pages) to fill gaps from internal conversations
-5. **Key Challenges** — Business pain points, blockers, or pressures they face
-6. **Key Stakeholders** — For each of these roles: CIO, CISO, CTO, CFO, CDO, VP of IT, VP of AI or Digital Transformation — provide the full name and title. First check CRM contacts and my emails. For any role where the name is missing or unconfirmed, look it up on their website Leadership/Team/About page or LinkedIn. Public and listed companies always have executive names published. Format each as: Name — Title (source: CRM or web). If genuinely not findable anywhere, write: Not found — [Title].
+1. **Company Name** — (the full legal or trading name)
+2. **Website** — (the company's primary website URL, e.g., https://www.acme.com)
+3. **Industry** — (e.g., Manufacturing, Banking, Retail, Healthcare, Energy)
+4. **Company Size** — (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
+5. **Strategic Priorities** — Their top 3-5 business priorities or transformation initiatives, using web research (Investor Relations, press releases, strategy pages) to fill gaps from internal conversations
+6. **Key Challenges** — Business pain points, blockers, or pressures they face
+7. **Key Stakeholders** — For each of these roles: CIO, CISO, CTO, CFO, CDO, VP of IT, VP of AI or Digital Transformation — provide the full name and title. First check CRM contacts and my emails. For any role where the name is missing or unconfirmed, look it up on their website Leadership/Team/About page or LinkedIn. Public and listed companies always have executive names published. Format each as: Name — Title (source: CRM or web). If genuinely not findable anywhere, write: Not found — [Title].
 
-Format as plain text only — no links, no URLs, no source citations, no markdown formatting. At the end, do a sanity check for yourself: flag if anything looks contradictory or if you found information that wasn't captured above — but do NOT include this check in the output you give me.`
+Format as plain text with no markdown formatting. The Website field should include the full URL. At the end, do a sanity check for yourself: flag if anything looks contradictory or if you found information that wasn't captured above — but do NOT include this check in the output you give me.`
 
 export default function StepCustomer({ wizard }: WizardProps) {
   const { data, updateData, nextStep, canAdvance } = wizard
