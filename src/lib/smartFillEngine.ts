@@ -343,22 +343,23 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   // 4. Priorities — combine strategic priorities + key challenges sections
   let priorities: SmartFillResult['priorities'] = null
   const priorityLines: string[] = []
+  // Template/placeholder text to reject from priorities and challenges
+  const PRIORITY_TEMPLATE_RE = /^(their\s+top|top\s+\d|business\s+pain\s+points|blockers|pressures\s+they\s+face|e\.?g\.?\s|using\s+web\s+research|investor\s+relations)/i
   if (sections.priorities) {
     for (const line of sections.priorities) {
-      // Strip sub-descriptions (indented explanations), keep main priority titles
       const stripped = line.replace(/^\s+/, '')
-      if (stripped.length > 5) priorityLines.push(stripped)
+      if (stripped.length > 5 && !PRIORITY_TEMPLATE_RE.test(stripped)) priorityLines.push(stripped)
     }
   }
   if (sections.challenges) {
     for (const line of sections.challenges) {
       const stripped = line.replace(/^\s+/, '')
-      if (stripped.length > 5) priorityLines.push(stripped)
+      if (stripped.length > 5 && !PRIORITY_TEMPLATE_RE.test(stripped)) priorityLines.push(stripped)
     }
   }
   if (priorityLines.length > 0) {
     priorities = {
-      value: priorityLines.join('; '),
+      value: priorityLines.join('\n'),
       confidence: priorityLines.length >= 3 ? 'high' : 'medium',
     }
   }
