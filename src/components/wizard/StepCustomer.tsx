@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
 import { INDUSTRIES } from '../../data/industries'
+import { SHOW_CUSTOMER_ZERO } from '../../data/global-ai-evidence'
 import { extractSmartFill, type SmartFillResult } from '../../lib/smartFillEngine'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
@@ -567,7 +568,8 @@ export default function StepCustomer({ wizard }: WizardProps) {
         />
       </div>
 
-      {/* NDA / Customer Zero Toggle */}
+      {/* NDA / Customer Zero Toggle — hidden when SHOW_CUSTOMER_ZERO is false */}
+      {SHOW_CUSTOMER_ZERO && (
       <div className="rounded-[16px] border border-gray-200 bg-gray-50/50 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -614,6 +616,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
           </p>
         )}
       </div>
+      )}
 
       {/* Next Button */}
       <div className="flex justify-end pt-4">
