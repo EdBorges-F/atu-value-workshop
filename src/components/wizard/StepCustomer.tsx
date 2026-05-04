@@ -34,21 +34,38 @@ Strategic priorities:
 
 Key challenges: They struggle with fragmented data across plants, aging equipment requiring costly maintenance, and pressure to meet ESG targets while maintaining production output.`
 
-const COPILOT_GATHER_PROMPT = `@Sales Agent — I'm preparing a Frontier Transformation value story for [CUSTOMER NAME]. Before you answer, do the following web research first:
+const COPILOT_GATHER_PROMPT = `@Sales Agent — I'm preparing a Frontier Transformation value story for [CUSTOMER NAME]. Before you answer, do the following research steps IN ORDER:
 
-Search for their official website and find the Leadership, Management Team, Executive Team, or About pages — these list the actual names of C-level executives and VPs. Also check their LinkedIn company page. If they are publicly listed, check their Investor Relations page or annual report for named executives. Do this research BEFORE answering — do not rely on CRM alone for names.
+STEP 1 — FIND EXECUTIVES (do this FIRST, spend time here):
+a) Go to their official website → look for pages named Leadership, Executive Team, Management Team, About Us, or Our Team. These pages list C-level names and titles.
+b) Search LinkedIn for "[CUSTOMER NAME]" company page → People tab → filter by "CIO", "CTO", "CISO", "CFO", "CDO", "VP". Note each name + exact title.
+c) If publicly traded, check their latest proxy statement (DEF 14A) or annual report — these always list named executive officers.
+d) Search recent press releases or news for "[CUSTOMER NAME] appoints" or "[CUSTOMER NAME] names" to catch leadership changes in the last 12 months.
+e) Check my CRM contacts and emails for any names associated with this account.
 
-Now give me the following, combining what you found on the web with CRM data, emails, and Teams messages:
+STEP 2 — COMPANY PROFILE (use web + CRM + emails + Teams):
+Search their Investor Relations page, recent earnings calls, press releases, and strategy announcements for priorities and challenges.
+
+Now give me the following:
 
 1. **Company Name** — (the full legal or trading name)
 2. **Website** — (the company's primary website URL, e.g., https://www.acme.com)
 3. **Industry** — (e.g., Manufacturing, Banking, Retail, Healthcare, Energy)
 4. **Company Size** — (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
-5. **Strategic Priorities** — Their top 3-5 business priorities or transformation initiatives, using web research (Investor Relations, press releases, strategy pages) to fill gaps from internal conversations
+5. **Strategic Priorities** — Their top 3-5 business priorities or transformation initiatives
 6. **Key Challenges** — Business pain points, blockers, or pressures they face
-7. **Key Stakeholders** — For each of these roles: CIO, CISO, CTO, CFO, CDO, VP of IT, VP of AI or Digital Transformation — provide the full name and title. First check CRM contacts and my emails. For any role where the name is missing or unconfirmed, look it up on their website Leadership/Team/About page or LinkedIn. Public and listed companies always have executive names published. Format each as: Name — Title (source: CRM or web). If genuinely not findable anywhere, write: Not found — [Title].
+7. **Key Stakeholders** — For EACH of these roles, provide the person's full name and title. Use what you found in Step 1. Format: Name — Title (source: website/LinkedIn/CRM/news)
+   - CEO
+   - CFO
+   - CIO
+   - CTO
+   - CISO
+   - CDO (Chief Digital/Data Officer)
+   - VP of IT / VP of Infrastructure
+   - VP of AI / VP of Digital Transformation
+   If a role genuinely cannot be found after checking all sources: write "Not found — [Role]"
 
-Format as plain text with no markdown formatting. The Website field should include the full URL. At the end, do a sanity check for yourself: flag if anything looks contradictory or if you found information that wasn't captured above — but do NOT include this check in the output you give me.`
+Format as plain text with no markdown formatting. The Website field should include the full URL.`
 
 export default function StepCustomer({ wizard }: WizardProps) {
   const { data, updateData, nextStep, canAdvance } = wizard
