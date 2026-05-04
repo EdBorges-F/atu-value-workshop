@@ -472,7 +472,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
           type="text"
           value={data.companyName}
           onChange={(e) => updateData({ companyName: e.target.value })}
-          placeholder="e.g., Contoso"
+          placeholder="e.g., ZAVA"
           className="w-full px-4 py-3 rounded-[14px] border border-gray-200 bg-white text-text 
                      placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/30 
                      focus:border-primary transition-all"
@@ -490,7 +490,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
           type="url"
           value={data.websiteUrl}
           onChange={(e) => updateData({ websiteUrl: e.target.value })}
-          placeholder="e.g., https://www.contoso.com"
+          placeholder="e.g., https://www.zava.com"
           className="w-full px-4 py-3 rounded-[14px] border border-gray-200 bg-white text-text 
                      placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/30 
                      focus:border-primary transition-all"
