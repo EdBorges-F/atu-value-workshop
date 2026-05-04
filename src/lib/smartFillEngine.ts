@@ -23,7 +23,7 @@ export interface SmartFillResult {
 // Rejects org/role category labels that look superficially like names
 const _NON_PERSON_ORG_RE = /\b(leadership|management|team|group|board|committee|department|division)\b/i
 // Rejects Copilot's own suggestion/commentary lines that bleed into stakeholder sections
-const _COPILOT_COMMENTARY_RE = /^(if\s+you|i\s+can|next\s+steps?|converting|creating|generating|building|developing|drafting|let\s+me|here\s+are|you\s+can)/i
+const _COPILOT_COMMENTARY_RE = /^(if\s+you|i\s+can|next\s+steps?|converting|creating|generating|building|developing|drafting|let\s+me|here\s+are|you\s+can|format\s+(?:each|as|stakeholder)|note:|please\s+note)/i
 
 /**
  * Returns true only if `name` plausibly looks like a person's name.
@@ -37,7 +37,7 @@ const _looksLikePerson = (name: string): boolean => {
   if (/^(CIO|CTO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director|Managing|Chief|Head)\b/i.test(name)) return false
   if (/\band\b/i.test(name)) return false
   // Reject common sentence starters — catches Copilot commentary if it bypasses the section pre-filter
-  if (/^(if|the|a|an|for|with|to|in|on|at|by|from|i\s)\b/i.test(name)) return false
+  if (/^(if|the|a|an|for|with|to|in|on|at|by|from|i\s|format|each|note)\b/i.test(name)) return false
   const firstName = words[0]
   if (firstName.length < 2 || firstName.length > 15 || /\d/.test(firstName)) return false
   return true
@@ -65,18 +65,19 @@ const INDUSTRY_KEYWORDS: Record<string, string[]> = {
   'banking': ['banking', 'bank', 'financial services', 'fintech', 'deposit', 'lending', 'mortgage'],
   'capital-markets': ['capital markets', 'asset management', 'hedge fund', 'brokerage', 'wealth management', 'securities', 'derivatives', 'equity fund'],
   'consumer-goods': ['consumer goods', 'cpg', 'fmcg', 'food and beverage', 'consumer products', 'packaged goods', 'beverage', 'food service', 'foodservice', 'footwear brand', 'fashion brand', 'apparel brand'],
-  'energy-resources': ['energy', 'oil', 'gas', 'mining', 'utilities', 'renewable', 'power generation', 'petroleum', 'lime', 'limestone', 'minerals', 'chemicals'],
+  'energy-resources': ['energy', 'oil', 'gas', 'mining', 'utilities', 'renewable', 'power generation', 'petroleum', 'lime', 'limestone', 'minerals', 'chemicals', 'infrastructure', 'water treatment', 'waste management', 'power grid', 'utilities infrastructure'],
   'government': ['government', 'public sector', 'federal', 'state agency', 'municipal', 'defense', 'civic'],
   'healthcare-provider': ['healthcare', 'hospital', 'health system', 'clinical', 'patient care', 'physician', 'medical center'],
   'healthcare-medtech': ['medtech', 'medical device', 'pharma', 'pharmaceutical', 'biotech', 'life sciences', 'drug'],
   'higher-education': ['university', 'college', 'higher education', 'academic', 'campus', 'research institution'],
   'insurance': ['insurance', 'insurer', 'underwriting', 'claims', 'actuarial', 'policy', 'reinsurance'],
-  'manufacturing': ['manufacturing', 'factory', 'production', 'industrial', 'plant', 'assembly', 'fabrication', 'materials', 'footwear', 'shoes', 'apparel', 'fashion', 'clothing', 'textiles', 'garments', 'calcados', 'calçados'],
+  'manufacturing': ['manufacturing', 'factory', 'production', 'industrial', 'plant', 'assembly', 'fabrication', 'materials', 'footwear', 'shoes', 'apparel', 'fashion', 'clothing', 'textiles', 'garments', 'calcados', 'calçados', 'construction', 'heavy industry', 'civil engineering', 'building materials', 'steel', 'cement', 'concrete'],
   'media-entertainment': ['media', 'entertainment', 'broadcast', 'streaming', 'gaming', 'content', 'publishing', 'studio'],
   'mobility-travel': ['travel', 'hospitality', 'airline', 'hotel', 'transportation', 'logistics', 'fleet', 'tourism'],
   'retail': ['retail', 'e-commerce', 'ecommerce', 'store', 'shop', 'omnichannel', 'merchandise', 'restaurant', 'restaurants', 'dining', 'casual dining', 'quick service', 'hospitality', 'grocery'],
-  'telecommunications': ['telecom', 'telecommunications', 'carrier', 'network operator', 'broadband', '5g', 'wireless'],
-  'professional-services': ['consulting', 'professional services', 'legal', 'accounting', 'advisory', 'engineering services'],
+  'telecommunications': ['telecom', 'telecommunications', 'carrier', 'network operator', 'broadband', '5g', 'wireless', 'network infrastructure'],
+  'professional-services': ['consulting', 'professional services', 'legal', 'accounting', 'advisory', 'engineering services', 'engineering firm', 'infrastructure consulting'],
+  'real-estate': ['real estate', 'reit', 'property management', 'commercial property', 'commercial real estate', 'property development', 'facilities management', 'building management'],
 }
 
 const SIZE_PATTERNS: { pattern: RegExp; value: CompanySize; confidence: 'high' | 'medium' }[] = [
