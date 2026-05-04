@@ -6,6 +6,7 @@ import { CUSTOMER_STORIES } from '../../data/customer-stories'
 import { HERO_USE_CASES } from '../../data/hero-use-cases'
 import { PRIORITY_KEYWORDS } from '../../data/priority-keywords'
 import { isIndustryMatch, FRONTIER_PILLARS, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION } from '../../lib/valueStoryGenerator'
+import { scoreChallengesForIndustry, scoreUseCasePriorityMatch } from '../../lib/smartFillEngine'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
@@ -80,20 +81,9 @@ const DISCOVERY_THEMES = [
   },
 ] as const
 
-/** Score challenges based on free-text match against PRIORITY_KEYWORDS */
-function scoreChallenges(priorities: string) {
-  const lower = priorities.toLowerCase()
-  if (!lower.trim()) return new Map<string, number>()
-
-  const scores = new Map<string, number>()
-  for (const pk of PRIORITY_KEYWORDS) {
-    let score = 0
-    for (const kw of pk.keywords) {
-      if (lower.includes(kw.toLowerCase())) score++
-    }
-    if (score > 0) scores.set(pk.challengeId, score)
-  }
-  return scores
+/** Score challenges using the shared scorer (same logic as Smart Fill) */
+function scoreChallenges(priorities: string, industryId: string) {
+  return scoreChallengesForIndustry(priorities, industryId)
 }
 
 /** Count industry-matching customer stories per use case (from 1-pagers) */
@@ -162,7 +152,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
     return (priorities + ' ' + noteTexts).trim()
   }, [priorities, discoveryNotes])
 
-  const priorityScores = useMemo(() => scoreChallenges(allText), [allText])
+  const priorityScores = useMemo(() => scoreChallenges(allText, industryId), [allText, industryId])
 
   // Also compute which pillar themes have notes → which challenges they suggest
   const discoveryInsights = useMemo(() => {
@@ -229,9 +219,11 @@ export default function StepChallenges({ wizard }: WizardProps) {
         const evidenceNames = evidenceCount > 0 ? getEvidenceNames(uc, industryId) : []
         const challengeOverlap = uc.challengeIds.filter((cid) => selectedChallengeIds.includes(cid)).length
         const sizeMatch = uc.sizeRelevance.includes(data.companySize || 'enterprise')
-        // Scoring: challenge match first, then size fit, evidence is just a tiebreaker
+        const priorityMatch = scoreUseCasePriorityMatch(uc.id, allText)
+        // Scoring: challenge match first, then priority relevance, size fit, evidence tiebreaker
         const score =
           (challengeOverlap * 100) +
+          (priorityMatch * 20) +
           (sizeMatch ? 10 : 0) +
           (evidenceCount * 1)
         return { uc, score, isIndustry: true, evidenceCount, evidenceNames }
@@ -239,7 +231,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
       .sort((a, b) => b.score - a.score)
 
     return scored
-  }, [industryId, selectedChallengeIds, data.companySize])
+  }, [industryId, selectedChallengeIds, data.companySize, allText])
 
   // Auto-select recommended use cases when challenges change
   const prevChallengesRef = useMemo(() => ({ current: '' }), [])

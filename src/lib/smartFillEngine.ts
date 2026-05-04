@@ -103,6 +103,58 @@ const SIZE_RANGE_PATTERNS: { pattern: RegExp; value: CompanySize }[] = [
 ]
 
 /**
+ * Shared challenge scorer — single source of truth used by both Smart Fill
+ * extraction and StepChallenges UI. Returns Map<challengeId, score>.
+ * Uses word-boundary keyword matching + industry filter.
+ */
+export function scoreChallengesForIndustry(
+  text: string,
+  industryId?: string
+): Map<string, number> {
+  const normalised = _normalise(text)
+  if (!normalised.trim()) return new Map()
+
+  const scores = new Map<string, number>()
+  for (const pk of PRIORITY_KEYWORDS) {
+    if (industryId) {
+      const challenge = CHALLENGES.find(c => c.id === pk.challengeId)
+      if (challenge && !challenge.industryIds.includes(industryId)) continue
+    }
+    let score = 0
+    for (const kw of pk.keywords) {
+      if (_kwMatch(normalised, kw)) score++
+    }
+    if (score > 0) scores.set(pk.challengeId, score)
+  }
+  return scores
+}
+
+/**
+ * Score use cases against priorities text. Returns bonus score for each UC
+ * whose name/description words appear in the priorities.
+ */
+export function scoreUseCasePriorityMatch(
+  useCaseId: string,
+  prioritiesText: string
+): number {
+  const uc = USE_CASES.find(u => u.id === useCaseId)
+  if (!uc) return 0
+  const normalised = _normalise(prioritiesText)
+  if (!normalised.trim()) return 0
+
+  const ucWords = _normalise(uc.name + ' ' + (uc.description || ''))
+    .split(/\s+/)
+    .filter(w => w.length > 4)
+  // Deduplicate
+  const unique = [...new Set(ucWords)]
+  let hits = 0
+  for (const word of unique) {
+    if (_kwMatch(normalised, word)) hits++
+  }
+  return hits
+}
+
+/**
  * Extract structured data from pasted text.
  * Only populates fields that exist in the wizard.
  */
@@ -391,35 +443,17 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     }
   }
 
-  // 5. Challenge suggestions — match against priority keywords
-  // IMPORTANT: Only score challenges that are relevant to the detected industry,
-  // and score against PRIORITIES TEXT (not full text) so recommendations reflect research
+  // 5. Challenge suggestions — use shared scorer against priority text
   let suggestedChallengeIds: SmartFillResult['suggestedChallengeIds'] = null
   const detectedIndustry = industryId?.value as string | undefined
-  const priorityText = _normalise(
-    [...(sections.priorities ?? []), ...(sections.challenges ?? [])].join(' ')
-  )
-  const challengeScores = new Map<string, number>()
-  for (const pk of PRIORITY_KEYWORDS) {
-    // Only consider challenges that belong to the detected industry
-    if (detectedIndustry) {
-      const challenge = CHALLENGES.find(c => c.id === pk.challengeId)
-      if (challenge && !challenge.industryIds.includes(detectedIndustry)) continue
-    }
-    let score = 0
-    // Score against priorities/challenges text (the research output), not the full text
-    const textToScore = priorityText.length > 20 ? priorityText : normLower
-    for (const kw of pk.keywords) {
-      if (_kwMatch(textToScore, kw)) score++
-    }
-    if (score > 0) challengeScores.set(pk.challengeId, score)
-  }
+  const priorityText = [...(sections.priorities ?? []), ...(sections.challenges ?? [])].join(' ')
+  const textToScore = priorityText.length > 20 ? priorityText : normLower
+  const challengeScores = scoreChallengesForIndustry(textToScore, detectedIndustry)
   if (challengeScores.size > 0) {
     const sorted = [...challengeScores.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([id]) => id)
-    // Verify they exist in our challenges
     const valid = sorted.filter((id) => CHALLENGES.some((c) => c.id === id))
     if (valid.length > 0) {
       suggestedChallengeIds = {
