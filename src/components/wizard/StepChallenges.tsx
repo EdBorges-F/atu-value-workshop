@@ -154,6 +154,13 @@ export default function StepChallenges({ wizard }: WizardProps) {
 
   const priorityScores = useMemo(() => scoreChallenges(allText, industryId), [allText, industryId])
 
+  // Top-N star logic: only star the top 4 challenges with score >= 2
+  const topStarredIds = useMemo(() => {
+    const entries = [...priorityScores.entries()].filter(([, score]) => score >= 2)
+    entries.sort((a, b) => b[1] - a[1])
+    return new Set(entries.slice(0, 4).map(([id]) => id))
+  }, [priorityScores])
+
   // Also compute which pillar themes have notes → which challenges they suggest
   const discoveryInsights = useMemo(() => {
     const insights: { challengeId: string; reason: string }[] = []
@@ -425,7 +432,6 @@ export default function StepChallenges({ wizard }: WizardProps) {
         <div className="flex flex-wrap gap-2">
           {allChallenges.map((challenge) => {
             const isSelected = selectedChallengeIds.includes(challenge.id)
-            const matchScore = priorityScores.get(challenge.id) ?? 0
             return (
               <button
                 key={challenge.id}
@@ -441,16 +447,16 @@ export default function StepChallenges({ wizard }: WizardProps) {
                 `}
               >
                 {challenge.name}
-                {matchScore > 0 && !isSelected && (
+                {topStarredIds.has(challenge.id) && !isSelected && (
                   <span className="ml-1.5 text-xs text-accent">★</span>
                 )}
               </button>
             )
           })}
         </div>
-        {(priorityScores.size > 0) && (
+        {(topStarredIds.size > 0) && (
           <p className="text-xs text-text-secondary">
-            <span className="text-accent">★</span> = Matches priorities{discoveryCount > 0 ? ' & discovery notes' : ''}
+            <span className="text-accent">★</span> = Top matches to priorities{discoveryCount > 0 ? ' & discovery notes' : ''}
           </p>
         )}
       </section>
