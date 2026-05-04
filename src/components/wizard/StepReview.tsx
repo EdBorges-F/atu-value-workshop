@@ -262,9 +262,7 @@ export default function StepReview({ wizard }: WizardProps) {
                   </div>
                 ))}
               </div>
-              {allStories.length > 6 && (
-                <p className="text-[10px] text-text-secondary mt-2">+{allStories.length - 6} more published customer stories available</p>
-              )}
+
             </div>
           )
         })()}
