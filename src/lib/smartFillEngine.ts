@@ -392,12 +392,25 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   }
 
   // 5. Challenge suggestions — match against priority keywords
+  // IMPORTANT: Only score challenges that are relevant to the detected industry,
+  // and score against PRIORITIES TEXT (not full text) so recommendations reflect research
   let suggestedChallengeIds: SmartFillResult['suggestedChallengeIds'] = null
+  const detectedIndustry = industryId?.value as string | undefined
+  const priorityText = _normalise(
+    [...(sections.priorities ?? []), ...(sections.challenges ?? [])].join(' ')
+  )
   const challengeScores = new Map<string, number>()
   for (const pk of PRIORITY_KEYWORDS) {
+    // Only consider challenges that belong to the detected industry
+    if (detectedIndustry) {
+      const challenge = CHALLENGES.find(c => c.id === pk.challengeId)
+      if (challenge && !challenge.industryIds.includes(detectedIndustry)) continue
+    }
     let score = 0
+    // Score against priorities/challenges text (the research output), not the full text
+    const textToScore = priorityText.length > 20 ? priorityText : normLower
     for (const kw of pk.keywords) {
-      if (_kwMatch(normLower, kw)) score++
+      if (_kwMatch(textToScore, kw)) score++
     }
     if (score > 0) challengeScores.set(pk.challengeId, score)
   }
@@ -418,7 +431,6 @@ export function extractSmartFill(rawText: string): SmartFillResult {
 
   // 6. Cross-reference: suggest use cases that match detected industry + challenges + priorities
   let suggestedUseCaseIds: SmartFillResult['suggestedUseCaseIds'] = null
-  const detectedIndustry = industryId?.value as string | undefined
   const detectedChallenges = suggestedChallengeIds?.value as string[] | undefined
 
   if (detectedIndustry && detectedChallenges && detectedChallenges.length > 0) {
