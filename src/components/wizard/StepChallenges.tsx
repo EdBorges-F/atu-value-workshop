@@ -341,13 +341,28 @@ export default function StepChallenges({ wizard }: WizardProps) {
 
                     {isExpanded && (
                       <div id={`discovery-theme-${theme.pillarId}`} className="px-3 pb-3 space-y-2">
-                        <div className="space-y-1">
-                          {theme.questions.map((q, i) => (
-                            <p key={i} className="text-[11px] text-text-secondary flex items-start gap-1.5">
-                              <span className="text-primary mt-0.5">•</span>
-                              <span className="italic">"{q}"</span>
-                            </p>
-                          ))}
+                        <div className="flex flex-wrap gap-1.5">
+                          {theme.questions.map((q, i) => {
+                            const isUsed = (discoveryNotes[theme.pillarId] || '').includes(q)
+                            return (
+                              <button
+                                key={i}
+                                onClick={() => {
+                                  if (isUsed) return
+                                  const current = discoveryNotes[theme.pillarId] || ''
+                                  const separator = current.trim() ? '\n' : ''
+                                  updateNote(theme.pillarId, current + separator + `• ${q} → `)
+                                }}
+                                className={`text-[11px] text-left px-2.5 py-1.5 rounded-lg border transition-all ${
+                                  isUsed
+                                    ? 'opacity-50 border-primary/20 bg-primary/5 text-text-secondary cursor-default'
+                                    : 'border-gray-200 bg-white text-text hover:bg-primary/5 hover:border-primary/30 cursor-pointer'
+                                }`}
+                              >
+                                {isUsed ? '✓ ' : '+ '}<span className="italic">{q}</span>
+                              </button>
+                            )
+                          })}
                         </div>
                         <textarea
                           value={discoveryNotes[theme.pillarId] || ''}

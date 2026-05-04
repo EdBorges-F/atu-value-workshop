@@ -332,9 +332,9 @@ export default function StepValueStory({ wizard }: WizardProps) {
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors">
             📧 Exec Follow-up
           </a>
-          <a href="#cowork-frontier-deck"
+          <a href="#cowork-customer-presentation"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors">
-            📊 Executive Deck
+            🎯 Presentation Package
           </a>
           <a href="#cowork-customer-alignment"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors">
