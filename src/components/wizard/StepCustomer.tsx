@@ -37,7 +37,7 @@ Key challenges: They struggle with fragmented data across plants, aging equipmen
 const COPILOT_GATHER_PROMPT = `@Sales Agent — I need a company profile for [CUSTOMER NAME]. Search the web, CRM, my emails, and LinkedIn for this company.
 
 1. Company Name — (full legal/trading name)
-2. Website — (full URL, e.g. https://www.acme.com)
+2. Website — (full URL, e.g. https://www.contoso.com)
 3. Industry — (e.g. Manufacturing, Banking, Retail, Healthcare, Energy)
 4. Company Size — (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
 5. Strategic Priorities — Their top 3-5 business priorities
@@ -490,7 +490,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
           type="url"
           value={data.websiteUrl}
           onChange={(e) => updateData({ websiteUrl: e.target.value })}
-          placeholder="e.g., https://www.vituity.com"
+          placeholder="e.g., https://www.contoso.com"
           className="w-full px-4 py-3 rounded-[14px] border border-gray-200 bg-white text-text 
                      placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/30 
                      focus:border-primary transition-all"

@@ -238,13 +238,13 @@ export function extractSmartFill(rawText: string): SmartFillResult {
 
   // 1b. Website URL — extract from rawText (URLs are stripped from cleaned)
   let websiteUrl: SmartFillResult['websiteUrl'] = null
-  const _INTERNAL_URL_RE = /linkedin|microsoft|sharepoint|teams|office|graph|crm|dynamics|aka\.ms|bing|google/i
+  const _INTERNAL_URL_RE = /linkedin|microsoft|sharepoint|teams|office|graph|crm|dynamics|aka\.ms|bing|google|datanyze|zoominfo|pitchbook|equilar|incfact/i
   // Strategy: try multiple patterns against rawText in priority order
-  // Pattern A: labeled "Website" field with full URL (handles bold markers: **Website**)
+  // Pattern A: labeled "Website" field with full URL (handles bold markers, angle brackets <url>)
   if (!websiteUrl) {
-    const labeledUrlMatch = rawText.match(/\*{0,2}website\*{0,2}[\s:—–-]+\s*\[?(?:https?:\/\/[^\s\])"[\]]+|www\.[^\s\])"[\]]+)/i)
+    const labeledUrlMatch = rawText.match(/\*{0,2}website\*{0,2}[\s:—–-]+\s*[<\[]?(?:https?:\/\/[^\s\])"<>\[\]]+|www\.[^\s\])"<>\[\]]+)/i)
     if (labeledUrlMatch) {
-      let url = labeledUrlMatch[0].replace(/^.*?(?=https?:\/\/|www\.)/i, '').replace(/[\[\])\s.,;]+$/, '')
+      let url = labeledUrlMatch[0].replace(/^.*?(?=https?:\/\/|www\.)/i, '').replace(/[<>\[\])\s.,;]+$/, '')
       if (url.startsWith('www.')) url = `https://${url}`
       if (!_INTERNAL_URL_RE.test(url)) websiteUrl = { value: url, confidence: 'high' }
     }
