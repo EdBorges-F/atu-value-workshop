@@ -34,7 +34,7 @@ Strategic priorities:
 
 Key challenges: They struggle with fragmented data across plants, aging equipment requiring costly maintenance, and pressure to meet ESG targets while maintaining production output.`
 
-const COPILOT_GATHER_PROMPT = `@Sales Agent — I need a company profile for [CUSTOMER NAME]. Search the web, CRM, my emails, and LinkedIn.
+const COPILOT_GATHER_PROMPT = `@Sales Agent — I need a company profile for [CUSTOMER NAME]. Search the web, CRM, my emails, and LinkedIn for this company.
 
 1. Company Name — (full legal/trading name)
 2. Website — (full URL, e.g. https://www.acme.com)
@@ -42,7 +42,7 @@ const COPILOT_GATHER_PROMPT = `@Sales Agent — I need a company profile for [CU
 4. Company Size — (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
 5. Strategic Priorities — Their top 3-5 business priorities
 6. Key Challenges — Pain points or blockers
-7. Key Stakeholders — IMPORTANT: Search LinkedIn "[CUSTOMER NAME]" People page AND their company website Leadership/About page. For each role below, give me the real person's name:
+7. Key Stakeholders — Search their LinkedIn People page AND company website Leadership/About page. For each role below, give me the real person's name:
    CEO: [Name] — [Full Title]
    CFO: [Name] — [Full Title]
    CIO: [Name] — [Full Title]
