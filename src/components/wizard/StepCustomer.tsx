@@ -42,21 +42,15 @@ const COPILOT_GATHER_PROMPT = `@Sales Agent — I need a company profile for [CU
 4. Company Size — (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
 5. Strategic Priorities — Their top 3-5 business priorities
 6. Key Challenges — Pain points or blockers
-7. Key Stakeholders — For EACH role below, do a separate search:
-   • Check the company website Leadership/About/Team page
-   • Search "[COMPANY NAME] [ROLE]" on the web (e.g. "Contoso CIO")
-   • Check LinkedIn People page filtered by company
-   • Check The Org, The Official Board, or Equilar if still not found
-   For each role, give me the REAL person's name and current title:
-   CEO: [Name] — [Full Title]
-   CFO: [Name] — [Full Title]
-   CIO: [Name] — [Full Title]
-   CTO: [Name] — [Full Title]
-   CISO: [Name] — [Full Title]
-   CDO: [Name] — [Full Title]
-   VP IT: [Name] — [Full Title]
-   VP AI/Digital: [Name] — [Full Title]
-   (Only write "Not found" after searching ALL sources above for that specific role)
+7. Key Stakeholders — Find ALL C-level and senior VP+ executives at this company. Search:
+   • Company website Leadership/About/Team page
+   • Search "[COMPANY NAME] leadership team" on the web
+   • LinkedIn People page filtered by company + title
+   • The Org, The Official Board, or Equilar
+   List EVERY executive you find (not just tech roles). Include operational leaders, division heads, and functional chiefs:
+   [Title]: [Full Name] — [Full Title]
+   Examples of roles to look for: CEO, CFO, COO, CIO, CTO, CISO, CDO, CMO, CHRO, CAO, General Counsel, Chief Safety Officer, Chief Communications Officer, VP IT, VP Digital, VP Operations, SVP Engineering, Division Presidents, etc.
+   (Only write "Not found" for roles you specifically searched and confirmed do not exist)
 
 Format as plain text. No markdown, no bullet points, no links.`
 

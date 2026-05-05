@@ -409,17 +409,35 @@ export default function StepReview({ wizard }: WizardProps) {
                     className="text-xs rounded-lg border border-gray-200 px-2 py-1.5 bg-white text-text max-w-[220px] truncate"
                   >
                     <option value="">— Assign sponsor</option>
-                    {roles.map((role) => {
-                      const contact = data.crmContacts.find(c =>
-                        c.title.toLowerCase().includes(role.toLowerCase()) ||
-                        role.toLowerCase().includes(c.title.toLowerCase().split(' ')[0])
-                      )
-                      return (
-                        <option key={role} value={role}>
-                          {role}{contact ? ` — ${contact.name}` : ''}
-                        </option>
-                      )
-                    })}
+                    {/* Suggested roles for this pillar */}
+                    <optgroup label="Suggested roles">
+                      {roles.map((role) => {
+                        const contact = data.crmContacts.find(c =>
+                          c.title.toLowerCase().includes(role.toLowerCase()) ||
+                          role.toLowerCase().includes(c.title.toLowerCase().split(' ')[0])
+                        )
+                        return (
+                          <option key={role} value={role}>
+                            {role}{contact ? ` — ${contact.name}` : ''}
+                          </option>
+                        )
+                      })}
+                    </optgroup>
+                    {/* All extracted contacts from Smart Fill */}
+                    {data.crmContacts.length > 0 && (
+                      <optgroup label="From Smart Fill">
+                        {data.crmContacts
+                          .filter(c => !roles.some(r =>
+                            c.title.toLowerCase().includes(r.toLowerCase()) ||
+                            r.toLowerCase().includes(c.title.toLowerCase().split(' ')[0])
+                          ))
+                          .map((c, i) => (
+                            <option key={`crm-${i}`} value={c.title}>
+                              {c.title} — {c.name}
+                            </option>
+                          ))}
+                      </optgroup>
+                    )}
                   </select>
                   {matchedContact && (
                     <span className="text-[9px] text-emerald-600 font-medium whitespace-nowrap">

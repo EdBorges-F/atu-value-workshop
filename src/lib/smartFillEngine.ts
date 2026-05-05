@@ -34,7 +34,7 @@ const _looksLikePerson = (name: string): boolean => {
   const words = name.trim().split(/\s+/)
   if (words.length < 2) return false
   if (_NON_PERSON_ORG_RE.test(name)) return false
-  if (/^(CIO|CTO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director|Managing|Chief|Head)\b/i.test(name)) return false
+  if (/^(CIO|CTO|CISO|CFO|CEO|COO|CRO|CMO|CHRO|CAO|VP|SVP|EVP|Director|Managing|Chief|Head|General\s+Counsel|Division)\b/i.test(name)) return false
   if (/\band\b/i.test(name)) return false
   // Reject common sentence starters — catches Copilot commentary if it bypasses the section pre-filter
   if (/^(if|the|a|an|for|with|to|in|on|at|by|from|i\s|format|each|note)\b/i.test(name)) return false
@@ -534,9 +534,10 @@ export function extractSmartFill(rawText: string): SmartFillResult {
 
   // Pattern 0: "TITLE_ABBREV: Name — Full Title (source: xxx)" format
   // e.g. "CIO: Amith Nair — Chief Information Officer (source: CRM)"
+  // e.g. "Chief Safety Officer: Adam Lanier — Chief Safety Officer"
   for (let i = 0; i < stakeholderLines.length; i++) {
     const line = stakeholderLines[i]
-    const smartFillMatch = line.match(/^(?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director)(?:\s+(?:of|for)\s+[\w\s]+?)?\s*:\s*(.+?)\s+[-–—]\s+(.+)/i)
+    const smartFillMatch = line.match(/^(?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|CMO|CHRO|CAO|VP|SVP|EVP|Director|General\s+Counsel|Chief\s+\w+(?:\s+\w+)?\s*Officer|Division\s+President)(?:\s+(?:of|for)\s+[\w\s]+?)?\s*:\s*(.+?)\s+[-–—]\s+(.+)/i)
     if (smartFillMatch) {
       const nameCandidate = smartFillMatch[1].trim()
       const titleCandidate = smartFillMatch[2].replace(/\s*\(source:.*?\)\s*/gi, '').trim()
@@ -562,7 +563,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     }
     // Pattern 1b: "Title: Name" or "Title — Name" (title-first format)
     // Only match when the value after separator looks like a person name (not "Name — Title")
-    const titleFirstMatch = line.match(/^((?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director|Managing Director|Chief\s+\w+\s*Officer)[^:–—,]*)\s*[-–—:,]\s*(.+)/i)
+    const titleFirstMatch = line.match(/^((?:CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|CMO|CHRO|CAO|VP|SVP|EVP|Director|Managing Director|General\s+Counsel|Chief\s+\w+(?:\s+\w+)?\s*Officer|Division\s+President)[^:–—,]*)\s*[-–—:,]\s*(.+)/i)
     if (titleFirstMatch) {
       const afterSep = titleFirstMatch[2].trim()
       // If afterSep contains a secondary separator (—), it's "ABBREV: Name — Full Title" — handled by Pattern 0
@@ -587,7 +588,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   }
 
   // Pattern 3: Inline "Name (Title)" — ALWAYS runs (supplements, not fallback)
-  const C_TITLES = 'CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|VP|SVP|EVP|Director|Sr\\.?\\s*Director|Chief\\s+\\w+\\s*Officer|Head\\s+of'
+  const C_TITLES = 'CTO|CIO|CDO|CISO|CFO|CEO|COO|CRO|CMO|CHRO|CAO|VP|SVP|EVP|Director|Sr\\.?\\s*Director|Managing Director|General\\s+Counsel|Chief\\s+\\w+(?:\\s+\\w+)?\\s*Officer|Head\\s+of|Division\\s+President'
   const inlinePattern = new RegExp(`(${NAME_RE.source})\\s*\\((?:${C_TITLES})[^)]*\\)`, 'gi')
   let m
   while ((m = inlinePattern.exec(rawText)) !== null) {
