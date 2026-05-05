@@ -391,7 +391,10 @@ export default function StepReview({ wizard }: WizardProps) {
             const roles = suggested?.roles ?? ['CIO', 'CTO', 'CFO']
             // Enrich: find a CRM contact whose title matches the assigned role
             const matchedContact = assignedTitle
-              ? data.crmContacts.find(c => c.title.toLowerCase().includes(assignedTitle.toLowerCase()) || assignedTitle.toLowerCase().includes(c.title.toLowerCase().split(' ')[0]))
+              ? data.crmContacts.find(c => c?.title && (
+                  c.title.toLowerCase().includes(assignedTitle.toLowerCase()) ||
+                  assignedTitle.toLowerCase().includes(c.title.toLowerCase().split(' ')[0])
+                ))
               : null
             return (
               <div key={pillarId} className="flex items-center gap-3 px-5 py-3">
@@ -431,8 +434,8 @@ export default function StepReview({ wizard }: WizardProps) {
                             c.title.toLowerCase().includes(r.toLowerCase()) ||
                             r.toLowerCase().includes(c.title.toLowerCase().split(' ')[0])
                           ))
-                          .map((c, i) => (
-                            <option key={`crm-${i}`} value={c.title}>
+                          .map((c) => (
+                            <option key={`${c.name}-${c.title}`} value={c.title}>
                               {c.title} — {c.name}
                             </option>
                           ))}

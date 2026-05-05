@@ -520,7 +520,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
   }
 
   // Flexible name regex: allows periods (Dr., Jr.), lowercase particles (de, van, la), 2-5 words
-  const NAME_RE = /[A-Z][a-zA-Z.''-]+(?:\s+(?:de|van|von|la|del|di|el|al|bin|da)\s+)?(?:\s+[A-Za-z.''-]+){1,4}/
+  const NAME_RE = /[A-Z][a-zA-Z.''-]+(?:\s+(?:de|van|von|la|del|di|el|al|bin|da))?(?:\s+[A-Z][a-zA-Z.''-]+){1,4}/
 
   // Pre-filter: strip Copilot's own commentary lines from stakeholder section before extraction
   // (e.g. "If you want next steps I can support include: Converting this into...")

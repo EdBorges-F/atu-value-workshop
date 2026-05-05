@@ -771,8 +771,9 @@ export function generateValueStory(data: WizardData): ValueStory {
           }
           // Cross-reference crmContacts to find a name for this title
           const matchedContact = data.crmContacts?.find(c =>
-            c.title.toLowerCase().includes(title!.toLowerCase()) ||
-            title!.toLowerCase().includes(c.title.toLowerCase().split(' ')[0])
+            c?.title && title &&
+            (c.title.toLowerCase().includes(title.toLowerCase()) ||
+             title.toLowerCase().includes(c.title.toLowerCase().split(' ')[0]))
           )
           const nameStr = matchedContact ? `${matchedContact.name} (${title})` : title
           return `- ${pillarNames[pillarId] || pillarId}: ${nameStr}`
