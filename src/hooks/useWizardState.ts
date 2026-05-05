@@ -13,8 +13,8 @@ export interface WizardData {
   confidence: Record<string, 'high' | 'medium' | 'low'>
   // CRM Contacts (from Smart Fill)
   crmContacts: CRMContact[]
-  // Stakeholder assignments: pillarId → CRM contact assigned by AE in Step 4 (Exec Summary)
-  pillarOwners: Record<string, CRMContact | null>
+  // Stakeholder assignments: pillarId → C-level title selected by AE (e.g. "CIO", "COO")
+  pillarOwners: Record<string, string | null>
   // Step 2: Challenges & Use Cases
   selectedChallengeIds: string[]
   selectedUseCaseIds: string[]

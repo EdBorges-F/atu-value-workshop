@@ -1,6 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import type { useWizardState } from '../../hooks/useWizardState'
-import type { CRMContact } from '../../hooks/useWizardState'
 import { INDUSTRIES } from '../../data/industries'
 import { CHALLENGES } from '../../data/challenges'
 import { generateValueStory, SECURITY_FOUNDATION } from '../../lib/valueStoryGenerator'
@@ -375,9 +374,7 @@ export default function StepReview({ wizard }: WizardProps) {
           <div className="flex-1 min-w-0">
             <h3 className="text-sm font-bold text-text">Stakeholder Assignment</h3>
             <p className="text-[10px] text-text-secondary mt-0.5">
-              {data.crmContacts.length > 0
-                ? 'Assign a business champion to each pillar — carried into your Action Center prompts'
-                : 'Add CRM contacts via Smart Fill in Step 1 to assign executive sponsors'}
+              Assign an executive sponsor title to each pillar — names from Smart Fill are matched automatically
             </p>
           </div>
           {Object.values(data.pillarOwners).filter(Boolean).length > 0 && (
@@ -389,8 +386,13 @@ export default function StepReview({ wizard }: WizardProps) {
         <div className="divide-y divide-gray-50">
           {story.pillarSections.map(section => {
             const pillarId = section.pillar.id
-            const assigned: CRMContact | null = data.pillarOwners[pillarId] ?? null
+            const assignedTitle: string | null = data.pillarOwners[pillarId] ?? null
             const suggested = story.stakeholderMap.find(e => e.pillar === section.pillar.fullName)
+            const roles = suggested?.roles ?? ['CIO', 'CTO', 'CFO']
+            // Enrich: find a CRM contact whose title matches the assigned role
+            const matchedContact = assignedTitle
+              ? data.crmContacts.find(c => c.title.toLowerCase().includes(assignedTitle.toLowerCase()) || assignedTitle.toLowerCase().includes(c.title.toLowerCase().split(' ')[0]))
+              : null
             return (
               <div key={pillarId} className="flex items-center gap-3 px-5 py-3">
                 <span className="text-xl flex-shrink-0">{section.pillar.icon}</span>
@@ -398,27 +400,33 @@ export default function StepReview({ wizard }: WizardProps) {
                   <p className="text-xs font-bold text-text">{section.pillar.fullName}</p>
                   <p className="text-[10px] text-text-secondary">{section.useCases.length} use case{section.useCases.length !== 1 ? 's' : ''}</p>
                 </div>
-                {data.crmContacts.length > 0 ? (
+                <div className="flex items-center gap-2">
                   <select
-                    value={assigned ? (assigned.email ?? assigned.name) : ''}
+                    value={assignedTitle ?? ''}
                     onChange={e => {
-                      const contact = data.crmContacts.find(c => (c.email ?? c.name) === e.target.value) ?? null
-                      updateData({ pillarOwners: { ...data.pillarOwners, [pillarId]: contact } })
+                      updateData({ pillarOwners: { ...data.pillarOwners, [pillarId]: e.target.value || null } })
                     }}
                     className="text-xs rounded-lg border border-gray-200 px-2 py-1.5 bg-white text-text max-w-[220px] truncate"
                   >
                     <option value="">— Assign sponsor</option>
-                    {data.crmContacts.map((c, i) => (
-                      <option key={i} value={c.email ?? c.name}>
-                        {c.name}{c.title ? ` · ${c.title}` : ''}
-                      </option>
-                    ))}
+                    {roles.map((role) => {
+                      const contact = data.crmContacts.find(c =>
+                        c.title.toLowerCase().includes(role.toLowerCase()) ||
+                        role.toLowerCase().includes(c.title.toLowerCase().split(' ')[0])
+                      )
+                      return (
+                        <option key={role} value={role}>
+                          {role}{contact ? ` — ${contact.name}` : ''}
+                        </option>
+                      )
+                    })}
                   </select>
-                ) : (
-                  <p className="text-[10px] text-text-secondary italic text-right max-w-[200px] leading-snug">
-                    {suggested?.roles[0] ?? 'Executive sponsor'}
-                  </p>
-                )}
+                  {matchedContact && (
+                    <span className="text-[9px] text-emerald-600 font-medium whitespace-nowrap">
+                      ✓ {matchedContact.name}
+                    </span>
+                  )}
+                </div>
               </div>
             )
           })}

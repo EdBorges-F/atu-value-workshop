@@ -42,7 +42,12 @@ const COPILOT_GATHER_PROMPT = `@Sales Agent — I need a company profile for [CU
 4. Company Size — (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
 5. Strategic Priorities — Their top 3-5 business priorities
 6. Key Challenges — Pain points or blockers
-7. Key Stakeholders — Search their LinkedIn People page AND company website Leadership/About page. For each role below, give me the real person's name:
+7. Key Stakeholders — For EACH role below, do a separate search:
+   • Check the company website Leadership/About/Team page
+   • Search "[COMPANY NAME] [ROLE]" on the web (e.g. "Contoso CIO")
+   • Check LinkedIn People page filtered by company
+   • Check The Org, The Official Board, or Equilar if still not found
+   For each role, give me the REAL person's name and current title:
    CEO: [Name] — [Full Title]
    CFO: [Name] — [Full Title]
    CIO: [Name] — [Full Title]
@@ -51,7 +56,7 @@ const COPILOT_GATHER_PROMPT = `@Sales Agent — I need a company profile for [CU
    CDO: [Name] — [Full Title]
    VP IT: [Name] — [Full Title]
    VP AI/Digital: [Name] — [Full Title]
-   (If not found after searching: "Not found — [Role]")
+   (Only write "Not found" after searching ALL sources above for that specific role)
 
 Format as plain text. No markdown, no bullet points, no links.`
 

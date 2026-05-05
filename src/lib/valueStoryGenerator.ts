@@ -762,14 +762,20 @@ export function generateValueStory(data: WizardData): ValueStory {
   const pillarOwnersBlock = data.pillarOwners && Object.keys(data.pillarOwners).length > 0
     ? '\n\nCONFIRMED EXECUTIVE SPONSORS (assigned by AE):\n' +
       Object.entries(data.pillarOwners)
-        .filter(([, contact]) => contact != null)
-        .map(([pillarId, contact]) => {
+        .filter(([, title]) => title != null && title !== '')
+        .map(([pillarId, title]) => {
           const pillarNames: Record<string, string> = {
             enrich: 'Employee Experience (Enrich)', reshape: 'Business Processes (Reshape)',
             reinvent: 'Customer Engagement (Reinvent)', bend: 'Innovation (Bend)',
             intelligence: 'Data & Intelligence', security: 'Security & Trust',
           }
-          return `- ${pillarNames[pillarId] || pillarId}: ${contact!.name} — ${contact!.title}`
+          // Cross-reference crmContacts to find a name for this title
+          const matchedContact = data.crmContacts?.find(c =>
+            c.title.toLowerCase().includes(title!.toLowerCase()) ||
+            title!.toLowerCase().includes(c.title.toLowerCase().split(' ')[0])
+          )
+          const nameStr = matchedContact ? `${matchedContact.name} (${title})` : title
+          return `- ${pillarNames[pillarId] || pillarId}: ${nameStr}`
         })
         .join('\n')
     : ''
