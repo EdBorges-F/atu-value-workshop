@@ -138,8 +138,10 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     storyUrl: 'https://www.microsoft.com/en/customers/story/1703068127118880263-conagra-brands-microsoft-teams-united-states',
     challengeIds: ['workforce-modernization', 'security-compliance'],
     keyMetrics: [
+      'Peer-led AI upskilling via workshops and hackathons',
+      'Governance-first SteerCo for AI risk and access',
     ],
-    summary: 'Conagra Brands has a well-established culture of embracing technology. What began as a grassroots movement to explore Microsoft Copilot quickly grew into an initiative that empowers employees through hands-on, peer-led workshops and hackathons designed to demystify AI. Today, employees are upskilling and progressing to more advanced training, while business leaders continue to embrace AI and encourage innovation.',
+    summary: 'Conagra Brands has a well-established cultureof embracing technology. What began as a grassroots movement to explore Microsoft Copilot quickly grew into an initiative that empowers employees through hands-on, peer-led workshops and hackathons designed to demystify AI. Today, employees are upskilling and progressing to more advanced training, while business leaders continue to embrace AI and encourage innovation.',
     quotes: [
       'Laying the foundation of proper governance, observability, and responsible AI was our first step to engaging our employees with AI. To do that, we built a SteerCo to review risk factors, access, and identity management.'
     ],
@@ -152,8 +154,10 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     product: 'Microsoft 365 Copilot',
     challengeIds: ['operational-efficiency', 'knowledge-management', 'autonomous-systems'],
     keyMetrics: [
+      'AI-powered lease audit replacing manual PDF review',
+      'Source-cited evidence for higher-risk leases',
     ],
-    summary: 'Crowe helps clients move from manual lease PDF hunting to audit-ready AI. Crowe built a lease audit AI agent on the Microsoft AI stack\u2014Azure for document understanding and retrieval, plus Copilot Studio and Power Apps to operationalize workflows. The agent runs continuously to surface higher-risk leases with source-cited evidence, helping teams verify terms faster and reduce audit risk.',
+    summary: 'Crowe helps clients move from manual lease PDF huntingto audit-ready AI. Crowe built a lease audit AI agent on the Microsoft AI stack\u2014Azure for document understanding and retrieval, plus Copilot Studio and Power Apps to operationalize workflows. The agent runs continuously to surface higher-risk leases with source-cited evidence, helping teams verify terms faster and reduce audit risk.',
     quotes: [
       'Copilot puts AI where the work happens. People are already in Word, Outlook, PowerPoint, and Excel. Use AI in the flow of that work. It\u2019s a little button\u2014you click it, and you\u2019re using it. That\u2019s how it becomes normal.'
     ],
@@ -200,6 +204,9 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     storyUrl: 'https://www.microsoft.com/en/customers/story/26137-emsteel-microsoft-fabric',
     challengeIds: ['operational-efficiency', 'security-compliance', 'data-analytics'],
     keyMetrics: [
+      'Full compliance achieved',
+      'Cut incident response times',
+      'Accelerated time to market',
     ],
     summary: 'Fragmented systems and expanding cyber risks slowed decisions at EMSTEEL, while regulatory demands threatened agility. EMSTEEL deployed Microsoft Fabric to unify OT and IT data, Microsoft Foundry for scalability, and Microsoft Entra ID for secure access. EMSTEEL increased operational efficiency, cut incident response times, reached full compliance, and lifted productivity across every site.',
     quotes: [
@@ -354,8 +361,10 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     product: 'Azure',
     challengeIds: ['customer-experience', 'operational-efficiency', 'innovation-speed'],
     keyMetrics: [
+      'Real-time network data for field technicians',
+      'Faster issue resolution improving service reliability',
     ],
-    summary: 'MEO aimed to stay ahead as the telecom market evolved\u2014while continuing to improve customer experience and operational efficiency. MEO built a modular \u201cAI factory\u201d on Azure and launched a real-time AI assistant that gives technicians instant, governed network insights.',
+    summary: 'MEO aimed to stay aheadas the telecom market evolved\u2014while continuing to improve customer experience and operational efficiency. MEO built a modular \u201cAI factory\u201d on Azure and launched a real-time AI assistant that gives technicians instant, governed network insights.',
     quotes: [
       'We\'re already seeing the benefits of deploying new use cases more rapidly than expected to other operational components like, for instance, planned interventions and disaster recovery impacts.'
     ],
@@ -430,6 +439,8 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     product: 'Microsoft 365 Copilot',
     challengeIds: ['customer-experience', 'workforce-modernization', 'operational-efficiency'],
     keyMetrics: [
+      'Thousands of hours saved across operations',
+      'AI Tracy: real-time passenger support agent',
     ],
     summary: 'As one of the world\u2019s busiest rail operators, MTR manages complex operations and high service expectations. MTR adopted Microsoft 365 Copilot to automate drafting, summarisation, and analysis, while Power Platform enabled governed low-code solutions and role-based copilots. With AI embedded into everyday work, MTR reduced manual effort, improved turnaround times, and strengthened operational consistency.',
     quotes: [
@@ -526,8 +537,10 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     storyUrl: 'https://www.microsoft.com/en/customers/story/25880-swiss-post-microsoft-365-copilot/',
     challengeIds: ['workforce-modernization', 'operational-efficiency'],
     keyMetrics: [
+      '45,000 employees empowered with Copilot Chat',
+      'Agent Factory for scaling AI agent development',
     ],
-    summary: 'To sustain excellence in service delivery, Swiss Post reimagined how work happens across every team. Partnering with Campana & Schott and Microsoft, Swiss Post launched one of the most ambitious AI adoption programs in the public sector, empowering a diverse workforce of frontline workers and administrative teams. Together they have delivered measurable results that extend well beyond technology adoption.',
+    summary: 'To sustain excellence in service delivery, Swiss Postreimagined how work happens across every team. Partnering with Campana & Schott and Microsoft, Swiss Post launched one of the most ambitious AI adoption programs in the public sector, empowering a diverse workforce of frontline workers and administrative teams. Together they have delivered measurable results that extend well beyond technology adoption.',
   },
   {
     id: 'toyota-leasing-thailand',
@@ -537,6 +550,8 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     storyUrl: 'https://www.microsoft.com/en/customers/story/25882-toyota-leasing-thailand-microsoft-security-copilot/',
     challengeIds: ['security-compliance', 'risk-management'],
     keyMetrics: [
+      'SOC response times: hours to minutes',
+      'Eliminated multi-tool switching for analysts',
     ],
     summary: 'Toyota Leasing Thailand provides financing, insurance, and mobility services. Frequent cyberattacks, especially phishing, put customer trust under pressure. The team turned to Microsoft Security Copilot, integrating it with Defender, Entra, and Purview. Security Copilot summarizes phishing incidents, classifies alerts, and generates leadership-ready reports, reducing tool-switching and providing leadership with a clear chain from risk to action to outcome.',
     quotes: [
@@ -584,6 +599,8 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
     storyUrl: 'https://www.microsoft.com/en/customers/story/26393-wipro-microsoft-365-copilot/',
     challengeIds: ['workforce-modernization', 'knowledge-management'],
     keyMetrics: [
+      'Improved recognition consistency at scale',
+      'Reduced manual HR audit effort',
     ],
     summary: 'Wipro faced uneven employee recognition, limited manager bandwidth, and manual HR audits. Wipro embedded the Vantage Circle agent into Microsoft 365 Copilot, integrating with enterprise data and workflows including Dynamics 365. With Copilot-powered insights and automation, Wipro improved recognition consistency, increased early adoption, reduced manual effort, and gave leaders data-driven visibility into employee contributions at scale.',
     quotes: [
