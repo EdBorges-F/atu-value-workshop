@@ -1,6 +1,6 @@
 import type { CustomerStory } from './types';
 
-// 63 Microsoft customer stories — verified against microsoft.com/customers pages
+// 85 customer stories — verified against microsoft.com/customers pages
 
 export const CUSTOMER_STORIES: CustomerStory[] = [
   {
@@ -369,55 +369,7 @@ export const CUSTOMER_STORIES: CustomerStory[] = [
       'We\'re already seeing the benefits of deploying new use cases more rapidly than expected to other operational components like, for instance, planned interventions and disaster recovery impacts.'
     ],
   },
-  {
-    id: 'microsoft-copilot-studio',
-    company: 'Microsoft',
-    industry: 'technology',
-    product: 'Microsoft Copilot Studio',
-    storyUrl: '',
-    challengeIds: ['operational-efficiency', 'innovation-speed'],
-    keyMetrics: [
-      '61% lower latency',
-      '70% fewer human escalations',
-      '10x more likely to sign up for services'
-    ],
-    summary: 'Microsoft used Copilot Studio to build \u201cAsk Microsoft,\u201d a web agent helping millions of customers on Microsoft.com. As traffic grew, customers experienced longer wait times. Microsoft solved this by building a faster agent that orchestrates specialized sub-agents. The updated agent achieved up to 61% lower latency, up to 70% fewer human escalations, and customers are ten times more likely to sign up for services.',
-    quotes: [
-      'Working with Copilot Studio made it easy to scale a low-code solution across Microsoft properties without technical overhead or custom development.'
-    ],
-  },
-  {
-    id: 'microsoft-foundry',
-    company: 'Microsoft',
-    industry: 'technology',
-    product: 'Microsoft Foundry',
-    storyUrl: '',
-    challengeIds: ['revenue-growth', 'data-analytics', 'customer-experience'],
-    keyMetrics: [
-      '$10M in value delivered',
-      '100,000+ customer voice inputs embedded into marketing workflows'
-    ],
-    summary: 'Microsoft built the AI Messaging Assistant (AMA), a generative AI application grounded in 100,000+ proprietary customer voice inputs that embeds customer intelligence directly into marketing workflows, delivering structured insights in real time. Customer intelligence now reaches decisions previously out of range, delivering approximately $10M in value.',
-    quotes: [
-      'Customer intelligence creates advantage when it compounds. That requires it to operate as a strategic, repeatable asset\u2014moving beyond one-time reports to become a trusted, continuously accessible input embedded directly in marketing workflow.'
-    ],
-  },
-  {
-    id: 'microsoft-sustainability',
-    company: 'Microsoft',
-    industry: 'technology',
-    product: 'Microsoft Power Platform',
-    storyUrl: 'https://www.microsoft.com/en/customers/story/26164-microsoft-microsoft-power-platform',
-    challengeIds: ['sustainability', 'digital-transformation'],
-    keyMetrics: [
-      '94% reduction in review time per submission',
-      'From 35 minutes to under 2 minutes per review'
-    ],
-    summary: 'Microsoft Sustainability Manager provides a complete solution for environmental sustainability management. Built on Power Platform, it enables organizations to record, report, and reduce emissions. Microsoft uses it for its own supply chain emissions tracking. By customizing with AI-driven automation, average review time per submission was reduced from approximately 35 minutes to under two minutes\u2014a 94% reduction.',
-    quotes: [
-      'Sustainability Manager was built on the goodness of Power Platform, making it extensible for our customers to customize - and our partners to deliver their own native solutions.'
-    ],
-  },
+
   {
     id: 'morningstar-inc',
     company: 'Morningstar Inc',
