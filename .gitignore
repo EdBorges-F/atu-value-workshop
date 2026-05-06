@@ -33,6 +33,7 @@ meeting-invites/
 
 # Generated artifacts
 Frontier-Canvas-Tester-Guide.pdf
+Frontier-Canvas-Tester-Guide.md
 generate-tester-guide.py
 
 # Internal / NDA-gated content (not for public repo)
