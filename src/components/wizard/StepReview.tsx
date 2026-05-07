@@ -450,10 +450,16 @@ export default function StepReview({ wizard }: WizardProps) {
                     {data.crmContacts.length > 0 && (
                       <optgroup label="From Smart Fill">
                         {data.crmContacts
-                          .filter(c => !roles.some(r =>
-                            c.title.toLowerCase().includes(r.toLowerCase()) ||
-                            r.toLowerCase().includes(c.title.toLowerCase().split(' ')[0])
-                          ))
+                          .filter(c => {
+                            // Exclude board-only directors (title is just "Director" with no functional qualifier)
+                            const t = c.title.toLowerCase().trim()
+                            if (t === 'director' || t === 'board director' || t === 'board member') return false
+                            // Exclude contacts already shown in suggested roles
+                            return !roles.some(r =>
+                              c.title.toLowerCase().includes(r.toLowerCase()) ||
+                              r.toLowerCase().includes(c.title.toLowerCase().split(' ')[0])
+                            )
+                          })
                           .map((c) => (
                             <option key={`${c.name}-${c.title}`} value={c.title}>
                               {c.title} — {c.name}
