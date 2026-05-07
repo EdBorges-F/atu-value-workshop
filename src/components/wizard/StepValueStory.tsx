@@ -465,10 +465,21 @@ export default function StepValueStory({ wizard }: WizardProps) {
             <span className="text-lg">🚀</span>
             <h3 className="text-sm font-bold text-text-primary">Cowork Prompts</h3>
             <span className="text-[10px] text-text-secondary bg-gray-100 px-2 py-0.5 rounded-full">{story.coworkPrompts.length} deliverables</span>
+            <a
+              href="https://aka.ms/cowork"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium
+                         bg-primary/10 text-primary hover:bg-primary/20 transition-all"
+            >
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                <path d="M10 2.5a.75.75 0 0 1 .712.513l1.537 4.613 4.613 1.537a.75.75 0 0 1 0 1.424l-4.613 1.537-1.537 4.613a.75.75 0 0 1-1.424 0L7.75 12.124l-4.613-1.537a.75.75 0 0 1 0-1.424l4.613-1.537 1.537-4.613A.75.75 0 0 1 10 2.5z"/>
+              </svg> Open Cowork
+            </a>
           </div>
           <p className="text-sm text-text-secondary">
             Each prompt generates a <strong>real deliverable</strong> — an Outlook email draft, PowerPoint deck, or Word document.
-            Copy → Paste into <a href="https://aka.ms/cowork" target="_blank" rel="noopener" className="text-primary font-semibold hover:underline">Microsoft 365 Copilot Cowork ↗</a> and it will create the file for you, pre-loaded with {data.companyName}'s full context.
+            Copy → Paste into <a href="https://aka.ms/cowork" target="_blank" rel="noopener" className="text-primary font-semibold hover:underline">Cowork ↗</a> and it will create the file for you, pre-loaded with {data.companyName}'s full context.
           </p>
           <div className="grid gap-3">
             {story.coworkPrompts.map((prompt) => (

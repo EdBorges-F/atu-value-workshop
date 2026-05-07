@@ -217,7 +217,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
           >
             <span className="text-lg">🚀</span>
             <span className="text-sm font-semibold text-primary">Start Here</span>
-            <span className="text-xs text-text-secondary">Paste your Copilot account summary to auto-fill</span>
+            <span className="text-xs text-text-secondary">Gather your account summary with Copilot Chat</span>
             <span className="text-text-secondary text-sm">{smartFillOpen ? '▾' : '▸'}</span>
           </button>
           <a
@@ -229,7 +229,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
           >
             <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
               <path d="M10 2.5a.75.75 0 0 1 .712.513l1.537 4.613 4.613 1.537a.75.75 0 0 1 0 1.424l-4.613 1.537-1.537 4.613a.75.75 0 0 1-1.424 0L7.75 12.124l-4.613-1.537a.75.75 0 0 1 0-1.424l4.613-1.537 1.537-4.613A.75.75 0 0 1 10 2.5z"/>
-            </svg> Open Copilot
+            </svg> Open Copilot Chat
           </a>
         </div>
 
@@ -255,7 +255,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
             {/* Copilot Prompt to gather data */}
             <div className="p-3 rounded-[10px] bg-primary/5 border border-primary/10 space-y-2">
               <p className="text-xs font-medium text-primary">
-                Step 1: Copy this prompt → Paste into Copilot → Get your account summary
+                Step 1: Copy this prompt → Paste into <a href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener" className="font-bold underline">Copilot Chat</a> → Get your account summary
               </p>
               <p className="text-[11px] text-text/60">
                 Only replace <span className="font-semibold text-primary">[CUSTOMER NAME]</span> before pasting — everything else is ready
