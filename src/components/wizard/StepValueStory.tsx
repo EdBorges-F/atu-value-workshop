@@ -87,14 +87,23 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
 
 function CoworkCard({ prompt }: { prompt: CoworkPrompt }) {
   const [expanded, setExpanded] = useState(false)
+  const phaseConfig = {
+    prep: { label: 'Prep', color: 'bg-blue-100 text-blue-700' },
+    meeting: { label: 'Meeting', color: 'bg-green-100 text-green-700' },
+    after: { label: 'After', color: 'bg-orange-100 text-orange-700' },
+  }
+  const phase = phaseConfig[prompt.phase]
   return (
     <div className="p-4 rounded-2xl border border-gray-100 bg-white hover:shadow-md transition-all">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="text-xl">{prompt.icon}</span>
           <div>
-            <p className="font-semibold text-sm text-text">{prompt.label}</p>
-            <p className="text-xs text-text-secondary">{prompt.description}</p>
+            <div className="flex items-center gap-2">
+              <p className="font-semibold text-sm text-text">{prompt.label}</p>
+              <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${phase.color}`}>{phase.label}</span>
+            </div>
+            <p className="text-xs text-text-secondary mt-0.5">{prompt.description}</p>
           </div>
         </div>
         <CopyButton text={prompt.prompt} />
@@ -328,13 +337,13 @@ export default function StepValueStory({ wizard }: WizardProps) {
           <p className="text-xs text-gray-400 mt-1">{story.pillarSections.length} pillars · {story.pillarSections.reduce((s,p)=>s+p.useCases.length,0)} use cases · {totalEvidenceCount} customer stories</p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <a href="#cowork-exec-email"
+          <a href="#cowork-exec-summary"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors">
-            📧 Exec Follow-up
+            📄 Exec Summary
           </a>
           <a href="#cowork-customer-presentation"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors">
-            🎯 Presentation Package
+            🎯 Customer Value Deck
           </a>
           <a href="#cowork-customer-alignment"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors">
