@@ -98,17 +98,37 @@ export default function StepReview({ wizard }: WizardProps) {
       <title>${escHtml(data.companyName || 'Executive Summary')} — Frontier Canvas</title>
       ${styles}
       <style>
-        @page { margin: 0.5in; size: letter; }
-        @media print { @page { margin: 0.5in; size: letter; } }
-        body { margin: 0; padding: 0.5in; background: white; font-size: 8px; }
+        @page { margin: 0.4in; size: letter; }
+        @media print { @page { margin: 0.4in; size: letter; } }
+        body { margin: 0; padding: 0.4in; background: white; font-size: 8px; }
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         .print\\:hidden, .no-print { display: none !important; }
         .print-disclaimer { display: block !important; }
+        /* Hard-clip to 1 letter page (11in - 0.8in margins) */
+        .print-container { max-height: 10.2in; overflow: hidden; }
+        /* Tighten hero */
+        .hero-card { padding: 0.35rem 0.6rem !important; border-radius: 0.25rem !important; }
+        .hero-card h3 { font-size: 14px !important; }
+        .hero-card .mt-4 { margin-top: 0.2rem !important; }
+        .hero-card .gap-1\\.5 { gap: 0.2rem !important; }
+        .hero-card .rounded-full { font-size: 8px !important; padding: 0.1rem 0.3rem !important; }
+        /* Tighten exec summary */
+        #exec-summary { padding: 0.4rem 0.6rem !important; }
+        #exec-summary .mb-5, #exec-summary .mb-3 { margin-bottom: 0.2rem !important; }
+        #exec-summary .pt-4 { padding-top: 0.15rem !important; }
+        #exec-summary .mt-4 { margin-top: 0.15rem !important; }
+        #exec-summary .gap-4 { gap: 0.25rem !important; }
+        #exec-summary .gap-2 { gap: 0.15rem !important; }
+        #exec-summary .p-4, #exec-summary .p-3 { padding: 0.2rem 0.35rem !important; }
+        #exec-summary .rounded-xl { border-radius: 0.2rem !important; }
+        #exec-summary .text-2xl { font-size: 16px !important; }
+        /* Limit success cases to 4 in print */
+        #exec-summary .grid-cols-3 > :nth-child(n+5) { display: none !important; }
       </style>
     </head><body>
-      <div style="max-width:100%;">
+      <div class="print-container" style="max-width:100%;">
         ${heroEl.outerHTML}
-        <div style="margin-top:0.2rem;">${execEl.outerHTML}</div>
+        <div style="margin-top:0.15rem;">${execEl.outerHTML}</div>
       </div>
     </body></html>`)
     win.document.close()
