@@ -3,6 +3,7 @@ import type { useWizardState } from '../../hooks/useWizardState'
 import { INDUSTRIES } from '../../data/industries'
 import { SHOW_CUSTOMER_ZERO } from '../../data/global-ai-evidence'
 import { extractSmartFill, type SmartFillResult } from '../../lib/smartFillEngine'
+import { DECISION_MAKER_TITLES } from '../../data/job-titles'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
@@ -34,25 +35,70 @@ Strategic priorities:
 
 Key challenges: They struggle with fragmented data across plants, aging equipment requiring costly maintenance, and pressure to meet ESG targets while maintaining production output.`
 
-const COPILOT_GATHER_PROMPT = `@Sales Agent — I need a company profile for [CUSTOMER NAME]. Search the web, CRM, my emails, and LinkedIn for this company.
+const ALLOWED_INDUSTRIES = [
+  'Manufacturing',
+  'Banking',
+  'Capital Markets',
+  'Consumer Goods',
+  'Energy & Resources',
+  'Government',
+  'Healthcare Provider',
+  'Healthcare/MedTech',
+  'Higher Education',
+  'Insurance',
+  'Media & Entertainment',
+  'Mobility & Travel',
+  'Retail',
+  'Telecommunications',
+  'Professional Services',
+  'Real Estate',
+] as const
 
-1. Company Name — (full legal/trading name)
-2. Website — (full URL, e.g. https://www.contoso.com)
-3. Industry — (e.g. Manufacturing, Banking, Retail, Healthcare, Energy)
-4. Company Size — (under 500 / 500-2,500 / 2,500-10,000 / 10,000+)
-5. Strategic Priorities — Their top 3-5 business priorities
-6. Key Challenges — Pain points or blockers
-7. Key Stakeholders — Find ALL C-level and senior VP+ executives at this company. Search:
-   • Company website Leadership/About/Team page
-   • Search "[COMPANY NAME] leadership team" on the web
-   • LinkedIn People page filtered by company + title
-   • The Org, The Official Board, or Equilar
-   List EVERY executive you find (not just tech roles). Include operational leaders, division heads, and functional chiefs:
-   [Title]: [Full Name] — [Full Title]
-   Examples of roles to look for: CEO, CFO, COO, CIO, CTO, CISO, CDO, CMO, CHRO, CAO, General Counsel, Chief Safety Officer, Chief Communications Officer, VP IT, VP Digital, VP Operations, SVP Engineering, Division Presidents, etc.
-   (Only write "Not found" for roles you specifically searched and confirmed do not exist)
+const COPILOT_GATHER_PROMPT = `I need a public-research company profile for [CUSTOMER NAME].
 
-Format as plain text. No markdown, no bullet points, no links.`
+Use ONLY public sources: company website (Leadership / About / Team page), LinkedIn People page, news, press releases, earnings calls, The Org, Equilar. Do NOT use internal CRM, sales, or email data.
+
+Return your answer in TWO parts.
+
+== PART 1 — Markdown briefing for me to skim ==
+
+## [Company Name]
+**Industry · Size · HQ · Website**
+
+### Strategic Priorities
+3–5 bullets — the company's top business priorities, in full sentences.
+
+### Key Challenges
+3 bullets — main blockers, pressures, or pain points.
+
+### Key Stakeholders
+- **Full Name** — Full Title
+(only include people whose current title matches the allowed list below)
+
+== PART 2 — JSON code block ==
+
+\`\`\`json
+{
+  "companyName": "...",
+  "website": "https://...",
+  "industry": "<one of: ${ALLOWED_INDUSTRIES.join(' | ')}>",
+  "industrySubcategory": "...",
+  "companySize": "<one of: <500 | 500-2500 | 2500-10000 | 10000+>",
+  "strategicPriorities": ["...", "..."],
+  "keyChallenges": ["...", "..."],
+  "stakeholders": [
+    { "name": "Full Name", "title": "Full Title" }
+  ]
+}
+\`\`\`
+
+Use FULL titles — never abbreviate. "Vice President of X" not "VP X". "Chief Information Officer" not "CIO".
+
+Allowed stakeholder titles (current title must match one of these exactly, OR follow the pattern "Chief [Something] Officer"):
+${DECISION_MAKER_TITLES.join(', ')}.
+
+Skip middle managers, individual contributors, and anyone below VP-equivalent.`
+
 
 export default function StepCustomer({ wizard }: WizardProps) {
   const { data, updateData, nextStep, canAdvance } = wizard
