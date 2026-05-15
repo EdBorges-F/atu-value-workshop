@@ -116,7 +116,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
     updateData({ smartFillRaw: smartFillText })
   }
 
-  const applyField = (field: keyof SmartFillResult) => {
+  const applyField = (field: Exclude<keyof SmartFillResult, 'source'>) => {
     if (!extraction) return
     const item = extraction[field]
     if (!item) return
@@ -143,6 +143,20 @@ export default function StepCustomer({ wizard }: WizardProps) {
     } else if (field === 'priorities') {
       updateData({
         priorities: item.value as string,
+        confidence: { ...data.confidence, priorities: item.confidence },
+      })
+    } else if (field === 'strategicPriorities') {
+      // Sync legacy `priorities` from extraction so engine scorers + downstream
+      // consumers keep working when user cherry-picks just this field.
+      updateData({
+        strategicPriorities: item.value as string[],
+        priorities: extraction.priorities?.value ?? data.priorities,
+        confidence: { ...data.confidence, priorities: item.confidence },
+      })
+    } else if (field === 'keyChallenges') {
+      updateData({
+        keyChallenges: item.value as string[],
+        priorities: extraction.priorities?.value ?? data.priorities,
         confidence: { ...data.confidence, priorities: item.confidence },
       })
     } else if (field === 'suggestedChallengeIds') {
@@ -190,6 +204,14 @@ export default function StepCustomer({ wizard }: WizardProps) {
       update.priorities = extraction.priorities.value as string
       conf.priorities = extraction.priorities.confidence
       fields.add('priorities')
+    }
+    if (extraction.strategicPriorities) {
+      update.strategicPriorities = extraction.strategicPriorities.value as string[]
+      fields.add('strategicPriorities')
+    }
+    if (extraction.keyChallenges) {
+      update.keyChallenges = extraction.keyChallenges.value as string[]
+      fields.add('keyChallenges')
     }
     // Apply challenges and use cases (these are additive, not conflicting with industry clear)
     if (extraction.suggestedChallengeIds) {

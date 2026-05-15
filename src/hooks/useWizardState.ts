@@ -8,6 +8,11 @@ export interface WizardData {
   industryId: string
   companySize: CompanySize | ''
   priorities: string
+  // v2: typed split of priorities — JSON-path Smart Fill populates these.
+  // Legacy `priorities` is kept synced for backward compat with everything
+  // that already reads it (engine scorers, ValueStoryGenerator, etc.).
+  strategicPriorities: string[]
+  keyChallenges: string[]
   // Smart Fill
   smartFillRaw: string
   confidence: Record<string, 'high' | 'medium' | 'low'>
@@ -41,6 +46,8 @@ const INITIAL_DATA: WizardData = {
   industryId: '',
   companySize: '',
   priorities: '',
+  strategicPriorities: [],
+  keyChallenges: [],
   smartFillRaw: '',
   confidence: {},
   crmContacts: [],

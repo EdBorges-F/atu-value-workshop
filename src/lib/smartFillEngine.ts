@@ -3,6 +3,7 @@ import { CHALLENGES } from '../data/challenges'
 import { USE_CASES } from '../data/use-cases'
 import { PRIORITY_KEYWORDS } from '../data/priority-keywords'
 import type { CompanySize } from '../data/types'
+import { isDecisionMakerTitle } from '../data/job-titles'
 
 /**
  * Smart Fill extraction result.
@@ -15,9 +16,17 @@ export interface SmartFillResult {
   industryId: { value: string; confidence: 'high' | 'medium' | 'low' } | null
   companySize: { value: CompanySize; confidence: 'high' | 'medium' | 'low' } | null
   priorities: { value: string; confidence: 'high' | 'medium' | 'low' } | null
+  // v2: split priorities into typed arrays. Regex fallback leaves these null;
+  // JSON path populates them. Legacy `priorities` is also synthesized in the
+  // JSON path so existing consumers keep working.
+  strategicPriorities: { value: string[]; confidence: 'high' | 'medium' | 'low' } | null
+  keyChallenges: { value: string[]; confidence: 'high' | 'medium' | 'low' } | null
   suggestedChallengeIds: { value: string[]; confidence: 'high' | 'medium' | 'low' } | null
   suggestedUseCaseIds: { value: string[]; confidence: 'high' | 'medium' | 'low' } | null
   contacts: { value: { name: string; title: string; email?: string }[]; confidence: 'high' | 'medium' | 'low' } | null
+  // v2: tells the UI which path produced this result, so we can show a
+  // "structured" vs "extracted via pattern matching" badge.
+  source: 'json' | 'regex' | 'empty'
 }
 
 // Rejects org/role category labels that look superficially like names
@@ -154,11 +163,267 @@ export function scoreUseCasePriorityMatch(
   return hits
 }
 
+// ─── v2: JSON-first extraction path ──────────────────────────────────────────
+
+// Maps the prompt's industry enum (and common spellings) to internal industry IDs.
+const _INDUSTRY_LABEL_TO_ID: Record<string, string> = {
+  'manufacturing': 'manufacturing',
+  'banking': 'banking',
+  'capital markets': 'capital-markets',
+  'consumer goods': 'consumer-goods',
+  'energy & resources': 'energy-resources',
+  'energy and resources': 'energy-resources',
+  'energy': 'energy-resources',
+  'government': 'government',
+  'public sector': 'government',
+  'healthcare provider': 'healthcare-provider',
+  'healthcare/medtech': 'healthcare-medtech',
+  'healthcare medtech': 'healthcare-medtech',
+  'medtech': 'healthcare-medtech',
+  'pharma': 'healthcare-medtech',
+  'higher education': 'higher-education',
+  'education': 'higher-education',
+  'insurance': 'insurance',
+  'media & entertainment': 'media-entertainment',
+  'media and entertainment': 'media-entertainment',
+  'media': 'media-entertainment',
+  'mobility & travel': 'mobility-travel',
+  'mobility and travel': 'mobility-travel',
+  'travel': 'mobility-travel',
+  'retail': 'retail',
+  'telecommunications': 'telecommunications',
+  'telecom': 'telecommunications',
+  'professional services': 'professional-services',
+  'real estate': 'real-estate',
+}
+
+// Maps the prompt's size enum (and friendly labels) to internal CompanySize bucket.
+const _SIZE_LABEL_TO_BUCKET: Record<string, CompanySize> = {
+  '<500': 'small',
+  'under 500': 'small',
+  'less than 500': 'small',
+  '500-2500': 'mid',
+  '500-2,500': 'mid',
+  '500 - 2500': 'mid',
+  '500 - 2,500': 'mid',
+  '2500-10000': 'large',
+  '2,500-10,000': 'large',
+  '2500 - 10000': 'large',
+  '2,500 - 10,000': 'large',
+  '10000+': 'enterprise',
+  '10,000+': 'enterprise',
+  'over 10000': 'enterprise',
+  'over 10,000': 'enterprise',
+}
+
+/**
+ * Pull the first ```json fenced code block out of a raw Copilot response and
+ * parse it. Returns the parsed object on success, or null if the block is
+ * missing, malformed, or doesn't parse to a plain object.
+ */
+export function extractJsonBlock(rawText: string): Record<string, unknown> | null {
+  if (!rawText || typeof rawText !== 'string') return null
+  // Match ```json ... ``` (case-insensitive on the language tag, lazy on body).
+  const fenceMatch = rawText.match(/```\s*json\s*\n([\s\S]*?)\n\s*```/i)
+  if (!fenceMatch || !fenceMatch[1]) return null
+  const body = fenceMatch[1].trim()
+  if (!body) return null
+  try {
+    const parsed = JSON.parse(body)
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed as Record<string, unknown>
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+const _isNonEmptyString = (v: unknown): v is string =>
+  typeof v === 'string' && v.trim().length > 0
+
+const _toStringArray = (v: unknown): string[] => {
+  if (!Array.isArray(v)) return []
+  return v.filter(_isNonEmptyString).map((s) => s.trim())
+}
+
+/**
+ * Validate a JSON object produced by Copilot against the v2 schema and
+ * project it into a `SmartFillResult`. Returns null if the object is
+ * structurally unusable (e.g. no recognizable fields at all) so the caller
+ * can fall back to the regex parser.
+ *
+ * Stakeholders are filtered through `isDecisionMakerTitle` — exact matches
+ * keep `confidence: high`; any soft-tier matches downgrade to `medium`.
+ */
+export function validateSmartFillJson(obj: Record<string, unknown>): SmartFillResult | null {
+  let companyName: SmartFillResult['companyName'] = null
+  let websiteUrl: SmartFillResult['websiteUrl'] = null
+  let industryId: SmartFillResult['industryId'] = null
+  let companySize: SmartFillResult['companySize'] = null
+  let strategicPriorities: SmartFillResult['strategicPriorities'] = null
+  let keyChallenges: SmartFillResult['keyChallenges'] = null
+  let priorities: SmartFillResult['priorities'] = null
+  let suggestedChallengeIds: SmartFillResult['suggestedChallengeIds'] = null
+  let suggestedUseCaseIds: SmartFillResult['suggestedUseCaseIds'] = null
+  let contacts: SmartFillResult['contacts'] = null
+
+  // Company name
+  if (_isNonEmptyString(obj.companyName)) {
+    companyName = { value: obj.companyName.trim(), confidence: 'high' }
+  }
+
+  // Website
+  if (_isNonEmptyString(obj.website)) {
+    let url = obj.website.trim()
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url
+    websiteUrl = { value: url, confidence: 'high' }
+  }
+
+  // Industry — map enum label to internal id; unknown labels yield null
+  if (_isNonEmptyString(obj.industry)) {
+    const key = obj.industry.trim().toLowerCase().replace(/\s+/g, ' ')
+    const mapped = _INDUSTRY_LABEL_TO_ID[key]
+    if (mapped) {
+      industryId = { value: mapped, confidence: 'high' }
+    } else {
+      // Soft fallback: substring match against any known label
+      const soft = Object.keys(_INDUSTRY_LABEL_TO_ID).find((k) => key.includes(k) || k.includes(key))
+      if (soft) industryId = { value: _INDUSTRY_LABEL_TO_ID[soft], confidence: 'medium' }
+    }
+  }
+
+  // Company size — map enum label to internal bucket
+  if (_isNonEmptyString(obj.companySize)) {
+    const key = obj.companySize.trim().toLowerCase().replace(/\s+/g, ' ')
+    const mapped = _SIZE_LABEL_TO_BUCKET[key]
+    if (mapped) {
+      companySize = { value: mapped, confidence: 'high' }
+    }
+  }
+
+  // Strategic priorities + key challenges (typed arrays)
+  const sp = _toStringArray(obj.strategicPriorities)
+  if (sp.length > 0) {
+    strategicPriorities = { value: sp, confidence: 'high' }
+  }
+  const kc = _toStringArray(obj.keyChallenges)
+  if (kc.length > 0) {
+    keyChallenges = { value: kc, confidence: 'high' }
+  }
+
+  // Synthesize the legacy `priorities` string so existing consumers and the
+  // industry/use-case scorers (which expect free text) keep working.
+  if (sp.length > 0 || kc.length > 0) {
+    const parts: string[] = []
+    if (sp.length > 0) {
+      parts.push('Strategic Priorities:')
+      parts.push(...sp.map((p) => '• ' + p))
+    }
+    if (kc.length > 0) {
+      if (parts.length > 0) parts.push('')
+      parts.push('Key Challenges:')
+      parts.push(...kc.map((c) => '• ' + c))
+    }
+    priorities = { value: parts.join('\n'), confidence: 'high' }
+  }
+
+  // Score challenges + use cases against priorities + industry, reusing the
+  // existing scorers so JSON and regex paths stay consistent.
+  if (industryId && priorities) {
+    const challengeScores = scoreChallengesForIndustry(priorities.value, industryId.value)
+    const topChallenges = [...challengeScores.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([id]) => id)
+    if (topChallenges.length > 0) {
+      suggestedChallengeIds = { value: topChallenges, confidence: 'medium' }
+    }
+
+    // Use cases: top 8 by combined challenge tag + priority keyword match
+    const ucScores = USE_CASES.filter((uc) => uc.industryIds.includes(industryId!.value))
+      .map((uc) => ({
+        ucId: uc.id,
+        score: scoreUseCasePriorityMatch(uc.id, priorities!.value),
+      }))
+      .filter((s) => s.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 8)
+      .map((s) => s.ucId)
+    if (ucScores.length > 0) {
+      suggestedUseCaseIds = { value: ucScores, confidence: 'medium' }
+    }
+  }
+
+  // Stakeholders — filter through DM whitelist
+  if (Array.isArray(obj.stakeholders)) {
+    const accepted: { name: string; title: string; email?: string }[] = []
+    let anySoft = false
+    for (const raw of obj.stakeholders) {
+      if (!raw || typeof raw !== 'object') continue
+      const r = raw as Record<string, unknown>
+      const name = _isNonEmptyString(r.name) ? r.name.trim() : null
+      const title = _isNonEmptyString(r.title) ? r.title.trim() : null
+      if (!name || !title) continue
+      const verdict = isDecisionMakerTitle(title)
+      if (verdict.match === 'none') continue
+      if (verdict.match === 'soft') anySoft = true
+      accepted.push({ name, title: verdict.canonical })
+    }
+    if (accepted.length > 0) {
+      contacts = {
+        value: accepted.slice(0, 10),
+        confidence: anySoft ? 'medium' : accepted.length >= 3 ? 'high' : 'medium',
+      }
+    }
+  }
+
+  // If the JSON didn't yield at least one *primary* identity field, fall back
+  // to the regex parser — it likely has more to offer from the surrounding
+  // markdown briefing. `priorities` is deliberately excluded here because it
+  // is auto-derived from `strategicPriorities` / `keyChallenges` and would
+  // mask cases where Copilot returned only those two arrays inside the JSON
+  // block while the markdown briefing carried the company name, industry, etc.
+  const anyPrimaryField = !!(
+    companyName ||
+    websiteUrl ||
+    industryId ||
+    companySize ||
+    contacts
+  )
+  if (!anyPrimaryField) return null
+
+  return {
+    companyName,
+    websiteUrl,
+    industryId,
+    companySize,
+    priorities,
+    strategicPriorities,
+    keyChallenges,
+    suggestedChallengeIds,
+    suggestedUseCaseIds,
+    contacts,
+    source: 'json',
+  }
+}
+
 /**
  * Extract structured data from pasted text.
  * Only populates fields that exist in the wizard.
+ *
+ * v2 path: try to find a ```json``` block first (new prompt produces one);
+ * fall back to the legacy regex parser if the block is missing or invalid.
  */
 export function extractSmartFill(rawText: string): SmartFillResult {
+  // v2: JSON-first
+  const jsonObj = extractJsonBlock(rawText)
+  if (jsonObj) {
+    const validated = validateSmartFillJson(jsonObj)
+    if (validated) return validated
+  }
+
+  // Legacy regex parser (unchanged below this line)
   // Pre-process: strip source citations and markdown formatting
   const cleaned = rawText
     .replace(/\[\d+\]:\s*https?:\/\/[^\n]*/g, '')
@@ -200,7 +465,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     .replace(/\s+\(\s*,/g, ',')
     .trim()
 
-  if (!cleaned) return { companyName: null, websiteUrl: null, industryId: null, companySize: null, priorities: null, suggestedChallengeIds: null, suggestedUseCaseIds: null, contacts: null }
+  if (!cleaned) return { companyName: null, websiteUrl: null, industryId: null, companySize: null, priorities: null, strategicPriorities: null, keyChallenges: null, suggestedChallengeIds: null, suggestedUseCaseIds: null, contacts: null, source: 'empty' }
 
   const normLower = _normalise(cleaned)
 
@@ -615,7 +880,7 @@ export function extractSmartFill(rawText: string): SmartFillResult {
     }
   }
 
-  return { companyName, websiteUrl, industryId, companySize, priorities, suggestedChallengeIds, suggestedUseCaseIds, contacts }
+  return { companyName, websiteUrl, industryId, companySize, priorities, strategicPriorities: null, keyChallenges: null, suggestedChallengeIds, suggestedUseCaseIds, contacts, source: 'regex' }
 }
 
 /**
