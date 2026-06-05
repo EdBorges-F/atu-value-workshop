@@ -5,6 +5,7 @@ import { USE_CASES } from '../../data/use-cases'
 import { CUSTOMER_STORIES } from '../../data/customer-stories'
 import { HERO_USE_CASES } from '../../data/hero-use-cases'
 import { PRIORITY_KEYWORDS } from '../../data/priority-keywords'
+import { FEATURE_FLAGS } from '../../data/feature-flags'
 import { isIndustryMatch, FRONTIER_PILLARS, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION } from '../../lib/valueStoryGenerator'
 import { scoreChallengesForIndustry, scoreUseCasePriorityMatch } from '../../lib/smartFillEngine'
 
@@ -146,11 +147,19 @@ export default function StepChallenges({ wizard }: WizardProps) {
   const [discoveryOpen, setDiscoveryOpen] = useState(false)
   const [expandedTheme, setExpandedTheme] = useState<string | null>(null)
 
+  // When the Discovery Companion is hidden behind a feature flag, any
+  // previously-captured notes in localStorage must be excluded from scoring
+  // and from downstream Cowork prompts — otherwise ghost data leaks into
+  // recommendations even though the UI is hidden.
+  const effectiveDiscoveryNotes = FEATURE_FLAGS.SHOW_DISCOVERY_COMPANION
+    ? discoveryNotes
+    : ({} as Record<string, string>)
+
   // Combine priorities text + all discovery notes for scoring
   const allText = useMemo(() => {
-    const noteTexts = Object.values(discoveryNotes).filter(Boolean).join(' ')
+    const noteTexts = Object.values(effectiveDiscoveryNotes).filter(Boolean).join(' ')
     return (priorities + ' ' + noteTexts).trim()
-  }, [priorities, discoveryNotes])
+  }, [priorities, effectiveDiscoveryNotes])
 
   const priorityScores = useMemo(() => scoreChallenges(allText, industryId), [allText, industryId])
 
@@ -167,7 +176,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
     const allPillars = [...FRONTIER_PILLARS, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION]
 
     for (const theme of DISCOVERY_THEMES) {
-      const note = discoveryNotes[theme.pillarId]?.toLowerCase().trim()
+      const note = effectiveDiscoveryNotes[theme.pillarId]?.toLowerCase().trim()
       if (!note) continue
 
       const pillar = allPillars.find(p => p.id === theme.pillarId)
@@ -195,9 +204,9 @@ export default function StepChallenges({ wizard }: WizardProps) {
       seen.add(i.challengeId);
       return true;
     });
-  }, [discoveryNotes, industryId])
+  }, [effectiveDiscoveryNotes, industryId])
 
-  const discoveryCount = Object.values(discoveryNotes).filter(Boolean).length
+  const discoveryCount = Object.values(effectiveDiscoveryNotes).filter(Boolean).length
 
   const updateNote = (pillarId: string, text: string) => {
     updateData({ discoveryNotes: { ...discoveryNotes, [pillarId]: text } })
@@ -278,6 +287,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
       </div>
 
       {/* Discovery Companion */}
+      {FEATURE_FLAGS.SHOW_DISCOVERY_COMPANION && (
       <div className="rounded-[20px] border border-primary/15 bg-primary/[0.02] overflow-hidden">
         <button
           onClick={() => setDiscoveryOpen(!discoveryOpen)}
@@ -420,6 +430,7 @@ export default function StepChallenges({ wizard }: WizardProps) {
           </div>
         )}
       </div>
+      )}
 
       {/* Challenge pills */}
       <section className="space-y-3">

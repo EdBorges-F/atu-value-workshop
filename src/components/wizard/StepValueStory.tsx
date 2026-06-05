@@ -3,6 +3,7 @@ import type { useWizardState } from '../../hooks/useWizardState'
 import { generateValueStory, INTELLIGENCE_FOUNDATION, SECURITY_FOUNDATION, type CoworkPrompt, type PillarSection, type MatchedStory } from '../../lib/valueStoryGenerator'
 import { FUNCTION_BENCHMARKS, filterCustomerZero } from '../../data/global-ai-evidence'
 import type { CustomerZeroDepartment, CustomerZeroProofPoint } from '../../data/customer-zero'
+import { FEATURE_FLAGS } from '../../data/feature-flags'
 
 type WizardProps = { wizard: ReturnType<typeof useWizardState> }
 
@@ -334,7 +335,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-0.5">{data.industryId} · {data.companySize}</p>
           <h1 className="text-2xl font-bold">{data.companyName}</h1>
-          <p className="text-xs text-gray-400 mt-1">{story.pillarSections.length} pillars · {story.pillarSections.reduce((s,p)=>s+p.useCases.length,0)} use cases · {totalEvidenceCount} customer stories</p>
+          <p className="text-xs text-gray-400 mt-1">{story.pillarSections.length} pillars · {story.pillarSections.reduce((s,p)=>s+p.useCases.length,0)} use cases{FEATURE_FLAGS.SHOW_FULL_VALUE_STORY ? ` · ${totalEvidenceCount} customer stories` : ''}</p>
         </div>
         <div className="flex gap-2 flex-wrap">
           <a href="#cowork-exec-summary"
@@ -352,6 +353,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
       </div>
       {/* ── Section Jump Nav ── */}
+      {FEATURE_FLAGS.SHOW_FULL_VALUE_STORY && (
       <nav className="flex gap-2 flex-wrap print:hidden mb-2">
         {[{id:"plan",label:"Use Cases by Pillar"},{id:"cowork",label:"Cowork Prompts"},{id:"proof",label:"Customer Stories"},{id:"next-steps",label:"Next Steps"},...(czMatchedDepts.length>0?[{id:"customer-zero",label:"Customer Zero"}]:[])].map(s=>(
           <a key={s.id} href={`#${s.id}`}
@@ -360,8 +362,10 @@ export default function StepValueStory({ wizard }: WizardProps) {
           </a>
         ))}
       </nav>
+      )}
 
       {/* ━━ 2. THE PLAN — Pillars (open by default) ━━ */}
+      {FEATURE_FLAGS.SHOW_FULL_VALUE_STORY && (
       <div id="plan" className="print:hidden">
       <Collapsible title="Use Cases by Pillar" icon="🎯"
         summary={`${story.pillarSections.length} pillars · ${story.pillarSections.reduce((n, s) => n + s.useCases.length, 0)} use cases`}
@@ -466,6 +470,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
       )}
       </div>
+      )}
 
       {/* ╋╋ COWORK PROMPTS — Primary action section ╋╋ */}
       <section id="cowork" className="print:hidden">
@@ -501,6 +506,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
       </section>
 
       {/* ━━ 3. THE PROOF — Consolidated evidence ━━ */}
+      {FEATURE_FLAGS.SHOW_FULL_VALUE_STORY && (
       <div id="proof" className="print:hidden">
       {totalEvidenceCount > 0 && (
         <Collapsible title="Customer Stories" icon="📊"
@@ -587,8 +593,10 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
       )}
       </div>
+      )}
 
       {/* ━━ 5. NEXT STEPS — collapsible, default open ━━ */}
+      {FEATURE_FLAGS.SHOW_FULL_VALUE_STORY && (
       <div id="next-steps" className="print:hidden">
       <Collapsible title="Next Steps" icon="🎯" defaultOpen={false}>
         <div className="space-y-4 pt-2">
@@ -629,9 +637,10 @@ export default function StepValueStory({ wizard }: WizardProps) {
         </div>
       </Collapsible>
       </div>
+      )}
 
       {/* ━━ CUSTOMER ZERO — NDA-Gated, Pillar-Filtered Section ━━ */}
-      {czMatchedDepts.length > 0 && czData && (() => {
+      {FEATURE_FLAGS.SHOW_FULL_VALUE_STORY && czMatchedDepts.length > 0 && czData && (() => {
         const matchedDeptNames = new Set(czMatchedDepts.map(d => d.name))
         const matchedProofPoints = czData.proofPoints.filter(pp => matchedDeptNames.has(pp.department))
 
@@ -752,6 +761,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
 
 
       {/* ── Disclaimer ── */}
+      {FEATURE_FLAGS.SHOW_FULL_VALUE_STORY && (
       <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5 text-center print:hidden">
         <p className="text-[11px] text-text-secondary leading-relaxed">
           ⚡ AI-Assisted · Human-Reviewed — This Value Story was prepared using Frontier Canvas, aligned with Microsoft's
@@ -765,6 +775,7 @@ export default function StepValueStory({ wizard }: WizardProps) {
           <a href="https://stories.microsoft.com" target="_blank" rel="noopener" className="hover:text-primary">📋 Evidence Standards</a>
         </div>
       </div>
+      )}
 
       {/* ── Feedback via MS Forms ── */}
       <div className="text-center print:hidden">

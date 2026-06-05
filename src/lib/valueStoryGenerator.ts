@@ -8,6 +8,7 @@ import { INDUSTRY_CONTEXTS } from '../data/industry-context'
 import { INDUSTRY_BENCHMARKS, USE_CASE_ROI_TEMPLATES, MARKET_STATS, GLOBAL_EVIDENCE } from '../data/global-ai-evidence'
 import type { UseCaseROITemplate } from '../data/global-ai-evidence'
 import type { CustomerStory } from '../data/types'
+import { FEATURE_FLAGS } from '../data/feature-flags'
 
 // ─── Frontier Transformation Pillars ─────────────────────────
 // Under the "Intelligence & Trust" umbrella
@@ -804,8 +805,8 @@ export function generateValueStory(data: WizardData): ValueStory {
   const pillarContext = pillarSections.map((ps) => `${ps.pillar.fullName}: ${ps.customerPriorities.slice(0, 2).join(', ')}`).join('; ')
   const statedPriorities = data.priorities ? data.priorities.slice(0, 400) : challengeList
 
-  // Enrich context with discovery conversation notes
-  const discoveryBlock = data.discoveryNotes && Object.keys(data.discoveryNotes).length > 0
+  // Enrich context with discovery conversation notes (gated by feature flag)
+  const discoveryBlock = FEATURE_FLAGS.SHOW_DISCOVERY_COMPANION && data.discoveryNotes && Object.keys(data.discoveryNotes).length > 0
     ? '\n- Discovery conversation notes:\n' + Object.entries(data.discoveryNotes)
         .filter(([, v]) => v?.trim())
         .map(([pillarId, note]) => {
