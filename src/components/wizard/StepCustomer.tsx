@@ -63,8 +63,7 @@ Return your answer in TWO parts.
 
 == PART 1 — Markdown briefing for me to skim ==
 
-## [Company Name]
-**Industry · Size · HQ · Website**
+Use the company's actual name as the H2 heading. On the next line, in bold on one line: Industry · Size · HQ · Website. Then add the three sections below.
 
 ### Strategic Priorities
 3–5 bullets — the company's top business priorities, in full sentences.
@@ -399,6 +398,26 @@ export default function StepCustomer({ wizard }: WizardProps) {
                 >
                   Apply All ({extractedCount} found)
                 </button>
+              )}
+              {extraction && (
+                <span
+                  title={
+                    extraction.source === 'json'
+                      ? 'Structured JSON block detected in Copilot response — high-fidelity parse'
+                      : extraction.source === 'regex'
+                      ? 'No JSON block found — fell back to regex parsing of prose'
+                      : 'No extractable fields found in the pasted text'
+                  }
+                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase ${
+                    extraction.source === 'json'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      : extraction.source === 'regex'
+                      ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                      : 'bg-gray-50 text-gray-500 border border-gray-200'
+                  }`}
+                >
+                  {extraction.source === 'json' ? 'JSON ✓' : extraction.source}
+                </span>
               )}
             </div>
 
