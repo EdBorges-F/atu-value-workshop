@@ -167,6 +167,7 @@ export function scoreUseCasePriorityMatch(
 
 // Maps the prompt's industry enum (and common spellings) to internal industry IDs.
 const _INDUSTRY_LABEL_TO_ID: Record<string, string> = {
+  'automotive': 'automotive',
   'manufacturing': 'manufacturing',
   'banking': 'banking',
   'capital markets': 'capital-markets',

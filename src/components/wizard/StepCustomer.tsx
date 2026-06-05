@@ -36,6 +36,7 @@ Strategic priorities:
 Key challenges: They struggle with fragmented data across plants, aging equipment requiring costly maintenance, and pressure to meet ESG targets while maintaining production output.`
 
 const ALLOWED_INDUSTRIES = [
+  'Automotive',
   'Manufacturing',
   'Banking',
   'Capital Markets',
@@ -203,7 +204,9 @@ export default function StepCustomer({ wizard }: WizardProps) {
     if (extraction.priorities) {
       update.priorities = extraction.priorities.value as string
       conf.priorities = extraction.priorities.confidence
-      fields.add('priorities')
+      // In JSON mode, `priorities` is synthesized from strategicPriorities + keyChallenges.
+      // Don't badge it separately so the banner reflects the actual typed source fields.
+      if (extraction.source !== 'json') fields.add('priorities')
     }
     if (extraction.strategicPriorities) {
       update.strategicPriorities = extraction.strategicPriorities.value as string[]
@@ -234,9 +237,17 @@ export default function StepCustomer({ wizard }: WizardProps) {
     setSmartFillCollected(true)
   }
 
+  // Filter out metadata keys (e.g. `source`) so the count reflects only extracted fields.
   const extractedCount = extraction
-    ? Object.values(extraction).filter((v) => v !== null).length
+    ? Object.entries(extraction).filter(([k, v]) => k !== 'source' && v !== null).length
     : 0
+
+  // The Strategic Priorities textarea displays the synthesized `priorities` string,
+  // which is populated by any of the three priority-related extraction fields.
+  const prioritiesHighlight =
+    appliedFields.has('priorities') ||
+    appliedFields.has('strategicPriorities') ||
+    appliedFields.has('keyChallenges')
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
@@ -421,13 +432,37 @@ export default function StepCustomer({ wizard }: WizardProps) {
                     applied={data.companySize === extraction.companySize.value}
                   />
                 )}
-                {extraction.priorities && (
+                {extraction.priorities && extraction.source !== 'json' && (
                   <ExtractionRow
                     label="Priorities"
                     value={(extraction.priorities.value as string).slice(0, 80) + ((extraction.priorities.value as string).length > 80 ? '...' : '')}
                     confidence={extraction.priorities.confidence}
                     onApply={() => applyField('priorities')}
                     applied={data.priorities === extraction.priorities.value}
+                  />
+                )}
+                {extraction.strategicPriorities && (extraction.strategicPriorities.value as string[]).length > 0 && (
+                  <ExtractionRow
+                    label="Strategic Priorities"
+                    value={`${(extraction.strategicPriorities.value as string[]).length} priorit${(extraction.strategicPriorities.value as string[]).length === 1 ? 'y' : 'ies'} extracted`}
+                    confidence={extraction.strategicPriorities.confidence}
+                    onApply={() => applyField('strategicPriorities')}
+                    applied={
+                      data.strategicPriorities.length === (extraction.strategicPriorities.value as string[]).length &&
+                      (extraction.strategicPriorities.value as string[]).every((p) => data.strategicPriorities.includes(p))
+                    }
+                  />
+                )}
+                {extraction.keyChallenges && (extraction.keyChallenges.value as string[]).length > 0 && (
+                  <ExtractionRow
+                    label="Key Challenges"
+                    value={`${(extraction.keyChallenges.value as string[]).length} challenge(s) extracted`}
+                    confidence={extraction.keyChallenges.confidence}
+                    onApply={() => applyField('keyChallenges')}
+                    applied={
+                      data.keyChallenges.length === (extraction.keyChallenges.value as string[]).length &&
+                      (extraction.keyChallenges.value as string[]).every((c) => data.keyChallenges.includes(c))
+                    }
                   />
                 )}
                 {extraction.suggestedChallengeIds && (
@@ -498,6 +533,8 @@ export default function StepCustomer({ wizard }: WizardProps) {
             {appliedFields.has('industryId') && <AppliedTag label="Industry" value={INDUSTRIES.find(i => i.id === data.industryId)?.name ?? data.industryId} />}
             {appliedFields.has('companySize') && <AppliedTag label="Size" value={SIZE_OPTIONS.find(s => s.value === data.companySize)?.label ?? data.companySize} />}
             {appliedFields.has('priorities') && <AppliedTag label="Priorities" value={data.priorities.slice(0, 50) + (data.priorities.length > 50 ? '…' : '')} />}
+            {appliedFields.has('strategicPriorities') && <AppliedTag label="Strategic Priorities" value={`${data.strategicPriorities.length} extracted`} />}
+            {appliedFields.has('keyChallenges') && <AppliedTag label="Key Challenges" value={`${data.keyChallenges.length} extracted`} />}
             {appliedFields.has('challenges') && <AppliedTag label="Challenges" value={`${data.selectedChallengeIds.length} selected`} />}
             {appliedFields.has('useCases') && <AppliedTag label="Use Cases" value={`${data.selectedUseCaseIds.length} matched`} />}
             {appliedFields.has('contacts') && <AppliedTag label="Stakeholders" value={`${data.crmContacts.length} contacts`} />}
@@ -622,7 +659,7 @@ export default function StepCustomer({ wizard }: WizardProps) {
       </div>
 
       {/* Strategic Priorities */}
-      <div className={appliedFields.has('priorities') ? 'ring-1 ring-primary/20 rounded-[16px] p-3 bg-primary/[0.02]' : ''}>
+      <div className={prioritiesHighlight ? 'ring-1 ring-primary/20 rounded-[16px] p-3 bg-primary/[0.02]' : ''}>
         <label htmlFor="priorities" className="block text-sm font-medium text-text mb-2">
           Strategic Priorities
           {data.confidence.priorities && (
